@@ -1,0 +1,36 @@
+{
+  "name": "rx-youtube-comments",
+  "version": "0.0.1",
+  "description": "",
+  "main": "lib/index.js",
+  "scripts": {
+    "start": "npm run build && node build/",
+    "build": "babel src -d build",
+    "test": "tape lib/test/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/philbot9/rx-youtube-comments.git"
+  },
+  "keywords": [
+    "youtube",
+    "comments",
+    "stream",
+    "rx",
+    "reactive"
+  ],
+  "author": "Philip Klostermann <philip.klostermann@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/philbot9/rx-youtube-comments/issues"
+  },
+  "homepage": "https://github.com/philbot9/rx-youtube-comments#readme",
+  "dependencies": {
+    "rx": "^4.1.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.14.0",
+    "babel-preset-es2015": "^6.14.0",
+    "blue-tape": "^1.0.0"
+  }
+}
