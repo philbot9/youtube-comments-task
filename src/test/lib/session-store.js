@@ -40,9 +40,9 @@ test('/lib/session-store', t => {
   })
 
   t.test('- parses session token', t => {
-    const fakeToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
-    const fakeHtml = `<html><script>var stuff = {'XSRF_TOKEN': "${fakeToken}"}</script></html>`
-    const request = sinon.stub().returns(Promise.resolve(fakeHtml))
+    const token = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
+    const html = `<html><script>var stuff = {'XSRF_TOKEN': "${token}"}</script></html>`
+    const request = sinon.stub().returns(Promise.resolve(html))
 
     const videoId = '2a4Uxdy9TQY'
     const url = URL_TEMPLATE.replace('{{videoId}}', '2a4Uxdy9TQY')
@@ -52,14 +52,14 @@ test('/lib/session-store', t => {
       .then(sessionToken => {
         t.ok(request.calledOnce, 'request called once')
         t.ok(request.calledWith(url), 'request called with correct url')
-        t.equal(sessionToken, fakeToken)
+        t.equal(sessionToken, token)
       })
   })
 
-  t.test(' - caches session token', t => {
-    const fakeToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
-    const fakeHtml = `<html><script>var stuff = {'XSRF_TOKEN': "${fakeToken}"}</script></html>`
-    const request = sinon.stub().returns(Promise.resolve(fakeHtml))
+  t.test('- caches session token', t => {
+    const token = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
+    const html = `<html><script>var stuff = {'XSRF_TOKEN': "${token}"}</script></html>`
+    const request = sinon.stub().returns(Promise.resolve(html))
     const videoId = '2a4Uxdy9TQY'
     const url = URL_TEMPLATE.replace('{{videoId}}', '2a4Uxdy9TQY')
 
@@ -68,19 +68,19 @@ test('/lib/session-store', t => {
       .then(sessionToken => {
         t.ok(request.calledOnce, 'request called once')
         t.ok(request.calledWith(url), 'request called with correct url')
-        t.equal(sessionToken, fakeToken)
+        t.equal(sessionToken, token)
         return getSessionToken(videoId)
       })
       .then(sessionToken => {
         t.ok(request.calledOnce, 'request called once')
-        t.equal(sessionToken, fakeToken)
+        t.equal(sessionToken, token)
       })
   })
 
-  t.test(' - fetches token if cache has expired', t => {
-    const fakeToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
-    const fakeHtml = `<html><script>var stuff = {'XSRF_TOKEN': "${fakeToken}"}</script></html>`
-    const request = sinon.stub().returns(Promise.resolve(fakeHtml))
+  t.test('- fetches token if cache has expired', t => {
+    const token = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
+    const html = `<html><script>var stuff = {'XSRF_TOKEN': "${token}"}</script></html>`
+    const request = sinon.stub().returns(Promise.resolve(html))
     const videoId = '2a4Uxdy9TQY'
     const url = URL_TEMPLATE.replace('{{videoId}}', '2a4Uxdy9TQY')
 
@@ -89,7 +89,7 @@ test('/lib/session-store', t => {
       .then(sessionToken => {
         t.ok(request.calledOnce, 'request called once')
         t.equal(request.firstCall.args[0], url, 'request called with correct url')
-        t.equal(sessionToken, fakeToken, 'returns the correct session token')
+        t.equal(sessionToken, token, 'returns the correct session token')
         return new Promise(resolve => {
           setTimeout(() => resolve(getSessionToken(videoId)), 10)
         })
@@ -97,7 +97,7 @@ test('/lib/session-store', t => {
       .then(sessionToken => {
         t.ok(request.calledTwice, 'request called again')
         t.equal(request.secondCall.args[0], url, 'request called again with correct url')
-        t.equal(sessionToken, fakeToken, 'returns correct session token')
+        t.equal(sessionToken, token, 'returns correct session token')
       })
   })
 })

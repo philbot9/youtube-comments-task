@@ -45,7 +45,3 @@ export function fetchPage ({ request, formData, videoId }) {
     url,
   })
 }
-
-export function parsePage (html) {
-
-}
