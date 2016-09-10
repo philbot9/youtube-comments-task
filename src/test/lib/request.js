@@ -1,5 +1,4 @@
 import test from 'blue-tape'
-import Rx from 'rx'
 
 import request from '../../lib/request'
 

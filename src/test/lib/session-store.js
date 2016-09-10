@@ -4,17 +4,17 @@ import sinon from 'sinon'
 import buildSessionStore, { URL_TEMPLATE } from '../../lib/session-store'
 
 test('/lib/session-store', t => {
-  test(' - module exports a function', t => {
+  t.test(' - module exports a function', t => {
     t.ok(typeof buildSessionStore === 'function', 'is of type function')
     t.end()
   })
 
-  test(' - exported function returns a session store function', t => {
+  t.test(' - exported function returns a session store function', t => {
     t.ok(typeof buildSessionStore() === 'function', 'is of type function')
     t.end()
   })
 
-  test(' - session store returns a promise', t => {
+  t.test(' - session store returns a promise', t => {
     const request = {
       get: sinon.stub().returns(Promise.resolve())
     }
@@ -27,7 +27,7 @@ test('/lib/session-store', t => {
     return returnValue
   })
 
-  test(' - fetches correct video page', t => {
+  t.test(' - fetches correct video page', t => {
     const request = {
       get: sinon.stub().returns(Promise.resolve())
     }
@@ -43,7 +43,7 @@ test('/lib/session-store', t => {
       })
   })
 
-  test(' - parses session token', t => {
+  t.test(' - parses session token', t => {
     const fakeToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
     const fakeHtml = `<html><script>var stuff = {'XSRF_TOKEN': "${fakeToken}"}</script></html>`
     const request = {
@@ -61,7 +61,7 @@ test('/lib/session-store', t => {
       })
   })
 
-  test(' - caches session token', t => {
+  t.test(' - caches session token', t => {
     const fakeToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
     const fakeHtml = `<html><script>var stuff = {'XSRF_TOKEN': "${fakeToken}"}</script></html>`
     const request = {
@@ -84,7 +84,7 @@ test('/lib/session-store', t => {
       })
   })
 
-  test(' - fetches token if cache has expired', t => {
+  t.test(' - fetches token if cache has expired', t => {
     const fakeToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
     const fakeHtml = `<html><script>var stuff = {'XSRF_TOKEN': "${fakeToken}"}</script></html>`
     const request = {
@@ -109,6 +109,4 @@ test('/lib/session-store', t => {
         t.equal(sessionToken, fakeToken)
       })
   })
-
-  t.end()
 })
