@@ -1,10 +1,10 @@
-import rp from 'request-promise'
+import importedRequest from './request'
 
 export const URL_TEMPLATE = 'https://www.youtube.com/watch?v={{videoId}}'
 
 export default function (config = {}, deps = {}) {
   const { cacheDuration = 1000 * 60 * 30 } = config
-  const { request = rp } = deps
+  const { request = importedRequest } = deps
   const cache = {}
 
   return (videoId) => {
@@ -15,7 +15,7 @@ export default function (config = {}, deps = {}) {
       }
     }
 
-    return request(URL_TEMPLATE.replace('{{videoId}}', videoId))
+    return request.get(URL_TEMPLATE.replace('{{videoId}}', videoId))
       .then(responseText => {
         const m = /\'XSRF_TOKEN\'\s*\n*:\s*\n*"(.*)"/.exec(responseText)
 
