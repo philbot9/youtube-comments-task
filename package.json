@@ -3,10 +3,21 @@
   "version": "0.0.1",
   "description": "",
   "main": "lib/index.js",
+  "watch": {
+    "test": {
+      "patterns": [
+        "build"
+      ],
+      "extensions": "js",
+      "quiet": true
+    }
+  },
   "scripts": {
-    "start": "npm run build && node build/",
     "build": "babel src -d build",
-    "test": "tape lib/test/*"
+    "build:watch": "babel --watch src -d build",
+    "test": "tape build/test/*.js build/test/**/*.js | faucet",
+    "npm-watch": "npm-watch",
+    "watch": "npm-run-all -p build:watch npm-watch"
   },
   "repository": {
     "type": "git",
@@ -26,11 +37,19 @@
   },
   "homepage": "https://github.com/philbot9/rx-youtube-comments#readme",
   "dependencies": {
+    "debug": "^2.2.0",
+    "request-promise": "^4.1.1",
     "rx": "^4.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.14.0",
+    "babel-plugin-transform-es2015-destructuring": "^6.9.0",
+    "babel-plugin-transform-object-rest-spread": "^6.8.0",
     "babel-preset-es2015": "^6.14.0",
-    "blue-tape": "^1.0.0"
+    "blue-tape": "^1.0.0",
+    "faucet": "0.0.1",
+    "npm-run-all": "^3.1.0",
+    "npm-watch": "^0.1.6",
+    "sinon": "^1.17.5"
   }
 }
