@@ -1,12 +1,12 @@
 import mem from 'mem'
+import { buildVideoPageUrl } from './url-builder'
 import requestImport from './request'
 
-export const URL_TEMPLATE = 'https://www.youtube.com/watch?v={{videoId}}'
 export const SESSION_TOKEN_REGEX = /\'XSRF_TOKEN\'\s*\n*:\s*\n*"(.*)"/i
 export const COMMENTS_TOKEN_REGEX = /\'COMMENTS_TOKEN\'\s*\n*:\s*\n*"(.*)"/i
 
 export default function (config = {}, deps = {}) {
-  const { cacheDuration = (1000 * 60 * 30) } = config
+  const { cacheDuration = (1000 * 60 * 5) } = config
   const { request = requestImport } = deps
 
   // return a memoized function
@@ -15,9 +15,12 @@ export default function (config = {}, deps = {}) {
   function initialiseSession (videoId) {
     return fetchVideoPage(videoId, request)
       .then(html => {
+        const sessionToken = extractToken(SESSION_TOKEN_REGEX, html)
+        const commentsToken = extractToken(COMMENTS_TOKEN_REGEX, html)
+
         return {
-          sessionToken: extractToken(SESSION_TOKEN_REGEX, html),
-          commentsToken: extractToken(COMMENTS_TOKEN_REGEX, html)
+          commentsToken: decodeURIComponent(commentsToken),
+          sessionToken
         }
       })
   }
@@ -32,7 +35,7 @@ export function fetchVideoPage(videoId, request) {
     return Promise.reject('Missing second parameter: request')
   }
 
-  return request(URL_TEMPLATE.replace('{{videoId}}', videoId))
+  return request(buildVideoPageUrl(videoId))
 }
 
 export function extractToken (regex, html) {

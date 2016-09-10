@@ -2,12 +2,13 @@ import test from 'blue-tape'
 import sinon from 'sinon'
 
 import buildSessionStore, {
-  URL_TEMPLATE,
   SESSION_TOKEN_REGEX,
   COMMENTS_TOKEN_REGEX,
   fetchVideoPage,
   extractToken
 } from '../../lib/session-store'
+
+import { buildVideoPageUrl } from '../../lib/url-builder'
 
 test('/lib/session-store', t => {
   t.test(' - module exports a function', t => {
@@ -61,7 +62,7 @@ test('/lib/session-store', t => {
 
   t.test('- fetchVideoPage() fetches correct URL', t => {
     const videoId = '2a4Uxdy9TQY'
-    const url = URL_TEMPLATE.replace('{{videoId}}', videoId)
+    const url = buildVideoPageUrl(videoId)
     const request =  sinon.stub().returns(Promise.resolve())
 
     return fetchVideoPage(videoId, request)
@@ -73,7 +74,7 @@ test('/lib/session-store', t => {
 
   t.test('- session store fetches correct video page', t => {
     const videoId = '2a2U4dg9sQZ'
-    const url = URL_TEMPLATE.replace('{{videoId}}', videoId)
+    const url = buildVideoPageUrl(videoId)
     const request =  sinon.stub().returns(Promise.resolve())
 
     const getSessionToken = buildSessionStore({}, { request })
@@ -99,7 +100,7 @@ test('/lib/session-store', t => {
 
   t.test('- extractToken() extracts tokens from html', t => {
     const sessionToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
-    const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY%3D'
+    const commentsToken = encodeURIComponent('EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY=')
     const videoPageHtml = `<html><script>
       var stuff = {'XSRF_TOKEN': "${sessionToken}",}
       var stuff2 = {'COMMENTS_TOKEN': "${commentsToken}",}
@@ -114,14 +115,33 @@ test('/lib/session-store', t => {
     t.end()
   })
 
-  t.test('- session store extracts session tokens', t => {
+  t.test('- session store URI decodes the comments token', t => {
     const videoId = '2a4Uxdy9TQY'
-    const url = URL_TEMPLATE.replace('{{videoId}}', '2a4Uxdy9TQY')
+    const url = buildVideoPageUrl(videoId)
     const sessionToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
-    const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY%3D'
+    const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
     const videoPageHtml = `<html><script>
       var stuff = {'XSRF_TOKEN': "${sessionToken}",}
-      var stuff2 = {'COMMENTS_TOKEN': "${commentsToken}",}
+      var stuff2 = {'COMMENTS_TOKEN': "${encodeURIComponent(commentsToken)}",}
+    </script></html>`
+
+    const request = sinon.stub().returns(Promise.resolve(videoPageHtml))
+    const getSession = buildSessionStore({}, { request })
+
+    return getSession(videoId)
+      .then(session => {
+        t.equal(session.commentsToken, commentsToken, 'returns decoded commments token')
+      })
+  })
+
+  t.test('- session store extracts session tokens', t => {
+    const videoId = '2a4Uxdy9TQY'
+    const url = buildVideoPageUrl(videoId)
+    const sessionToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
+    const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
+    const videoPageHtml = `<html><script>
+      var stuff = {'XSRF_TOKEN': "${sessionToken}",}
+      var stuff2 = {'COMMENTS_TOKEN': "${encodeURIComponent(commentsToken)}",}
     </script></html>`
 
     const request = sinon.stub().returns(Promise.resolve(videoPageHtml))
@@ -137,12 +157,12 @@ test('/lib/session-store', t => {
 
   t.test('- session store caches tokens', t => {
     const videoId = '2a4Uxdy9TQY'
-    const url = URL_TEMPLATE.replace('{{videoId}}', '2a4Uxdy9TQY')
+    const url = buildVideoPageUrl(videoId)
     const sessionToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
-    const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY%3D'
+    const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
     const videoPageHtml = `<html><script>
       var stuff = {'XSRF_TOKEN': "${sessionToken}",}
-      var stuff2 = {'COMMENTS_TOKEN': "${commentsToken}",}
+      var stuff2 = {'COMMENTS_TOKEN': "${encodeURIComponent(commentsToken)}",}
     </script></html>`
 
     const request = sinon.stub().returns(Promise.resolve(videoPageHtml))
@@ -163,12 +183,12 @@ test('/lib/session-store', t => {
 
   t.test('- session store fetches tokens if cache has expired', t => {
     const videoId = '2a4Uxdy9TQY'
-    const url = URL_TEMPLATE.replace('{{videoId}}', '2a4Uxdy9TQY')
+    const url = buildVideoPageUrl(videoId)
     const sessionToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
-    const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY%3D'
+    const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
     const videoPageHtml = `<html><script>
       var stuff = {'XSRF_TOKEN': "${sessionToken}",}
-      var stuff2 = {'COMMENTS_TOKEN': "${commentsToken}",}
+      var stuff2 = {'COMMENTS_TOKEN': "${encodeURIComponent(commentsToken)}",}
     </script></html>`
 
     const request = sinon.stub().returns(Promise.resolve(videoPageHtml))

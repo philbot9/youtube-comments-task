@@ -37,7 +37,9 @@
   },
   "homepage": "https://github.com/philbot9/rx-youtube-comments#readme",
   "dependencies": {
+    "cheerio": "^0.22.0",
     "debug": "^2.2.0",
+    "mem": "^0.1.1",
     "request": "^2.74.0",
     "request-promise": "^4.1.1",
     "rx": "^4.1.0"

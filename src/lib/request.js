@@ -4,6 +4,4 @@ const request = rp.defaults({
   jar: CookieJar
 })
 
-export default function (...args) {
-  return request(...args)
-}
+export default request
