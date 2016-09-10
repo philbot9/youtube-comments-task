@@ -38,6 +38,7 @@
   "homepage": "https://github.com/philbot9/rx-youtube-comments#readme",
   "dependencies": {
     "debug": "^2.2.0",
+    "request": "^2.74.0",
     "request-promise": "^4.1.1",
     "rx": "^4.1.0"
   },
@@ -50,6 +51,7 @@
     "faucet": "0.0.1",
     "npm-run-all": "^3.1.0",
     "npm-watch": "^0.1.6",
-    "sinon": "^1.17.5"
+    "sinon": "^1.17.5",
+    "tape": "^4.6.0"
   }
 }

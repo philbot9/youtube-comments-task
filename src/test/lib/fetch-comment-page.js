@@ -7,7 +7,7 @@ import fetchCommentPage, {
   fetchPage
 } from '../../lib/fetch-comment-page'
 
-test.only('/lib/fetch-comment-page.js', t => {
+test('/lib/fetch-comment-page.js', t => {
   t.test('- exports a function', t => {
     t.equal(typeof fetchCommentPage, 'function', 'is of type function')
     t.end()
