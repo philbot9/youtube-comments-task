@@ -75,14 +75,17 @@ test('/lib/fetch-comment-page.js', t => {
       session_token: sessionToken,
       video_id: videoId
     }
-    const request = {
-      post: sinon.stub().returns(Promise.resolve(html))
-    }
+    const request = sinon.stub().returns(Promise.resolve(html))
 
     return fetchPage({ request, formData, videoId })
       .then(result => {
-        t.ok(request.post.calledOnce, 'request called once')
-        t.ok(request.post.calledWith(url, formData), 'request called with correct arguments')
+        t.ok(request.calledOnce, 'request called once')
+        t.deepEqual(request.firstCall.args[0], {
+          method: 'POST',
+          form: formData,
+          url
+        }, 'request called with correct parameter')
+
         t.equal(result, html, 'returns server HTML response')
       })
   })

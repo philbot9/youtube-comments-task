@@ -2,7 +2,7 @@ import test from 'blue-tape'
 
 import request, { CookieJar } from '../../lib/request'
 
-test.only('/lib/request.js', t => {
+test('/lib/request.js', t => {
   t.test('- exports a function', t => {
     t.equal(typeof request, 'function', 'is of type object')
     t.end()

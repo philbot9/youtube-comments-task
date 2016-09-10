@@ -15,11 +15,9 @@ export default function (params = {}) {
     throw new Error('Missing parameter: getSessionToken')
   }
 
-  const {
-    request = requestImport,
-    parseComments
-  } = deps
+  const { request = requestImport } = deps
 
+  debug('fetching comment page for %s, page token %s', videoId, pageToken)
   return getSessionToken(videoId)
     .then(sessionToken => buildFormData({ sessionToken, videoId, pageToken }))
     .then(formData => fetchPage({ request, formData, videoId }))
@@ -41,7 +39,11 @@ export function buildFormData ({ sessionToken, videoId, pageToken }) {
 
 export function fetchPage ({ request, formData, videoId }) {
   const url = URL_TEMPLATE.replace('{{videoId}}', videoId)
-  return request.post(url, formData)
+  return request({
+    method: 'POST',
+    form: formData,
+    url,
+  })
 }
 
 export function parsePage (html) {
