@@ -4,8 +4,10 @@ import nodeUrl from 'url'
 import {
   VIDEO_PAGE_URL,
   WATCH_FRAGMENTS_URL,
+  COMMENT_SERVICE_URL,
   buildVideoPageUrl,
-  buildWatchFragmentsUrl
+  buildWatchFragmentsUrl,
+  buildCommentServiceUrl
 } from '../../lib/url-builder'
 
 test('/lib/url-build.js', t => {
@@ -70,6 +72,11 @@ test('/lib/url-build.js', t => {
       distiller: '1',
       spf: 'load'
     }, 'query contains correct values')
+    t.end()
+  })
+
+  t.test('- buildCommentServiceUrl() returns the comment service url', t => {
+    t.equal(buildCommentServiceUrl(), COMMENT_SERVICE_URL, 'url is correct')
     t.end()
   })
 })

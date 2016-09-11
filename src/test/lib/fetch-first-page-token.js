@@ -8,7 +8,7 @@ import fetchFirstPageToken, {
 
 import { buildWatchFragmentsUrl } from '../../lib/url-builder'
 
-test.only('/lib/fetch-first-page-token.js', t => {
+test('/lib/fetch-first-page-token.js', t => {
   t.test('- module exports a function', t => {
     t.equal(typeof fetchFirstPageToken, 'function', 'is of type function')
     t.end()

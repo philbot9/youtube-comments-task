@@ -1,44 +1,51 @@
-import requestImport from './request'
 import Debug from 'debug'
 const debug = Debug('fetch-comment-page')
 
-export const URL_TEMPLATE = 'https://www.youtube.com/comment_ajax?action_load_comments=1&order_by_time=True&filter={{videoId}}'
+import requestImport from './request'
+import { buildCommentServiceUrl } from './url-builder'
 
-export default function (params = {}) {
-  const { videoId, pageToken, getSessionToken, deps = {} } = params
-
+export default function (videoId, pageToken, getSessionToken, deps = {}) {
   if (!videoId) {
-    throw new Error('Missing parameter: videoId')
+    return Promise.reject('Missing first parameter: videoId')
   }
-
+  if (!pageToken) {
+    return Promise.reject('Missing second parameter: pageToken')
+  }
   if (!getSessionToken) {
-    throw new Error('Missing parameter: getSessionToken')
+    return Promise.reject('Missing third parameter: getSessionToken')
   }
 
   const { request = requestImport } = deps
 
-  debug('fetching comment page for %s, page token %s', videoId, pageToken)
+  debug('fetching comment page for %s with page token %s', videoId, pageToken)
   return getSessionToken(videoId)
-    .then(sessionToken => buildFormData({ sessionToken, videoId, pageToken }))
-    .then(formData => fetchPage({ request, formData, videoId }))
+    .then(sessionToken => buildFormData(sessionToken, pageToken))
+    .then(formData => fetchPage(formData, request))
 }
 
-export function buildFormData ({ sessionToken, videoId, pageToken }) {
+export function buildFormData (sessionToken, pageToken) {
+  if (!sessionToken) {
+    throw new Error('Missing first parameter: sessionToken')
+  }
   if (!pageToken) {
-    return {
-      session_token: sessionToken,
-      video_id: videoId
-    }
-  } else {
-    return {
-      session_token: sessionToken,
-      page_token: pageToken
-    }
+    throw new Error('Missing second parameter: pageToken')
+  }
+
+  return {
+    session_token: sessionToken,
+    page_token: pageToken
   }
 }
 
-export function fetchPage ({ request, formData, videoId }) {
-  const url = URL_TEMPLATE.replace('{{videoId}}', videoId)
+export function fetchPage (formData, request) {
+  if (!formData) {
+    return Promise.reject('Missing first argument: formData')
+  }
+  if (!request) {
+    return Promise.reject('Missing second argument: request')
+  }
+
+  const url = buildCommentServiceUrl()
   return request({
     method: 'POST',
     form: formData,

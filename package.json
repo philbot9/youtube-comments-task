@@ -15,7 +15,7 @@
   "scripts": {
     "build": "babel src -d build",
     "build:watch": "babel --watch src -d build",
-    "test": "tape build/test/*.js build/test/**/*.js | faucet",
+    "test": "tape build/test/*.js build/test/**/*.js | faucet || true",
     "npm-watch": "npm-watch",
     "watch": "npm-run-all -p build:watch npm-watch"
   },
