@@ -4,4 +4,6 @@ const request = rp.defaults({
   jar: CookieJar
 })
 
+// TODO: add retries
+
 export default request

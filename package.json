@@ -15,7 +15,7 @@
   "scripts": {
     "build": "babel src -d build",
     "build:watch": "babel --watch src -d build",
-    "test": "tape build/test/*.js build/test/**/*.js | faucet || true",
+    "test": "tape build/test/*.js build/test/**/*.js || true",
     "npm-watch": "npm-watch",
     "watch": "npm-run-all -p build:watch npm-watch"
   },
@@ -28,6 +28,7 @@
     "comments",
     "stream",
     "rx",
+    "rxjs",
     "reactive"
   ],
   "author": "Philip Klostermann <philip.klostermann@gmail.com>",
@@ -42,7 +43,7 @@
     "mem": "^0.1.1",
     "request": "^2.74.0",
     "request-promise": "^4.1.1",
-    "rx": "^4.1.0"
+    "rxjs": "^5.0.0-beta.12"
   },
   "devDependencies": {
     "babel-cli": "^6.14.0",

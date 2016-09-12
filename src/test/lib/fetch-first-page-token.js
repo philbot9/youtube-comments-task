@@ -27,7 +27,7 @@ test('/lib/fetch-first-page-token.js', t => {
       .catch((err) => {
         t.ok(err, 'promise is rejected with an error')
       })
-      .then(() => fetchFirstPageToken(null, {}))
+      .then(() => fetchFirstPageToken(null, () => {}))
       .then(() => t.fail('promise should not resolve'))
       .catch((err) => {
         t.ok(err, 'promise is rejected with an error')
@@ -57,31 +57,7 @@ test('/lib/fetch-first-page-token.js', t => {
     .catch((err) => {
       t.ok(err, 'promise is rejected with an error')
     })
-    .then(() => fetchCommentFragment('videoId', {}))
-    .then(() => t.fail('promise should not resolve'))
-    .catch((err) => {
-      t.ok(err, 'promise is rejected with an error')
-    })
   })
-
-  t.test('- fetchCommentsFragment() rejects promise if session tokens are missing', t => {
-    return fetchCommentsFragment('videoId', {}, () => {})
-    .then(() => t.fail('promise should not resolve'))
-    .catch((err) => {
-      t.ok(err, 'promise is rejected with an error')
-    })
-    .then(() => fetchCommentFragment('videoId', {sessionToken: 'token'}, () => {}))
-    .then(() => t.fail('promise should not resolve'))
-    .catch((err) => {
-      t.ok(err, 'promise is rejected with an error')
-    })
-    .then(() => fetchCommentFragment('videoId', {commentsToken: 'token'}, () => {}))
-    .then(() => t.fail('promise should not resolve'))
-    .catch((err) => {
-      t.ok(err, 'promise is rejected with an error')
-    })
-  })
-
 
   t.test('- fetchCommentsFragment() fetches a comments fragment', t => {
     const videoId = 'K3rJ5kK52'
@@ -93,9 +69,10 @@ test('/lib/fetch-first-page-token.js', t => {
     }
 
     const url = buildWatchFragmentsUrl(videoId, commentsToken)
+    const getSession = sinon.stub().returns(Promise.resolve(session))
     const request = sinon.stub().returns(Promise.resolve())
 
-    return fetchCommentsFragment(videoId, session, request)
+    return fetchCommentsFragment(videoId, getSession, request)
       .then(() => {
         t.ok(request.calledOnce, 'request called once')
         t.deepEqual(request.firstCall.args[0], {
@@ -114,12 +91,13 @@ test('/lib/fetch-first-page-token.js', t => {
 
   t.test('- extractPageToken() throws an error if watch-discussion is missing from response', t => {
     t.throws(() => extractPageToken({'nothing': 'here'}), 'throws an error')
+    t.throws(() => extractPageToken({'body': {'nothing': 'here'}}), 'throws an error')
     t.end()
   })
 
   t.test('- extractPageToken() throws an error if the page token cannot be found', t => {
     const html = '<div><div class="yadayada" token="blahblah">content</div></div>'
-    t.throws(() => extractPageToken({'watch-discussion': html}))
+    t.throws(() => extractPageToken({body: {'watch-discussion': html}}))
     t.end()
   })
 
@@ -132,7 +110,7 @@ test('/lib/fetch-first-page-token.js', t => {
       '<div>'
     ].join('')
 
-    t.throws(() => extractPageToken({'watch-discussion': html}), 'throws an error')
+    t.throws(() => extractPageToken({body: {'watch-discussion': html}}), 'throws an error')
     t.end()
   })
 
@@ -151,7 +129,7 @@ test('/lib/fetch-first-page-token.js', t => {
       '</div></div></div>'
     ].join('')
 
-    const result = extractPageToken({'watch-discussion': html})
+    const result = extractPageToken({body: {'watch-discussion': html}})
     t.equal(result, pageToken, 'extracts page token correctly')
     t.end()
   })
@@ -179,9 +157,10 @@ test('/lib/fetch-first-page-token.js', t => {
     ].join('')
 
     const url = buildWatchFragmentsUrl(videoId, commentsToken)
-    const request = sinon.stub().returns(Promise.resolve({'watch-discussion': html}))
+    const getSession = sinon.stub().returns(Promise.resolve(session))
+    const request = sinon.stub().returns(Promise.resolve({body: {'watch-discussion': html}}))
 
-    return fetchFirstPageToken(videoId, session, { request })
+    return fetchFirstPageToken(videoId, getSession, { request })
       .then(result => t.equal(result, pageToken, 'fetches correct page token'))
   })
 })

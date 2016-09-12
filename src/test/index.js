@@ -1,5 +1,5 @@
 import test from 'blue-tape'
-import Rx from 'rx'
+import Rx from 'rxjs'
 
 import commentStream from '../index'
 

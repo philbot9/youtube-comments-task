@@ -2,47 +2,42 @@ import cheerio from 'cheerio'
 import requestImport from './request'
 import { buildWatchFragmentsUrl } from './url-builder'
 
-export default function (videoId, session, deps = {}) {
+export default function (videoId, getSession, deps = {}) {
   if (!videoId) {
     return Promise.reject('Missing first parameter: videoId')
   }
-  if (!session) {
+  if (!getSession) {
     return Promise.reject('Missing second parameter: session')
   }
 
   const { request = requestImport } = deps
-  return fetchCommentsFragment(videoId, session, request)
+  return fetchCommentsFragment(videoId, getSession, request)
     .then(extractPageToken)
 }
 
-export function fetchCommentsFragment (videoId, session, request) {
+export function fetchCommentsFragment (videoId, getSession, request) {
   if (!videoId) {
     return Promise.reject('Missing first parameter: videoId')
   }
-  if (!session) {
-    return Promise.reject('Missing second parameter: session')
+  if (!getSession) {
+    return Promise.reject('Missing second parameter: getSession')
   }
   if (!request) {
     return Promise.reject('Missing third parameter: request')
   }
 
-  const { sessionToken, commentsToken } = session
-  if (!sessionToken) {
-    return Promise.reject('Missing "sessionToken" in session parameter')
-  }
-  if (!commentsToken) {
-    return Promise.reject('Missing "commentsToken" in session parameter')
-  }
+  return getSession(videoId)
+    .then(({ sessionToken, commentsToken }) => {
+      const url = buildWatchFragmentsUrl(videoId, commentsToken)
+      const form = { session_token: sessionToken }
 
-  const url = buildWatchFragmentsUrl(videoId, commentsToken)
-  const form = { session_token: sessionToken }
-
-  return request({
-    method: 'POST',
-    json: true,
-    url,
-    form
-  })
+      return request({
+        method: 'POST',
+        json: true,
+        url,
+        form
+      })
+    })
 }
 
 export function extractPageToken (response) {
@@ -50,7 +45,9 @@ export function extractPageToken (response) {
     throw new Error('Missing parameter: response')
   }
 
-  const html = response['watch-discussion']
+  const html = response.body && response.body['watch-discussion']
+    ? response.body['watch-discussion']
+    : null
   if (!html) {
     throw new Error('Missing field in response: watch-discussion')
   }
