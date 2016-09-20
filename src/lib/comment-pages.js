@@ -2,6 +2,7 @@ import Rx from 'rxjs'
 import cheerio from 'cheerio'
 import fetchFirstPageTokenImport from './fetch-first-page-token'
 import fetchCommentPageImport from './fetch-comment-page'
+import until from 'promised-until'
 
 export default function (videoId, getSession, deps = {}) {
   if (!videoId) {
@@ -13,71 +14,26 @@ export default function (videoId, getSession, deps = {}) {
 
   const {
     fetchFirstPageToken = fetchFirstPageTokenImport,
-    fetchCommentPage = fetchCommentPageImport
+    fetchCommentPage = fetchCommentPageImport,
+    extractNextPageToken = extractNextPageToken
   } = deps
 
   return Rx.Observable.create(observer => {
-    const fetchAndEmitAllPages = buildFetchAndEmitAllPages({
-      videoId,
-      observer,
-      fetchCommentPage,
-      getSession,
-      extractNextPageToken
-    })
-
-    fetchFirstPageToken(videoId, getSession)
-      .then(fetchAndEmitAllPages)
+    until(
+      pageToken => !pageToken,
+      pageToken => {
+        return fetchCommentPage(videoId, pageToken, getSession)
+          .then(response => {
+            observer.next(response.content_html)
+            return extractNextPageToken(response)
+          })
+      }
+    )(fetchFirstPageToken(videoId, getSession))
+      .then(() => observer.complete())
   })
 }
 
-export function buildFetchAndEmitAllPages ({
-  videoId,
-  observer,
-  fetchCommentPage,
-  getSession,
-  extractNextPageToken
-}) {
-  if (!videoId) {
-    throw new Error('Missing parameter: videoId')
-  }
-  if (!observer) {
-    throw new Error('Missing parameter: observer')
-  }
-  if (!fetchCommentPage) {
-    throw new Error('Missing parameter: fetchCommentPage')
-  }
-  if (!getSession) {
-    throw new Error('Missing parameter: getSession')
-  }
-  if (!extractNextPageToken) {
-    throw new Error('Missing parameter: extractNextPageToken')
-  }
-
-  return function fetchAndEmitAllPages (pageToken) {
-    if (!pageToken) {
-      return Promise.reject('Missing parameter: pageToken')
-    }
-
-    return fetchCommentPage(videoId, pageToken, getSession)
-      .then(response => {
-        // emit the comment page html
-        observer.next(response.content_html)
-        return response
-      })
-      .then((response) => extractNextPageToken(response))
-      .then(nextPageToken => {
-        console.log('nextpagetoken', nextPageToken)
-        if (nextPageToken) {
-          fetchAndEmitAllPages(nextPageToken)
-        } else {
-          observer.complete()
-        }
-      })
-  }
-}
-
 export function extractNextPageToken (response) {
-  console.log('extracting', Object.keys(response))
   if (!response) {
     throw new Error('Missing parameter: response')
   }
