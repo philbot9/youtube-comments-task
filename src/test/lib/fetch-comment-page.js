@@ -7,6 +7,8 @@ import fetchCommentPage, {
 } from '../../lib/fetch-comment-page'
 import { buildCommentServiceUrl } from '../../lib/url-builder'
 
+const noop = () => {}
+
 test('/lib/fetch-comment-page.js', t => {
   t.test('- exports a function', t => {
     t.equal(typeof fetchCommentPage, 'function', 'is of type function')
@@ -15,10 +17,9 @@ test('/lib/fetch-comment-page.js', t => {
 
   t.test('- function returns a promise', t => {
     const getSession = () => Promise.resolve()
-    const videoId = 'videoId'
     const request = sinon.stub().returns(Promise.resolve())
 
-    const returnValue = fetchCommentPage({videoId, getSession})
+    const returnValue = fetchCommentPage('videoId', 'pageToken', {getSession, request}).catch(noop)
     t.ok(returnValue instanceof Promise, 'instance of Promise')
     t.end()
   })
@@ -26,28 +27,64 @@ test('/lib/fetch-comment-page.js', t => {
   t.test('- rejects the promise if videoId is missing', t => {
     return fetchCommentPage()
       .then(() => t.fail('promise should not resolve'))
-      .catch((err) => t.ok(err, 'promise rejected with an error'))
-      .then(() => fetchCommentPage(null, 'pageToken', () => {}))
+      .catch((err) => {
+        t.ok(err, 'promise rejected with an error')
+        t.ok(/videoId/.test(err), 'error is correct')
+      })
+      .then(() => fetchCommentPage(null, 'pageToken', {}))
       .then(() => t.fail('promise should not resolve'))
-      .catch((err) => t.ok(err, 'promise rejected with an error'))
+      .catch((err) => {
+        t.ok(err, 'promise rejected with an error')
+        t.ok(/videoId/.test(err), 'error is correct')
+      })
   })
 
   t.test('- rejects the promise if pageToken is missing', t => {
-    return fetchCommentPage()
+    return fetchCommentPage('videoId', null, {})
       .then(() => t.fail('promise should not resolve'))
-      .catch((err) => t.ok(err, 'promise rejected with an error'))
-      .then(() => fetchCommentPage('videoId', null, () => {}))
-      .then(() => t.fail('promise should not resolve'))
-      .catch((err) => t.ok(err, 'promise rejected with an error'))
+      .catch((err) => {
+        t.ok(err, 'promise rejected with an error')
+        t.ok(/pageToken/.test(err), 'error is correct')
+      })
   })
 
-  t.test('- rejects the promise if getSession is missing', t => {
-    return fetchCommentPage()
+  t.test('- rejects the promise if dependencies parameter is missing', t => {
+    return fetchCommentPage('videoId', 'pageToken', null)
       .then(() => t.fail('promise should not resolve'))
-      .catch((err) => t.ok(err, 'promise rejected with an error'))
-      .then(() => fetchCommentPage('videoId', 'pageToken'))
+      .catch((err) => {
+        t.ok(err, 'promise rejected with an error')
+        t.ok(/dependencies/.test(err), 'Error is correct')
+      })
+  })
+
+  t.test('- rejects the promise if request is missing from dependencies', t => {
+    return fetchCommentPage('videoId', 'pageToken', {getSession: noop})
       .then(() => t.fail('promise should not resolve'))
-      .catch((err) => t.ok(err, 'promise rejected with an error'))
+      .catch((err) => {
+        t.ok(err, 'promise rejected with an error')
+        t.ok(/request/.test(err), 'Error is correct')
+      })
+      .then(() => fetchCommentPage('videoId', 'pageToken', {getSession: noop, request: null}))
+      .then(() => t.fail('promise should not resolve'))
+      .catch((err) => {
+        t.ok(err, 'promise rejected with an error')
+        t.ok(/request/.test(err), 'Error is correct')
+      })
+  })
+
+  t.test('- rejects the promise if getSession is missing from dependencies', t => {
+    return fetchCommentPage('videoId', 'pageToken', {request: noop})
+      .then(() => t.fail('promise should not resolve'))
+      .catch((err) => {
+        t.ok(err, 'promise rejected with an error')
+        t.ok(/getSession/.test(err), 'Error is correct')
+      })
+      .then(() => fetchCommentPage('videoId', 'pageToken', {getSession: null, request: noop}))
+      .then(() => t.fail('promise should not resolve'))
+      .catch((err) => {
+        t.ok(err, 'promise rejected with an error')
+        t.ok(/getSession/.test(err), 'Error is correct')
+      })
   })
 
   t.test('- gets a session token', t => {
@@ -58,7 +95,7 @@ test('/lib/fetch-comment-page.js', t => {
     const getSession = sinon.stub().returns(Promise.resolve(session))
     const request = sinon.stub().returns(Promise.resolve())
 
-    return fetchCommentPage(videoId, 'pageToken', getSession, { request })
+    return fetchCommentPage(videoId, 'pageToken', {getSession, request})
       .then(() => {
         t.ok(getSession.calledOnce, 'get session token once')
         t.equal(getSession.firstCall.args[0], videoId, 'get session token for correct video id')
@@ -127,7 +164,7 @@ test('/lib/fetch-comment-page.js', t => {
     const getSession = sinon.stub().returns(Promise.resolve(session))
     const request = sinon.stub().returns(Promise.resolve(response))
 
-    return fetchCommentPage(videoId, pageToken, getSession, { request })
+    return fetchCommentPage(videoId, pageToken, {getSession, request})
       .then(result => {
         t.ok(getSession.calledOnce, 'getSession called once')
         t.ok(getSession.firstCall.args[0], 'getSession called with correct videoId')

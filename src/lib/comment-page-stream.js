@@ -4,25 +4,35 @@ import fetchFirstPageTokenImport from './fetch-first-page-token'
 import fetchCommentPageImport from './fetch-comment-page'
 import until from 'promised-until'
 
-export default function (videoId, getSession, deps = {}) {
+export default function (videoId, dependencies) {
   if (!videoId) {
     throw new Error('Missing first parameter: videoId')
   }
-  if (!getSession) {
-    throw new Error('Missing second parameter: getSession')
+  if (!dependencies) {
+    throw new Error('Missing second parameter: dependencies')
   }
 
   const {
+    getSession,
+    request,
     fetchFirstPageToken = fetchFirstPageTokenImport,
     fetchCommentPage = fetchCommentPageImport,
     extractNextPageToken = extractNextPageToken
-  } = deps
+  } = dependencies
+
+  if (!getSession) {
+    throw new Error('Missing dependency parameter: getSession')
+  }
+
+  if (!request) {
+    throw new Error('Missing dependency parameter: request')
+  }
 
   return Rx.Observable.create(observer => {
     until(
-      pageToken => !pageToken,
-      pageToken => {
-        return fetchCommentPage(videoId, pageToken, getSession)
+      (pageToken) => !pageToken,
+      (pageToken) => {
+        return fetchCommentPage(videoId, pageToken, {getSession, request})
           .then(response => {
             observer.next(response.content_html)
             return extractNextPageToken(response)

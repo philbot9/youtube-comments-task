@@ -1,18 +1,28 @@
 import mem from 'mem'
 import { buildVideoPageUrl } from './url-builder'
-import requestImport from './request'
 
 export const SESSION_TOKEN_REGEX = /\'XSRF_TOKEN\'\s*\n*:\s*\n*"(.*)"/i
 export const COMMENTS_TOKEN_REGEX = /\'COMMENTS_TOKEN\'\s*\n*:\s*\n*"(.*)"/i
 
-export default function (config = {}, deps = {}) {
-  const { cacheDuration = (1000 * 60 * 5) } = config
-  const { request = requestImport } = deps
+export default function (config, dependencies) {
+  if (!dependencies) {
+    throw new Error('Missing second parameter: dependencies')
+  }
+
+  const { cacheDuration = (1000 * 60 * 5) } = config || {}
+
+  const { request } = dependencies
+  if (!request) {
+    throw new Error('Missing dependency parameter: request')
+  }
 
   // return a memoized function
   return mem(initialiseSession, {maxAge: cacheDuration})
 
   function initialiseSession (videoId) {
+    if (!videoId) {
+      return Promise.reject('Missing first parameter: videoId')
+    }
     return fetchVideoPage(videoId, request)
       .then(html => {
         const sessionToken = extractToken(SESSION_TOKEN_REGEX, html)

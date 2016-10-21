@@ -8,6 +8,8 @@ import fetchFirstPageToken, {
 
 import { buildWatchFragmentsUrl } from '../../lib/url-builder'
 
+const noop = () => {}
+
 test('/lib/fetch-first-page-token.js', t => {
   t.test('- module exports a function', t => {
     t.equal(typeof fetchFirstPageToken, 'function', 'is of type function')
@@ -21,21 +23,66 @@ test('/lib/fetch-first-page-token.js', t => {
     t.end()
   })
 
-  t.test('- rejects promise if required parameters missing', t => {
+  t.test('- promise is rejected if videoId parameter is missing', t => {
     return fetchFirstPageToken()
       .then(() => t.fail('promise should not resolve'))
       .catch((err) => {
-        t.ok(err, 'promise is rejected with an error')
+        t.ok(err, 'promise rejects with an error')
+        t.ok(/videoId/.test(err), 'error is correct')
       })
-      .then(() => fetchFirstPageToken(null, () => {}))
+      .then(() => fetchFirstPageToken(null, {}))
       .then(() => t.fail('promise should not resolve'))
       .catch((err) => {
-        t.ok(err, 'promise is rejected with an error')
+        t.ok(err, 'promise rejects with an error')
+        t.ok(/videoId/.test(err), 'error is correct')
       })
-      .then(() => fetchFirstPageToken('videoId'))
+  })
+
+  t.test('- promise is rejected if dependencies parameter is missing', t => {
+    t.plan(4)
+    return fetchFirstPageToken('videoId')
       .then(() => t.fail('promise should not resolve'))
       .catch((err) => {
-        t.ok(err, 'promise is rejected with an error')
+        t.ok(err, 'promise rejects with an error')
+        t.ok(/dependencies/.test(err), 'error is correct')
+      })
+      .then(() => fetchFirstPageToken('videoId', null))
+      .then(() => t.fail('promise should not resolve'))
+      .catch((err) => {
+        t.ok(err, 'promise rejects with an error')
+        t.ok(/dependencies/.test(err), 'error is correct')
+      })
+  })
+
+  t.test('- promise is rejected if request is missing from dependencies parameter', t => {
+    t.plan(4)
+    return fetchFirstPageToken('videoId', {getSession: noop})
+      .then(() => t.fail('promise should not resolve'))
+      .catch((err) => {
+        t.ok(err, 'promise rejects with an error')
+        t.ok(/request/.test(err), 'error is correct')
+      })
+      .then(() => fetchFirstPageToken('videoId', {getSession: noop, request: null}))
+      .then(() => t.fail('promise should not resolve'))
+      .catch((err) => {
+        t.ok(err, 'promise rejects with an error')
+        t.ok(/request/.test(err), 'error is correct')
+      })
+  })
+
+  t.test('- promise is rejected if getSession is missing from dependencies parameter', t => {
+    t.plan(4)
+    return fetchFirstPageToken('videoId', {request: noop})
+      .then(() => t.fail('promise should not resolve'))
+      .catch((err) => {
+        t.ok(err, 'promise rejects with an error')
+        t.ok(/getSession/.test(err), 'error is correct')
+      })
+      .then(() => fetchFirstPageToken('videoId', {getSession: null, request: noop}))
+      .then(() => t.fail('promise should not resolve'))
+      .catch((err) => {
+        t.ok(err, 'promise rejects with an error')
+        t.ok(/getSession/.test(err), 'error is correct')
       })
   })
 
@@ -160,7 +207,7 @@ test('/lib/fetch-first-page-token.js', t => {
     const getSession = sinon.stub().returns(Promise.resolve(session))
     const request = sinon.stub().returns(Promise.resolve({body: {'watch-discussion': html}}))
 
-    return fetchFirstPageToken(videoId, getSession, { request })
+    return fetchFirstPageToken(videoId, {getSession, request})
       .then(result => t.equal(result, pageToken, 'fetches correct page token'))
   })
 })

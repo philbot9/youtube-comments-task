@@ -1,21 +1,27 @@
 import Debug from 'debug'
 const debug = Debug('fetch-comment-page')
 
-import requestImport from './request'
 import { buildCommentServiceUrl } from './url-builder'
 
-export default function (videoId, pageToken, getSession, deps = {}) {
+export default function (videoId, pageToken, dependencies) {
   if (!videoId) {
     return Promise.reject('Missing first parameter: videoId')
   }
   if (!pageToken) {
     return Promise.reject('Missing second parameter: pageToken')
   }
-  if (!getSession) {
-    return Promise.reject('Missing third parameter: getSession')
+  if (!dependencies) {
+    return Promise.reject('Missing third parameter: dependencies')
   }
 
-  const { request = requestImport } = deps
+  const { getSession, request } = dependencies
+
+  if (!getSession) {
+    return Promise.reject('Missing dependency parameter: getSession')
+  }
+  if (!request) {
+    return Promise.reject('Missing dependency parameter: request')
+  }
 
   debug('fetching comment page for %s with page token %s', videoId, pageToken)
   return getSession(videoId)

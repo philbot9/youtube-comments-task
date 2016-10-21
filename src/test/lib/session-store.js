@@ -10,6 +10,8 @@ import buildSessionStore, {
 
 import { buildVideoPageUrl } from '../../lib/url-builder'
 
+const noop = () => {}
+
 test('/lib/session-store', t => {
   t.test(' - module exports a function', t => {
     t.ok(typeof buildSessionStore === 'function', 'is of type function')
@@ -17,17 +19,30 @@ test('/lib/session-store', t => {
   })
 
   t.test('- exported function returns a function', t => {
-    t.ok(typeof buildSessionStore() === 'function', 'is of type function')
+    t.ok(typeof buildSessionStore({}, {request: noop}) === 'function',
+      'is of type function')
     t.end()
   })
 
   t.test('- session store returns a promise', t => {
     const request = sinon.stub().returns(Promise.resolve())
-    const getSessionToken = buildSessionStore({}, { request })
+    const getSessionToken = buildSessionStore({}, {request})
 
     const returnValue = getSessionToken('videoid').catch(() => {})
     t.ok(returnValue instanceof Promise, 'is instance of promise')
     t.end()
+  })
+
+  t.test('- session store promise is rejected if videoId is missing', t => {
+    const request = sinon.stub().returns(Promise.resolve())
+    const getSessionToken = buildSessionStore({}, {request})
+
+    return getSessionToken()
+      .then(() => t.fail('promise should not resolve'))
+      .catch((err) => {
+        t.ok(err, 'promise rejects with an error')
+        t.ok(/videoId/i.test(err), 'error is correct')
+      })
   })
 
   t.test('- fetchVideoPage() returns a promise', t => {
@@ -77,7 +92,9 @@ test('/lib/session-store', t => {
     const url = buildVideoPageUrl(videoId)
     const request =  sinon.stub().returns(Promise.resolve())
 
-    const getSessionToken = buildSessionStore({}, { request })
+    t.plan(2)
+
+    const getSessionToken = buildSessionStore({}, {request})
     return getSessionToken(videoId)
       .catch(() => {})
       .then(sessionToken => {
@@ -126,7 +143,7 @@ test('/lib/session-store', t => {
     </script></html>`
 
     const request = sinon.stub().returns(Promise.resolve(videoPageHtml))
-    const getSession = buildSessionStore({}, { request })
+    const getSession = buildSessionStore({}, {request})
 
     return getSession(videoId)
       .then(session => {
@@ -145,7 +162,7 @@ test('/lib/session-store', t => {
     </script></html>`
 
     const request = sinon.stub().returns(Promise.resolve(videoPageHtml))
-    const getSession = buildSessionStore({}, { request })
+    const getSession = buildSessionStore({}, {request})
 
     return getSession(videoId)
       .then(session => {
@@ -166,7 +183,7 @@ test('/lib/session-store', t => {
     </script></html>`
 
     const request = sinon.stub().returns(Promise.resolve(videoPageHtml))
-    const getSession = buildSessionStore({}, { request })
+    const getSession = buildSessionStore({}, {request})
 
     return getSession(videoId)
       .then(session => {
@@ -192,7 +209,7 @@ test('/lib/session-store', t => {
     </script></html>`
 
     const request = sinon.stub().returns(Promise.resolve(videoPageHtml))
-    const getSession = buildSessionStore({cacheDuration: 1}, { request })
+    const getSession = buildSessionStore({cacheDuration: 1}, {request})
 
     return getSession(videoId)
       .then(session => {

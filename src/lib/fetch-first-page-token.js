@@ -1,16 +1,23 @@
 import cheerio from 'cheerio'
-import requestImport from './request'
 import { buildWatchFragmentsUrl } from './url-builder'
 
-export default function (videoId, getSession, deps = {}) {
+export default function (videoId, dependencies) {
   if (!videoId) {
     return Promise.reject('Missing first parameter: videoId')
   }
-  if (!getSession) {
-    return Promise.reject('Missing second parameter: session')
+  if (!dependencies) {
+    return Promise.reject('Missing second parameter: dependencies')
   }
 
-  const { request = requestImport } = deps
+  const { getSession, request } = dependencies
+
+  if (!getSession) {
+    return Promise.reject('Missing dependency parameter: getSession')
+  }
+  if (!request) {
+    return Promise.reject('Missing dependency parameter: request')
+  }
+
   return fetchCommentsFragment(videoId, getSession, request)
     .then(extractPageToken)
 }

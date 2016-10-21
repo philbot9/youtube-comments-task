@@ -3,26 +3,26 @@ import cheerio from 'cheerio'
 
 import tokenizeComments from '../../lib/tokenize-comments'
 
-test('/lib/split-comments.js', t => {
-  t.test('exports a function', t => {
+test('/lib/tokenize-comments.js', t => {
+  t.test('- exports a function', t => {
     t.equal(typeof tokenizeComments, 'function', 'is of type function')
     t.end()
   })
 
-  t.test('throws an error if html argument is missing', t => {
+  t.test('- throws an error if html argument is missing', t => {
     t.throws(() => tokenizeComments())
     t.throws(() => tokenizeComments(''))
     t.end()
   })
 
-  t.test('returns an empty array if the html doesn\'t contain any comments', t => {
+  t.test('- returns an empty array if the html doesn\'t contain any comments', t => {
     const html = '<div><div class="no-comment">nope</div><div class="no-comment">hahaha</div></div>'
     const commentTokens = tokenizeComments(html)
     t.deepEqual(commentTokens, [])
     t.end()
   })
 
-  t.test('returns an array of cheerio tokens', t => {
+  t.test('- returns an array of cheerio tokens', t => {
     const c1 = 'comment1'
     const r1 = 'reply1'
     const c2 = 'comment2'
@@ -59,35 +59,3 @@ test('/lib/split-comments.js', t => {
     t.end()
   })
 })
-
-
-
-// const html = [
-//   '<section class="comment-thread-renderer">',
-//   ' <div class="comment-renderer">',
-//   '   <a class="yt-uix-sessionlink  g-hovercard"></a>',
-//   '   <div class="comment-renderer-edit"></div>',
-//   '   <div class="comment-renderer-content">',
-//   '     <div class="comment-renderer-header">header1</div>',
-//   '     <div class="comment-renderer-text">text1</div>',
-//   '     <div class="comment-renderer-footer">footer1</div>',
-//   '   </div>',
-//   ' </div>',
-//   ' <div class="comment-replies-renderer">',
-//   '   <div class="comment-replies-renderer-header">',
-//   '     <div class="yt-uix-expander-collapsed-body">',
-//   '       <button class="comment-replies-renderer-paginator">',
-//   '       <div class="comment-renderer">',
-//   '         <a class="yt-uix-sessionlink  g-hovercard"></a>',
-//   '         <div class="comment-renderer-edit"></div>',
-//   '         <div class="comment-renderer-content">',
-//   '           <div class="comment-renderer-header">reply header1</div>',
-//   '           <div class="comment-renderer-text">reply text1</div>',
-//   '           <div class="comment-renderer-footer">reply footer1</div>',
-//   '         </div>',
-//   '       </div>',
-//   '     </div>',
-//   '   </div>',
-//   ' </div>',
-//   '</section>'
-// ]

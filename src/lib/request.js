@@ -4,6 +4,10 @@ const request = rp.defaults({
   jar: CookieJar
 })
 
-// TODO: add retries
+import retry from './retry'
 
-export default request
+export default function buildRequest (retries = 3) {
+  return function (...args) {
+    return retry(() => request(...args), retries)
+  }
+}
