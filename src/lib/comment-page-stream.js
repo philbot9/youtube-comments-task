@@ -17,7 +17,7 @@ export default function (videoId, dependencies) {
     request,
     fetchFirstPageToken = fetchFirstPageTokenImport,
     fetchCommentPage = fetchCommentPageImport,
-    extractNextPageToken = extractNextPageToken
+    extractNextPageToken = extractNextPageTokenLocal
   } = dependencies
 
   if (!getSession) {
@@ -38,12 +38,12 @@ export default function (videoId, dependencies) {
             return extractNextPageToken(response)
           })
       }
-    )(fetchFirstPageToken(videoId, getSession))
+    )(fetchFirstPageToken(videoId, {getSession, request}))
       .then(() => observer.complete())
   })
 }
 
-export function extractNextPageToken (response) {
+export function extractNextPageTokenLocal (response) {
   if (!response) {
     throw new Error('Missing parameter: response')
   }

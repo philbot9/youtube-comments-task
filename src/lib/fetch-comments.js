@@ -1,10 +1,10 @@
 import Rx from 'rxjs'
-import cheerio from 'cheerio'
 
 import buildSessionStore from './session-store'
 import buildCommentPageStream from './comment-page-stream'
 import tokenizeComments from './tokenize-comments'
 import buildRequest from './request'
+import parseComment from './parse-comment'
 
 export default function (videoId, config) {
   const request = buildRequest(config.fetchRetries)
@@ -13,11 +13,6 @@ export default function (videoId, config) {
 
   return _commentPages
     .concatMap(html => Rx.Observable.from(tokenizeComments(html)))
-    .map(commentToken => {
-      const $comment = cheerio(commentToken)
-      return {
-        id: $comment.find('.comment-thread-renderer > .comment-renderer').attr('data-cid'),
-        user: $comment.find('.comment-thread-renderer > .comment-renderer .comment-author-text').text()
-      }
-    })
+    .concatMap(parseComment)
+    //.concatMap(fetchReplies)
 }
