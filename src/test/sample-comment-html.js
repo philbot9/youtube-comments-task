@@ -2,13 +2,13 @@ import cheerio from 'cheerio'
 
 export const COMMENT_ID = 'z12vvvxaryjywra0h234jdcg5p24zbvol04'
 export const COMMENT_USER = 'the_comment_username'
-export const COMMENT_DATE = '1 month ago'
+export const COMMENT_FROMNOW = '1 month ago'
 export const COMMENT_TEXT = 'This is the actual comment text.'
 export const COMMENT_LIKES = 3
 
 export const REPLY_ID = '1475411087107188'
 export const REPLY_USER = 'the_reply_username'
-export const REPLY_DATE = '1 week ago'
+export const REPLY_FROMNOW = '1 week ago'
 export const REPLY_TEXT = 'This is the actual reply text.'
 export const REPLY_LIKES = 1
 
@@ -16,20 +16,20 @@ export default function buildCommentSample (params = {}) {
   const {
     id = COMMENT_ID,
     user = COMMENT_USER,
-    date = COMMENT_DATE,
+    fromNow = COMMENT_FROMNOW,
     text = COMMENT_TEXT,
     likes = COMMENT_LIKES,
     replies = []
   } = params
 
   return [
-    commentTop({id, user}),
+    commentTop({id, user, fromNow, text, likes}),
     replies.length ? buildReplies(id, replies) : '',
     commentBottom()
   ].join('')
 }
 
-function commentTop ({ id, user, date, text, likes }) {
+function commentTop ({ id, user, fromNow, text, likes }) {
   return `
 <section class="comment-thread-renderer" data-visibility-tracking="CKQBEMJ1IhMIivG8hf2M0AIVB3hOCh3PWgpF" data-priority="0">
 <div class="comment-renderer" data-visibility-tracking="CK0BELZ1IhMIivG8hf2M0AIVB3hOCh3PWgpF" data-cid="${id}">
@@ -48,7 +48,7 @@ function commentTop ({ id, user, date, text, likes }) {
 
     <div id="comment-renderer-edit-z12vvvxaryjywra0h234jdcg5p24zbvol04" class="comment-simplebox-edit" data-editable-content-text="" data-image-src="" data-video-id="">
     </div>
-<div class="comment-renderer-content"><div class="comment-renderer-header"><a href="/channel/UCjp-_6mlFkVBZlG1nvKJ6bg" class="yt-uix-sessionlink comment-author-text g-hovercard     " data-ytid="UCjp-_6mlFkVBZlG1nvKJ6bg" data-sessionlink="itct=CK0BELZ1IhMIivG8hf2M0AIVB3hOCh3PWgpF">${user}</a><span class="comment-renderer-time" tabindex="0"><a href="/watch?v=XkcGuZHPbKk&amp;lc=z12vvvxaryjywra0h234jdcg5p24zbvol04" class=" yt-uix-sessionlink     " data-sessionlink="itct=CK0BELZ1IhMIivG8hf2M0AIVB3hOCh3PWgpF">${date}</a></span></div><div class="comment-renderer-text" tabindex="0" role="article">
+<div class="comment-renderer-content"><div class="comment-renderer-header"><a href="/channel/UCjp-_6mlFkVBZlG1nvKJ6bg" class="yt-uix-sessionlink comment-author-text g-hovercard     " data-ytid="UCjp-_6mlFkVBZlG1nvKJ6bg" data-sessionlink="itct=CK0BELZ1IhMIivG8hf2M0AIVB3hOCh3PWgpF">${user}</a><span class="comment-renderer-time" tabindex="0"><a href="/watch?v=XkcGuZHPbKk&amp;lc=z12vvvxaryjywra0h234jdcg5p24zbvol04" class=" yt-uix-sessionlink     " data-sessionlink="itct=CK0BELZ1IhMIivG8hf2M0AIVB3hOCh3PWgpF">${fromNow}</a></span></div><div class="comment-renderer-text" tabindex="0" role="article">
 <div class="comment-renderer-text-content">${text}</div><div class="comment-text-toggle hid"><div class="comment-text-toggle-link read-more"><button class="yt-uix-button yt-uix-button-size-default yt-uix-button-link" type="button" onclick="return false;"><span class="yt-uix-button-content">Read more
 </span></button></div><div class="comment-text-toggle-link show-less hid"><button class="yt-uix-button yt-uix-button-size-default yt-uix-button-link" type="button" onclick="return false;"><span class="yt-uix-button-content">Show less
 </span></button></div></div></div>
@@ -101,7 +101,7 @@ function buildReplies(commentId, replies) {
     const {
       id = REPLY_ID,
       user = REPLY_USER,
-      date = REPLY_DATE,
+      fromNow = REPLY_FROMNOW,
       text = REPLY_TEXT,
       likes = REPLY_LIKES,
     } = reply
@@ -123,7 +123,7 @@ function buildReplies(commentId, replies) {
 
     <div id="comment-renderer-edit-z12vvvxaryjywra0h234jdcg5p24zbvol04.1475411087107188" class="comment-simplebox-edit" data-editable-content-text="" data-image-src="" data-video-id="">
     </div>
-<div class="comment-renderer-content"><div class="comment-renderer-header"><a href="/channel/UC3GLl4md-J-6Sf9vw0dsAGA" class="yt-uix-sessionlink comment-author-text g-hovercard     " data-ytid="UC3GLl4md-J-6Sf9vw0dsAGA" data-sessionlink="itct=CKYBELZ1IhMIivG8hf2M0AIVB3hOCh3PWgpF">${user}</a><span class="comment-renderer-time" tabindex="0"><a href="/watch?v=XkcGuZHPbKk&amp;lc=z12vvvxaryjywra0h234jdcg5p24zbvol04.1475411087107188" class=" yt-uix-sessionlink     " data-sessionlink="itct=CKYBELZ1IhMIivG8hf2M0AIVB3hOCh3PWgpF">${date}</a></span></div><div class="comment-renderer-text" tabindex="0" role="article">
+<div class="comment-renderer-content"><div class="comment-renderer-header"><a href="/channel/UC3GLl4md-J-6Sf9vw0dsAGA" class="yt-uix-sessionlink comment-author-text g-hovercard     " data-ytid="UC3GLl4md-J-6Sf9vw0dsAGA" data-sessionlink="itct=CKYBELZ1IhMIivG8hf2M0AIVB3hOCh3PWgpF">${user}</a><span class="comment-renderer-time" tabindex="0"><a href="/watch?v=XkcGuZHPbKk&amp;lc=z12vvvxaryjywra0h234jdcg5p24zbvol04.1475411087107188" class=" yt-uix-sessionlink     " data-sessionlink="itct=CKYBELZ1IhMIivG8hf2M0AIVB3hOCh3PWgpF">${fromNow}</a></span></div><div class="comment-renderer-text" tabindex="0" role="article">
 <div class="comment-renderer-text-content">﻿${text}</div>
 <div class="comment-text-toggle hid"><div class="comment-text-toggle-link read-more"><button class="yt-uix-button yt-uix-button-size-default yt-uix-button-link" type="button" onclick="return false;"><span class="yt-uix-button-content">Read more
 </span></button></div><div class="comment-text-toggle-link show-less hid"><button class="yt-uix-button yt-uix-button-size-default yt-uix-button-link" type="button" onclick="return false;"><span class="yt-uix-button-content">Show less
