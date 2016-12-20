@@ -3,9 +3,10 @@ import sinon from 'sinon'
 import Rx from 'rxjs'
 
 import buildCommentPageStream, {
-  buildFetchAndEmitAllPages,
-  extractNextPageToken
+  extractNextPageToken,
+  fetchCommentPage
 } from '../../lib/comment-page-stream'
+import { buildCommentServiceUrl } from '../../lib/url-builder'
 
 const noop = () => {}
 
@@ -40,7 +41,7 @@ test('/lib/comment-page-stream.js', t => {
   })
 
   t.test('- returns an Rx Observable', t => {
-    const dependencies = { getSession: () => {}, request: () => {}}
+    const dependencies = { getSession: noop, request: noop}
     const returnValue = buildCommentPageStream('videoId', dependencies)
     t.ok(returnValue instanceof Rx.Observable, 'is an instance of Rx.Observable')
     t.end()
@@ -84,4 +85,48 @@ test('/lib/comment-page-stream.js', t => {
     t.equal(returnValue, nextPageToken)
     t.end()
   })
+
+  t.test('- fetchCommentPage() returns a promise', t => {
+    const getSession = sinon.stub().returns(Promise.resolve())
+    const returnValue = fetchCommentPage('', '', {getSession}).catch(() => {})
+    t.ok(returnValue.then, 'return value has .then')
+    t.equal(typeof returnValue.then, 'function', '.then is s function')
+    t.end()
+  })
+
+  t.test('- fetchCommentPage() fetches a comment page', t => {
+    const requestResult = { test: 'value' }
+    const session = {session: 'token'}
+    const formData = {form: 'data'}
+    const request = sinon.stub().returns(Promise.resolve(requestResult))
+    const getSession = sinon.stub().returns(Promise.resolve(session))
+    const buildRequestFormData = sinon.stub().returns(formData)
+    const videoId = 'theVideoId'
+    const pageToken = 'pageToken'
+    const url = buildCommentServiceUrl()
+
+    return fetchCommentPage(videoId, pageToken, { request, getSession, buildRequestFormData})
+      .then(result => {
+        t.deepEqual(result, requestResult, 'request result is correct')
+
+        t.ok(getSession.calledOnce, 'getSession called once')
+        t.equal(getSession.getCall(0).args[0], videoId, 'getSession called with correct videoId')
+
+        t.ok(buildRequestFormData.calledOnce, 'buildRequestFormData called once')
+        t.deepEqual(buildRequestFormData.getCall(0).args[0], session, 'called with correct session')
+        t.equal(buildRequestFormData.getCall(0).args[1], pageToken, 'called with correct page token')
+
+        t.ok(request.calledOnce, 'request called once')
+        const requestObject = request.getCall(0).args[0]
+        t.equal(requestObject.method, 'POST', 'request method POST')
+        t.deepEqual(requestObject.form, formData, 'request form data is correct')
+        t.equal(requestObject.url, url, 'request url is correct')
+      })
+  })
+
+  t.test('- Tests are complete', t => {
+    t.ok(false, 'TESTS ARE INCOMPLETE!')
+    t.end()
+  })
+
 })

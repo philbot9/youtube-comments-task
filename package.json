@@ -15,7 +15,7 @@
   "scripts": {
     "build": "babel src -d build",
     "build:watch": "babel --watch src -d build",
-    "test": "tape build/test/*.js build/test/**/*.js || true",
+    "test": "tape build/test/*.js build/test/**/*.js | faucet || true",
     "npm-watch": "npm-watch",
     "watch": "npm-run-all -p build:watch npm-watch"
   },
@@ -41,7 +41,7 @@
     "cheerio": "^0.22.0",
     "debug": "^2.2.0",
     "mem": "^0.1.1",
-    "moment": "^2.16.0",
+    "moment": "^2.17.1",
     "promised-until": "^1.0.2",
     "request": "^2.74.0",
     "request-promise": "^4.1.1",

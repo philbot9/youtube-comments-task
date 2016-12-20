@@ -1,9 +1,10 @@
 import moment from 'moment'
 
 export default function ($commentThread) {
-  // extract the original comment only (ignore replies)
-  const $comment = $commentThread.find('.comment-thread-renderer > .comment-renderer')
+  const $repliesContainer = $commentThread.find('.comment-replies-renderer > div')
+  const repliesInfo = extractRepliesInfo($repliesContainer)
 
+  const $comment = $commentThread.find('.comment-thread-renderer > .comment-renderer')
   const likesStr = $commentThread.find('.comment-action-buttons-toolbar > .comment-renderer-like-count.on').text();
   let likes = 0
   if (likesStr) {
@@ -14,7 +15,7 @@ export default function ($commentThread) {
   const timestamp = parseFromNow(fromNow)
 
   return {
-    hasReplies: ($commentThread.find('.comment-thread-renderer > .comment-replies-renderer').children().length > 0),
+    ...repliesInfo,
     id: $comment.attr('data-cid'),
     user: $comment.find('.comment-renderer-header > .comment-author-text').text().trim(),
     text: $comment.find('.comment-renderer-content > .comment-renderer-text > .comment-renderer-text-content').text().trim(),
@@ -22,6 +23,32 @@ export default function ($commentThread) {
     timestamp,
     likes
   }
+}
+
+function extractRepliesInfo ($repliesContainer) {
+  if (!$repliesContainer.length) {
+    return {
+      hasReplies: false,
+      numReplies: 0
+    }
+  }
+
+  let repliesToken = $repliesContainer
+    .find('div > button:nth-of-type(1)')
+    .attr('data-uix-load-more-post-body')
+    .replace(/^page_token=/i, '')
+    .trim()
+  repliesToken = decodeURIComponent(repliesToken)
+
+  const btnText = $repliesContainer
+    .find('div > button:nth-of-type(1) .load-more-text')
+    .text()
+    .trim()
+
+  const m = btnText.match(/^View (?:all\s)?(\d+)/i)
+  const numReplies = m && m[1] ? parseInt(m[1], 10) : 1
+
+  return { hasReplies: true, repliesToken, numReplies }
 }
 
 function parseFromNow (fromNow) {

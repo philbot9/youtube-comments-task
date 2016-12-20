@@ -1,8 +1,9 @@
 import Rx from 'rxjs'
 import cheerio from 'cheerio'
 import fetchFirstPageTokenImport from './fetch-first-page-token'
-import fetchCommentPageImport from './fetch-comment-page'
+import buildRequestFormDataImport from './build-request-form-data'
 import until from 'promised-until'
+import { buildCommentServiceUrl } from './url-builder'
 
 export default function (videoId, dependencies) {
   if (!videoId) {
@@ -16,8 +17,7 @@ export default function (videoId, dependencies) {
     getSession,
     request,
     fetchFirstPageToken = fetchFirstPageTokenImport,
-    fetchCommentPage = fetchCommentPageImport,
-    extractNextPageToken = extractNextPageTokenLocal
+    buildRequestFormData = buildRequestFormDataImport
   } = dependencies
 
   if (!getSession) {
@@ -32,7 +32,7 @@ export default function (videoId, dependencies) {
     until(
       (pageToken) => !pageToken,
       (pageToken) => {
-        return fetchCommentPage(videoId, pageToken, {getSession, request})
+        return fetchCommentPage(videoId, pageToken, {getSession, request, buildRequestFormData})
           .then(response => {
             observer.next(response.content_html)
             return extractNextPageToken(response)
@@ -43,7 +43,18 @@ export default function (videoId, dependencies) {
   })
 }
 
-export function extractNextPageTokenLocal (response) {
+export function fetchCommentPage (videoId, pageToken, { request, getSession, buildRequestFormData }) {
+  return getSession(videoId)
+    .then(session => buildRequestFormData(session, pageToken))
+    .then(form => request({
+      url: buildCommentServiceUrl(),
+      method: 'POST',
+      json: true,
+      form
+    }))
+}
+
+export function extractNextPageToken (response) {
   if (!response) {
     throw new Error('Missing parameter: response')
   }

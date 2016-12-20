@@ -18,7 +18,7 @@ function isWithinRange (v1, v2, range) {
   return v1 > (v2 - range) && v1 < (v2 + range)
 }
 
-test.only('/lib/parse-comment-page.js', t => {
+test('/lib/parse-comment-page.js', t => {
   t.test('- exports a function', t => {
     t.equal(typeof parseComment, 'function', 'is of type function')
     t.end()
@@ -41,10 +41,23 @@ test.only('/lib/parse-comment-page.js', t => {
     t.end()
   })
 
-  t.test('- detects if a comment has replies', t => {
-    const html = sampleComment({replies: [{id: REPLY_ID, user: REPLY_USER}]})
+  t.test('- extracts info on replies to comment if applicable', t => {
+    const replies = 4
+    const repliesToken = 'EhYSC2NCVWVpcFhGaXNRwAEAyAEA4AEBGAYyWRpXEiN6MTNrZm4xNW91bXRodmRpNDA0Y2lybWF0dHYwZHoxNG1kayICCAAqGFVDM1hUelZ6YUhRRWQzMHJRYnV2Q3RUUTILY0JVZWlwWEZpc1E4AEABSPQD'
+    const html = sampleComment({replies, repliesToken})
     const result = parseComment(cheerio(html))
     t.equal(result.hasReplies, true, 'hasReplies is true')
+    t.equal(result.numReplies, replies, 'numReplies is correct')
+    t.equal(result.repliesToken, repliesToken, 'repliesToken is correct')
+    t.end()
+  })
+
+  t.test('- does not falsely identify replies', t => {
+    const html = sampleComment({replies: 0})
+    const result = parseComment(cheerio(html))
+    t.equal(result.hasReplies, false, 'hasReplies is false')
+    t.equal(result.numReplies, 0, 'numReplies is 0')
+    t.notOk(result.repliesToken, 'repliesToken not defined')
     t.end()
   })
 })
