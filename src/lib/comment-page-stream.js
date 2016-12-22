@@ -1,24 +1,22 @@
 import Rx from 'rxjs'
 import cheerio from 'cheerio'
-import fetchFirstPageTokenImport from './fetch-first-page-token'
-import buildRequestFormDataImport from './build-request-form-data'
 import until from 'promised-until'
-import { buildCommentServiceUrl } from './url-builder'
+
+const fetchFirstPageToken = require('./fetch-first-page-token')
+const buildRequestFormData = require('./build-request-form-data')
+const { buildCommentServiceUrl } = require('./url-builder')
+const { fetchCommentPage } = require('./youtube-api')
 
 export default function (videoId, dependencies) {
   if (!videoId) {
     throw new Error('Missing first parameter: videoId')
   }
+
   if (!dependencies) {
     throw new Error('Missing second parameter: dependencies')
   }
 
-  const {
-    getSession,
-    request,
-    fetchFirstPageToken = fetchFirstPageTokenImport,
-    buildRequestFormData = buildRequestFormDataImport
-  } = dependencies
+  const { getSession, request } = dependencies
 
   if (!getSession) {
     throw new Error('Missing dependency parameter: getSession')
@@ -32,7 +30,8 @@ export default function (videoId, dependencies) {
     until(
       (pageToken) => !pageToken,
       (pageToken) => {
-        return fetchCommentPage(videoId, pageToken, {getSession, request, buildRequestFormData})
+        return getSession()
+          .then(session => fetchCommentPage(pageToken, session, request)
           .then(response => {
             observer.next(response.content_html)
             return extractNextPageToken(response)
@@ -41,17 +40,6 @@ export default function (videoId, dependencies) {
     )(fetchFirstPageToken(videoId, {getSession, request}))
       .then(() => observer.complete())
   })
-}
-
-export function fetchCommentPage (videoId, pageToken, { request, getSession, buildRequestFormData }) {
-  return getSession(videoId)
-    .then(session => buildRequestFormData(session, pageToken))
-    .then(form => request({
-      url: buildCommentServiceUrl(),
-      method: 'POST',
-      json: true,
-      form
-    }))
 }
 
 export function extractNextPageToken (response) {

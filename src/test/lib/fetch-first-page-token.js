@@ -1,5 +1,5 @@
 import test from 'blue-tape'
-import sinon from 'sinon'
+import td from 'testdouble'
 
 import fetchFirstPageToken, {
   fetchCommentsFragment,
@@ -86,51 +86,6 @@ test('/lib/fetch-first-page-token.js', t => {
       })
   })
 
-  t.test('- fetchCommentsFragment() returns a promise', t => {
-    const returnValue = fetchCommentsFragment().catch(() => {})
-    t.ok(returnValue.then, 'return value has .then')
-    t.equal(typeof returnValue.then, 'function', '.then is a function')
-    t.end()
-  })
-
-  t.test('- fetchCommentsFragment() rejects promise if required parameters are missing', t => {
-    return fetchCommentsFragment()
-    .then(() => t.fail('promise should not resolve'))
-    .catch((err) => {
-      t.ok(err, 'promise is rejected with an error')
-    })
-    .then(() => fetchCommentFragment('videoId'))
-    .then(() => t.fail('promise should not resolve'))
-    .catch((err) => {
-      t.ok(err, 'promise is rejected with an error')
-    })
-  })
-
-  t.test('- fetchCommentsFragment() fetches a comments fragment', t => {
-    const videoId = 'K3rJ5kK52'
-    const sessionToken = 'the_session_token'
-    const commentsToken = 'the_comments_token'
-    const session = {
-      sessionToken,
-      commentsToken
-    }
-
-    const url = buildWatchFragmentsUrl(videoId, commentsToken)
-    const getSession = sinon.stub().returns(Promise.resolve(session))
-    const request = sinon.stub().returns(Promise.resolve())
-
-    return fetchCommentsFragment(videoId, getSession, request)
-      .then(() => {
-        t.ok(request.calledOnce, 'request called once')
-        t.deepEqual(request.firstCall.args[0], {
-          method: 'POST',
-          json: true,
-          form: {session_token: sessionToken},
-          url
-        }, 'request called with correct parameters')
-      })
-  })
-
   t.test('- extractPageToken() throws an error on missing parameter', t => {
     t.throws(() => extractPageToken(), 'throws an error')
     t.end()
@@ -185,10 +140,7 @@ test('/lib/fetch-first-page-token.js', t => {
     const videoId = 'K3rJ5kK52'
     const sessionToken = 'the_session_token'
     const commentsToken = 'the_comments_token'
-    const session = {
-      sessionToken,
-      commentsToken
-    }
+    const session = 'session'
     const pageToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAYyESIPIgsyYTRVeGR5OVRRWTAB'
     const html = [
       '<div>div class="comment-section-sort-menu"><div class="yt-uix-menu-content">',
@@ -203,11 +155,23 @@ test('/lib/fetch-first-page-token.js', t => {
       '</div></div></div>'
     ].join('')
 
-    const url = buildWatchFragmentsUrl(videoId, commentsToken)
-    const getSession = sinon.stub().returns(Promise.resolve(session))
-    const request = sinon.stub().returns(Promise.resolve({body: {'watch-discussion': html}}))
+    const url = buildWatchFragmentsUrl(videoId, session)
+    const form = { test: 'form' }
+
+    const getSession = td.function('getSession')
+    const request = td.function('request')
+
+    td.when(getSession(videoId))
+      .thenReturn(Promise.resolve(session))
+
+    const youtubeApi = td.replace('../../lib/youtube-api')
+    const fetchFirstPageToken = require('../../lib/fetch-first-page-token').default
+
+    td.when(youtubeApi.fetchCommentsWatchFragment(videoId, session, request))
+      .thenReturn(Promise.resolve({body: {'watch-discussion': html}}))
 
     return fetchFirstPageToken(videoId, {getSession, request})
       .then(result => t.equal(result, pageToken, 'fetches correct page token'))
+      .then(() => td.reset())
   })
 })

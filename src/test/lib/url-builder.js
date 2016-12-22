@@ -38,9 +38,10 @@ test('/lib/url-build.js', t => {
   t.test('- buildWatchFragmentsUrl() builds a watch fragments url', t => {
     const videoId = 'K23jKl24k'
     const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
+    const session = { commentsToken }
     const fragments = ['comments', 'andmore']
 
-    const urlStr = buildWatchFragmentsUrl(videoId, commentsToken, fragments)
+    const urlStr = buildWatchFragmentsUrl(videoId, session, fragments)
     t.ok(urlStr.indexOf(`${WATCH_FRAGMENTS_URL}?`) === 0, 'starts with correct base url')
 
     const url = nodeUrl.parse(urlStr, true)
@@ -58,9 +59,10 @@ test('/lib/url-build.js', t => {
   t.test('- buildWatchFragmentsUrl() uses default fragment if not given', t => {
     const videoId = 'K23jKl24k'
     const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
+    const session = { commentsToken }
     const defaultFragment = 'comments'
 
-    const urlStr = buildWatchFragmentsUrl(videoId, commentsToken)
+    const urlStr = buildWatchFragmentsUrl(videoId, session)
     t.ok(urlStr.indexOf(`${WATCH_FRAGMENTS_URL}?`) === 0, 'starts with correct base url')
 
     const url = nodeUrl.parse(urlStr, true)

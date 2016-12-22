@@ -23,6 +23,6 @@ export default function (dependencies) {
   }
 }
 
-export function fetchReplies (repliesToken, { request }) {
-  return request()
+export function fetchReplies (repliesToken, { request, getSession }) {
+  getSession()
 }

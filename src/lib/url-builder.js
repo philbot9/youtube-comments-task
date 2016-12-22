@@ -12,10 +12,10 @@ export function buildVideoPageUrl (videoId) {
   return `${VIDEO_PAGE_URL}?${query}`
 }
 
-export function buildWatchFragmentsUrl (videoId, commentsToken, fragments = ['comments']) {
+export function buildWatchFragmentsUrl (videoId, session, fragments = ['comments']) {
   const query = qs.stringify({
     v: videoId,
-    ctoken: commentsToken,
+    ctoken: session.commentsToken,
     frags: fragments.join(','),
     tr: 'time',
     distiller: 1,

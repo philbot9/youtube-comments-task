@@ -15,12 +15,6 @@ test('/lib/build-request-form-data.js', t => {
     t.end()
   })
 
-  t.test('throws an error if pageToken is missing', t => {
-    t.throws(() => buildRequestFormData())
-    t.throws(() => buildRequestFormData({}))
-    t.end()
-  })
-
   t.test('builds form data', t => {
     const sessionToken = 'fake_token'
     const commentsToken = 'commentsToken'

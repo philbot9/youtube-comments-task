@@ -10,11 +10,11 @@ import prepareRepliesStreamBuilder from './comment-replies-stream'
 export default function (videoId, config) {
   const request = buildRequest(config.fetchRetries)
   const getSession = buildSessionStore(config, {request})
+  const buildRepliesStream = prepareRepliesStreamBuilder()
   const _commentPages = buildCommentPageStream(videoId, {request, getSession})
-  //const getReplies = buildRepliesStream()
 
   return _commentPages
     .concatMap(html => Rx.Observable.from(tokenizeComments(html)))
-    .map(parseComment)
-    //.concatMap(fetchReplies)
+    .concatMap(parseComment)
+    .concatMap(comment => config.includeReplies ? buildRepliesStream(comment) : comment)
 }

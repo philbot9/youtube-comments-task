@@ -1,5 +1,5 @@
 import cheerio from 'cheerio'
-import { buildWatchFragmentsUrl } from './url-builder'
+const { fetchCommentsWatchFragment } = require('./youtube-api')
 
 export default function (videoId, dependencies) {
   if (!videoId) {
@@ -18,33 +18,9 @@ export default function (videoId, dependencies) {
     return Promise.reject('Missing dependency parameter: request')
   }
 
-  return fetchCommentsFragment(videoId, getSession, request)
-    .then(extractPageToken)
-}
-
-export function fetchCommentsFragment (videoId, getSession, request) {
-  if (!videoId) {
-    return Promise.reject('Missing first parameter: videoId')
-  }
-  if (!getSession) {
-    return Promise.reject('Missing second parameter: getSession')
-  }
-  if (!request) {
-    return Promise.reject('Missing third parameter: request')
-  }
-
   return getSession(videoId)
-    .then(({ sessionToken, commentsToken }) => {
-      const url = buildWatchFragmentsUrl(videoId, commentsToken)
-      const form = { session_token: sessionToken }
-
-      return request({
-        method: 'POST',
-        json: true,
-        url,
-        form
-      })
-    })
+    .then(session => fetchCommentsWatchFragment(videoId, session, request))
+    .then(extractPageToken)
 }
 
 export function extractPageToken (response) {

@@ -15,7 +15,7 @@
   "scripts": {
     "build": "babel src -d build",
     "build:watch": "babel --watch src -d build",
-    "test": "tape build/test/*.js build/test/**/*.js | faucet || true",
+    "test": "tape build/test/*.js build/test/**/*.js || true",
     "npm-watch": "npm-watch",
     "watch": "npm-run-all -p build:watch npm-watch"
   },
@@ -57,6 +57,7 @@
     "npm-run-all": "^3.1.0",
     "npm-watch": "^0.1.6",
     "sinon": "^1.17.5",
-    "tape": "^4.6.0"
+    "tape": "^4.6.0",
+    "testdouble": "^1.10.1"
   }
 }
