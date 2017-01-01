@@ -6,18 +6,16 @@
   "watch": {
     "test": {
       "patterns": [
-        "build"
+        "./",
+        "test"
       ],
       "extensions": "js",
       "quiet": true
     }
   },
   "scripts": {
-    "build": "babel src -d build",
-    "build:watch": "babel --watch src -d build",
-    "test": "tape build/test/*.js build/test/**/*.js || true",
-    "npm-watch": "npm-watch",
-    "watch": "npm-run-all -p build:watch npm-watch"
+    "test": "tape test/*.js test/**/*.js | faucet || true",
+    "watch": "npm-watch"
   },
   "repository": {
     "type": "git",
@@ -48,13 +46,8 @@
     "rxjs": "^5.0.0-beta.12"
   },
   "devDependencies": {
-    "babel-cli": "^6.14.0",
-    "babel-plugin-transform-es2015-destructuring": "^6.9.0",
-    "babel-plugin-transform-object-rest-spread": "^6.8.0",
-    "babel-preset-es2015": "^6.14.0",
     "blue-tape": "^1.0.0",
     "faucet": "0.0.1",
-    "npm-run-all": "^3.1.0",
     "npm-watch": "^0.1.6",
     "sinon": "^1.17.5",
     "tape": "^4.6.0",
