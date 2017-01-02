@@ -1,9 +1,9 @@
 const test = require('tape')
 const td = require('testdouble')
 
-const { fetchCommentsWatchFragment, fetchCommentPage } = require('../../lib/youtube-api')
-const { buildWatchFragmentsUrl, buildCommentServiceUrl } = require('../../lib/url-builder')
-const buildRequestFormData = require('../../lib/build-request-form-data')
+const { fetchCommentsWatchFragment, fetchCommentPage } = require('../../../lib/youtube-api/youtube-api')
+const { buildWatchFragmentsUrl, buildCommentServiceUrl } = require('../../../lib/youtube-api/url-builder')
+const buildRequestFormData = require('../../../lib/youtube-api/build-request-form-data')
 
 const noop = () => {}
 

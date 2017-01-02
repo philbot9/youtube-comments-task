@@ -8,7 +8,7 @@ const {
   buildVideoPageUrl,
   buildWatchFragmentsUrl,
   buildCommentServiceUrl
-} = require('../../lib/url-builder')
+} = require('../../../lib/youtube-api/url-builder')
 
 test('/lib/url-build.js', t => {
   t.test('- exports buildVideoPageUrl() function', t => {

@@ -1,6 +1,6 @@
 const test = require('blue-tape')
 
-const buildRequestFormData = require('../../lib/build-request-form-data')
+const buildRequestFormData = require('../../../lib/youtube-api/build-request-form-data')
 
 test('/lib/build-request-form-data.js', t => {
   t.test('- throws an error if session is missing', t => {

@@ -1,5 +1,5 @@
 const defaultConfig = require('./default-config')
-const fetchComments = require('./lib/fetch-comments')
+const buildCommentStream = require('./lib/comment-stream')
 
 module.exports = (videoId, config) =>
-  fetchComments(videoId, Object.assign({}, defaultConfig, config))
+  buildCommentStream(videoId, Object.assign({}, defaultConfig, config))

@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "test": "tape test/*.js test/**/*.js | faucet || true",
+    "test": "tape test/*.js test/**/*.js test/**/**/*.js | faucet || true",
     "watch": "npm-watch"
   },
   "repository": {
@@ -37,10 +37,14 @@
   "homepage": "https://github.com/philbot9/rx-youtube-comments#readme",
   "dependencies": {
     "cheerio": "^0.22.0",
+    "data.either": "^1.4.0",
+    "data.task": "^3.1.1",
     "debug": "^2.2.0",
+    "futurize": "^1.1.0",
     "mem": "^0.1.1",
     "moment": "^2.17.1",
     "promised-until": "^1.0.2",
+    "ramda": "^0.23.0",
     "request": "^2.74.0",
     "request-promise": "^4.1.1",
     "rxjs": "^5.0.0-beta.12"

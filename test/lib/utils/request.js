@@ -1,6 +1,6 @@
 const test = require('blue-tape')
 
-const buildRequest = require('../../lib/request')
+const buildRequest = require('../../../lib/utils/request')
 
 test('/lib/request.js', t => {
   t.test('- exports a function', t => {
