@@ -5,7 +5,8 @@ const fetchFirstPageToken = require('../../lib/fetch-first-page-token')
 
 const { buildWatchFragmentsUrl } = require('../../lib/url-builder')
 
-const noop = () => {}
+const noop = () => {
+}
 
 test('/lib/fetch-first-page-token.js', t => {
   t.test('- module exports a function', t => {
@@ -14,7 +15,8 @@ test('/lib/fetch-first-page-token.js', t => {
   })
 
   t.test('- function returns a promise', t => {
-    const returnValue = fetchFirstPageToken().catch(() => {})
+    const returnValue = fetchFirstPageToken().catch(() => {
+    })
     t.ok(returnValue.then, 'return value has .then')
     t.equal(typeof returnValue.then, 'function', '.then is a function')
     t.end()

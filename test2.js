@@ -1,6 +1,6 @@
 const Rx = require('rxjs')
 
-function first() {
+function first () {
   return new Promise(resolve => {
     setTimeout(() => {
       resolve(0)
@@ -9,7 +9,7 @@ function first() {
 }
 
 function second (count) {
-  return new Promise (resolve => {
+  return new Promise(resolve => {
     const time = count < 1 ? 5000 : 1000
     setTimeout(() => {
       resolve(count)
@@ -18,7 +18,5 @@ function second (count) {
 }
 
 const observable = Rx.Observable.fromPromise(first())
-
-
 
 observable.subscribe(o => console.log('output', o))

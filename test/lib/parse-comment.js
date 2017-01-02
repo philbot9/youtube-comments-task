@@ -4,16 +4,7 @@ const cheerio = require('cheerio')
 const moment = require('moment')
 
 const parseComment = require('../../lib/parse-comment')
-const {
-  sampleComment,
-  COMMENT_ID,
-  COMMENT_USER,
-  COMMENT_FROMNOW,
-  COMMENT_TEXT,
-  COMMENT_LIKES,
-  REPLY_ID,
-  REPLY_USER
-} = require('../sample-comment-html')
+const {sampleComment, COMMENT_ID, COMMENT_USER, COMMENT_FROMNOW, COMMENT_TEXT, COMMENT_LIKES, REPLY_ID, REPLY_USER} = require('../sample-comment-html')
 
 function isWithinRange (v1, v2, range) {
   return v1 > (v2 - range) && v1 < (v2 + range)

@@ -7,7 +7,8 @@ const buildSessionStore = require('../../../lib/youtube-api/session-store')
 
 const { buildVideoPageUrl } = require('../../../lib/youtube-api/url-builder')
 
-const noop = () => {}
+const noop = () => {
+}
 
 test('/lib/session-store', t => {
   t.test(' - module exports a function', t => {
@@ -42,7 +43,7 @@ test('/lib/session-store', t => {
           td.reset()
           t.end()
         }
-      )
+    )
   })
 
   t.test('task fails if session token cannot be found', t => {
@@ -65,7 +66,7 @@ test('/lib/session-store', t => {
           t.end()
         },
         t.notOk
-      )
+    )
   })
 
   t.test('- session store caches tokens', t => {
@@ -87,7 +88,7 @@ test('/lib/session-store', t => {
         s => {
           t.deepEqual(s, {sessionToken, commentsToken}, 'session tokens are correct')
         }
-      )
+    )
 
     getSessionToken(videoId)
       .fork(
@@ -97,7 +98,7 @@ test('/lib/session-store', t => {
           td.reset()
           t.end()
         }
-      )
+    )
   })
 
   t.test('- session store re-fetches expired tokens', t => {
@@ -127,7 +128,7 @@ test('/lib/session-store', t => {
         s => {
           t.deepEqual(s, {sessionToken: sessionToken1, commentsToken: commentsToken1}, 'session tokens are correct')
         }
-      )
+    )
 
     setTimeout(() => {
       getSessionToken(videoId)
@@ -138,7 +139,7 @@ test('/lib/session-store', t => {
             td.reset()
             t.end()
           }
-        )
+      )
     }, 10)
   })
 })

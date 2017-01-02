@@ -15,7 +15,7 @@ test('/lib/tokenize-comments.js', t => {
     t.end()
   })
 
-  t.test('- returns an empty array if the html doesn\'t contain any comments', t => {
+  t.test("- returns an empty array if the html doesn't contain any comments", t => {
     const html = '<div><div class="no-comment">nope</div><div class="no-comment">hahaha</div></div>'
     const commentTokens = tokenizeComments(html)
     t.deepEqual(commentTokens, [])

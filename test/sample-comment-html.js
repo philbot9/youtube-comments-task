@@ -23,19 +23,10 @@ module.exports = {
   REPLY_USER,
   REPLY_FROMNOW,
   REPLY_TEXT,
-  REPLY_LIKES
-}
+REPLY_LIKES}
 
 function sampleComment (params = {}) {
-  const {
-    id = COMMENT_ID,
-    user = COMMENT_USER,
-    fromNow = COMMENT_FROMNOW,
-    text = COMMENT_TEXT,
-    likes = COMMENT_LIKES,
-    replies = 0,
-    repliesToken = ''
-  } = params
+  const { id = COMMENT_ID, user = COMMENT_USER, fromNow = COMMENT_FROMNOW, text = COMMENT_TEXT, likes = COMMENT_LIKES, replies = 0, repliesToken = '' } = params
 
   return [
     commentTop({id, user, fromNow, text, likes}),
@@ -60,7 +51,6 @@ function commentTop ({ id, user, fromNow, text, likes }) {
   </span>
 </a>
 
-
     <div id="comment-renderer-edit-z12vvvxaryjywra0h234jdcg5p24zbvol04" class="comment-simplebox-edit" data-editable-content-text="" data-image-src="" data-video-id="">
     </div>
 <div class="comment-renderer-content"><div class="comment-renderer-header"><a href="/channel/UCjp-_6mlFkVBZlG1nvKJ6bg" class="yt-uix-sessionlink comment-author-text g-hovercard     " data-ytid="UCjp-_6mlFkVBZlG1nvKJ6bg" data-sessionlink="itct=CK0BELZ1IhMIivG8hf2M0AIVB3hOCh3PWgpF">${user}</a><span class="comment-renderer-time" tabindex="0"><a href="/watch?v=XkcGuZHPbKk&amp;lc=z12vvvxaryjywra0h234jdcg5p24zbvol04" class=" yt-uix-sessionlink     " data-sessionlink="itct=CK0BELZ1IhMIivG8hf2M0AIVB3hOCh3PWgpF">${fromNow}</a></span></div><div class="comment-renderer-text" tabindex="0" role="article">
@@ -69,7 +59,6 @@ function commentTop ({ id, user, fromNow, text, likes }) {
 </span></button></div></div></div>
 
 <div class="comment-renderer-footer" data-vote-status="INDIFFERENT"><div class="comment-action-buttons-toolbar">
-
 
     <button class="yt-uix-button yt-uix-button-size-small yt-uix-button-link comment-renderer-reply comment-simplebox-trigger" type="button" onclick=";return false;" data-simplebox-id="comment-simplebox-reply-z12vvvxaryjywra0h234jdcg5p24zbvol04" data-simplebox-sessionlink="itct=CLIBEPBbIhMIivG8hf2M0AIVB3hOCh3PWgpF" data-simplebox-event="replycreated" data-simplebox-target="/comment_service_ajax?action_create_comment_reply=1" data-simplebox-params="EgtYa2NHdVpIUGJLayIjejEydnZ2eGFyeWp5d3JhMGgyMzRqZGNnNXAyNHpidm9sMDQqAggAMAA%3D" data-simplebox-label="Reply"><span class="yt-uix-button-content">Reply</span></button>
 
@@ -92,7 +81,6 @@ function commentTop ({ id, user, fromNow, text, likes }) {
     <span class="yt-ui-menu-item-label">Report spam or abuse</span>
   </button>
 
-
       </li>
   </ul>
 </div></div>
@@ -111,17 +99,12 @@ function commentTop ({ id, user, fromNow, text, likes }) {
 </div></div></div></div><div class="comment-replies-renderer" data-visibility-tracking="CKUBEL51IhMIivG8hf2M0AIVB3hOCh3PWgpF">`
 }
 
-function buildReplies(commentId, replies, repliesToken) {
-
+function buildReplies (commentId, replies, repliesToken) {
   return (!replies || replies <= 0)
     ? ''
     : `
     <div class="yt-uix-expander yt-uix-expander-collapsed comment-replies-renderer-header" tabindex="0">
     <div class="yt-uix-expander-collapsed-body">
-
-
-
-
 
     <button class="yt-uix-button yt-uix-button-size-default yt-uix-button-default load-more-button yt-uix-load-more comment-replies-renderer-paginator comment-replies-renderer-expander-down yt-uix-button-link" type="button" onclick=";return false;" aria-label="View all 6 replies" data-uix-load-more-post="true" data-uix-load-more-href="/comment_service_ajax?action_get_comment_replies=1" data-uix-load-more-target-id="comment-replies-renderer-z13kfn15oumthvdi404cirmattv0dz14mdk"
       data-uix-load-more-post-body="page_token=${repliesToken}"><span class="yt-uix-button-content">  <span class="load-more-loading hid">
@@ -137,17 +120,12 @@ Loading...
   </span>
 </span></button>
 
-
       <div class="yt-uix-expander-head comment-replies-renderer-expander-down comment-replies-renderer-view hid" tabindex="0">
         View all 6 replies
       </div>
 
-
-
-
     </div>
     <div id="comment-replies-renderer-z13kfn15oumthvdi404cirmattv0dz14mdk" class="yt-uix-expander-body comment-replies-renderer-pages">
-
 
       <div class="yt-uix-expander-head comment-replies-renderer-expander-up comment-replies-renderer-hide" tabindex="0">
         Hide replies

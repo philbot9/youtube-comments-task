@@ -4,7 +4,8 @@ const Rx = require('rxjs')
 const buildCommentPageStream = require('../../lib/comment-page-stream')
 const { buildCommentServiceUrl } = require('../../lib/url-builder')
 
-const noop = () => {}
+const noop = () => {
+}
 
 test('/lib/comment-page-stream.js', t => {
   t.test('- exports a function', t => {
@@ -47,5 +48,4 @@ test('/lib/comment-page-stream.js', t => {
     t.ok(false, 'TESTS ARE INCOMPLETE!')
     t.end()
   })
-
 })

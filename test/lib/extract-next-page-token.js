@@ -8,7 +8,7 @@ test('/lib/extract-next-page-token', t => {
     t.end()
   })
 
-  t.test('- extractNextPageToken() throws an error if button doesn\'t have page token attribute', t => {
+  t.test("- extractNextPageToken() throws an error if button doesn't have page token attribute", t => {
     const html = '<html><button class="comment-section-renderer-paginator">Not it!</button></html>'
     t.throws(() => extractNextPageToken(html), /attribute/i)
     t.end()

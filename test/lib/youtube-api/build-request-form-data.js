@@ -18,7 +18,7 @@ test('/lib/build-request-form-data.js', t => {
   t.test('builds form data', t => {
     const sessionToken = 'fake_token'
     const commentsToken = 'commentsToken'
-    const session = { sessionToken, commentsToken }
+    const session = { sessionToken, commentsToken}
     const pageToken = 'page_token'
 
     const formData = buildRequestFormData(session, pageToken)

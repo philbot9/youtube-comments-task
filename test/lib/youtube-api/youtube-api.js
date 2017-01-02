@@ -5,7 +5,8 @@ const { fetchCommentsWatchFragment, fetchCommentPage } = require('../../../lib/y
 const { buildWatchFragmentsUrl, buildCommentServiceUrl } = require('../../../lib/youtube-api/url-builder')
 const buildRequestFormData = require('../../../lib/youtube-api/build-request-form-data')
 
-const noop = () => {}
+const noop = () => {
+}
 
 test('/lib/youtube-api-request', t => {
   t.test('fetchCommentsWatchFragment is a function', t => {
@@ -36,8 +37,7 @@ test('/lib/youtube-api-request', t => {
       method: 'POST',
       json: true,
       url,
-      form
-    })).thenReturn(Promise.resolve(expectedResult))
+    form})).thenReturn(Promise.resolve(expectedResult))
 
     return fetchCommentsWatchFragment(videoId, session, request)
       .then(result => t.equal(expectedResult, result))
@@ -72,12 +72,10 @@ test('/lib/youtube-api-request', t => {
       method: 'POST',
       json: true,
       url,
-      form
-    })).thenReturn(Promise.resolve(expectedResult))
+    form})).thenReturn(Promise.resolve(expectedResult))
 
     return fetchCommentPage(pageToken, session, request)
       .then(result => t.equal(expectedResult, result))
       .then(() => td.reset())
   })
-
 })

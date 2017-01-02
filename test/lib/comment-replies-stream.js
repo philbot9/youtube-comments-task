@@ -4,7 +4,8 @@ const Rx = require('rxjs')
 
 const prepareRepliesStreamBuilder = require('../../lib/comment-replies-stream')
 
-const noop = () => {}
+const noop = () => {
+}
 
 test('/lib/comment-replies-stream.js', t => {
   t.test('- exports a function', t => {
@@ -36,7 +37,7 @@ test('/lib/comment-replies-stream.js', t => {
     t.end()
   })
 
-  t.test('- stream builder throws an error if comment parameter is missing', t=> {
+  t.test('- stream builder throws an error if comment parameter is missing', t => {
     const buildRepliesStream = prepareRepliesStreamBuilder({getSession: noop, request: noop})
     t.throws(() => buildRepliesStream())
     t.throws(() => buildRepliesStream(null))
