@@ -4,7 +4,7 @@ const Task = require('data.task')
 
 const retry = require('../../../lib/utils/retry-task')
 
-test.only('/lib/utils/retry-task.js', t => {
+test('/lib/utils/retry-task.js', t => {
   t.test('- exports a function', t => {
     t.equal(typeof retry, 'function', 'is of type function')
     t.end()
