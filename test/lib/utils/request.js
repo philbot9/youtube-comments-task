@@ -1,33 +1,37 @@
 const test = require('blue-tape')
+const Task = require('data.task')
 
-const buildRequest = require('../../../lib/utils/request')
+const request = require('../../../lib/utils/request')
 
-test('/lib/request.js', t => {
+test('/lib/utils/request.js', t => {
   t.test('- exports a function', t => {
-    t.equal(typeof buildRequest, 'function', 'is of type function')
-    t.end()
-  })
-
-  t.test('- function returns a function', t => {
-    const request = buildRequest()
     t.equal(typeof request, 'function', 'is of type function')
     t.end()
   })
 
-  t.test('- returned function returns a promise', t => {
-    const request = buildRequest()
-    const returnValue = request('http://www.google.com')
-    t.ok(returnValue.then, 'return value has .then')
+  t.test('- function returns a Task', t => {
+    t.ok(request() instanceof Task, 'is instance of Task')
     t.end()
   })
 
-  t.test('- promise is rejected for invalid parameters', t => {
-    const request = buildRequest()
-    return request()
-      .then(() => t.fail('promise should not resolve'))
-      .catch((err) => t.ok(err, 'promise rejected with an error'))
-      .then(() => request({nothing: 'here'}))
-      .then(() => t.fail('promise should not resolve'))
-      .catch((err) => t.ok(err, 'promise rejected with an error'))
+  t.test(' - fetches a url', t => {
+    request('http://www.google.com/')
+      .fork(t.notOk,
+            html => {
+              t.ok(html, 'result exists')
+              t.end()
+            })
+  })
+
+  t.test('- Task is rejected for invalid inputs', t => {
+    request()
+      .fork(e => {
+        t.ok(e, 'rejected with an error')
+        request('http://nosuchdomain.fake')
+          .fork(e => {
+            t.ok(e, 'rejected with an error')
+            t.end()
+          }, t.notOk)
+      }, t.notOk)
   })
 })

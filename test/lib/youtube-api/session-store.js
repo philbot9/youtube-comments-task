@@ -2,9 +2,6 @@ const test = require('tape')
 const td = require('testdouble')
 const Task = require('data.task')
 
-const request = td.replace('../../../lib/utils/request')
-const buildSessionStore = require('../../../lib/youtube-api/session-store')
-
 const { buildVideoPageUrl } = require('../../../lib/youtube-api/url-builder')
 
 const noop = () => {
@@ -12,13 +9,8 @@ const noop = () => {
 
 test('/lib/session-store', t => {
   t.test(' - module exports a function', t => {
-    t.ok(typeof buildSessionStore === 'function', 'is of type function')
-    t.end()
-  })
-
-  t.test('- exported function returns a function', t => {
-    t.ok(typeof buildSessionStore({}, {request: noop}) === 'function',
-      'is of type function')
+    const getSession = require('../../../lib/youtube-api/session-store')
+    t.equal(typeof getSession, 'function', 'is of type function')
     t.end()
   })
 
@@ -32,12 +24,13 @@ test('/lib/session-store', t => {
       var stuff2 = {'COMMENTS_TOKEN': "${encodeURIComponent(commentsToken)}",}
     </script></html>`
 
+    const request = td.replace('../../../lib/utils/request')
+    const getSession = require('../../../lib/youtube-api/session-store')
     td.when(request(url)).thenReturn(Task.of(html))
 
-    const getSessionToken = buildSessionStore({})
-    getSessionToken(videoId)
+    getSession(videoId)
       .fork(
-        t.notOk,
+        t.fail,
         s => {
           t.deepEqual(s, {sessionToken, commentsToken}, 'session tokens are correct')
           td.reset()
@@ -56,17 +49,20 @@ test('/lib/session-store', t => {
       var stuff2 = {'SOMETHING_ELSE_TOKEN': "${encodeURIComponent(commentsToken)}",}
     </script></html>`
 
+    const request = td.replace('../../../lib/utils/request')
+    const getSession = require('../../../lib/youtube-api/session-store')
     td.when(request(url)).thenReturn(Task.of(html))
 
-    const getSessionToken = buildSessionStore({})
-    getSessionToken(videoId)
+    t.plan(1)
+
+    getSession(videoId)
       .fork(
         e => {
           t.ok(e, 'task rejects with an error')
+          td.reset()
           t.end()
         },
-        t.notOk
-    )
+        t.fail)
   })
 
   t.test('- session store caches tokens', t => {
@@ -79,67 +75,22 @@ test('/lib/session-store', t => {
       var stuff2 = {'COMMENTS_TOKEN': "${encodeURIComponent(commentsToken)}",}
     </script></html>`
 
+    const request = td.replace('../../../lib/utils/request')
+    const getSession = require('../../../lib/youtube-api/session-store')
     td.when(request(url)).thenReturn(Task.of(html), Task.rejected('one request only'))
 
-    const getSessionToken = buildSessionStore({})
-    getSessionToken(videoId)
+    getSession(videoId)
       .fork(
-        t.notOk,
+        t.fail,
         s => {
-          t.deepEqual(s, {sessionToken, commentsToken}, 'session tokens are correct')
-        }
-    )
-
-    getSessionToken(videoId)
-      .fork(
-        t.notOk,
-        s => {
-          t.deepEqual(s, {sessionToken, commentsToken}, 'session tokens are correct')
-          td.reset()
-          t.end()
-        }
-    )
-  })
-
-  t.test('- session store re-fetches expired tokens', t => {
-    const videoId = 'the_video_id'
-    const sessionToken1 = 'sessionToken1'
-    const commentsToken1 = 'commentToken1'
-    const sessionToken2 = 'sessionToken2'
-    const commentsToken2 = 'commentToken2'
-    const url = buildVideoPageUrl(videoId)
-
-    const html1 = `<html><script>
-      var stuff = {'XSRF_TOKEN': "${sessionToken1}",}
-      var stuff2 = {'COMMENTS_TOKEN': "${encodeURIComponent(commentsToken1)}",}
-    </script></html>`
-
-    const html2 = `<html><script>
-      var stuff = {'XSRF_TOKEN': "${sessionToken2}",}
-      var stuff2 = {'COMMENTS_TOKEN': "${encodeURIComponent(commentsToken2)}",}
-    </script></html>`
-
-    td.when(request(url)).thenReturn(Task.of(html1), Task.of(html2))
-
-    const getSessionToken = buildSessionStore({cacheDuration: 1})
-    getSessionToken(videoId)
-      .fork(
-        t.notOk,
-        s => {
-          t.deepEqual(s, {sessionToken: sessionToken1, commentsToken: commentsToken1}, 'session tokens are correct')
-        }
-    )
-
-    setTimeout(() => {
-      getSessionToken(videoId)
-        .fork(
-          t.notOk,
-          s => {
-            t.deepEqual(s, {sessionToken: sessionToken2, commentsToken: commentsToken2}, 'session tokens are correct')
-            td.reset()
-            t.end()
-          }
-      )
-    }, 10)
+          getSession(videoId)
+            .fork(
+              t.fail,
+              s => {
+                t.deepEqual(s, {sessionToken, commentsToken}, 'session tokens are correct')
+                td.reset()
+                t.end()
+              })
+        })
   })
 })
