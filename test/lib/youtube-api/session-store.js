@@ -4,9 +4,6 @@ const Task = require('data.task')
 
 const { buildVideoPageUrl } = require('../../../lib/youtube-api/url-builder')
 
-const noop = () => {
-}
-
 test('/lib/session-store', t => {
   t.test(' - module exports a function', t => {
     const getSession = require('../../../lib/youtube-api/session-store')

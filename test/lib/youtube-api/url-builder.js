@@ -1,7 +1,14 @@
 const test = require('blue-tape')
 const nodeUrl = require('url')
 
-const {VIDEO_PAGE_URL, WATCH_FRAGMENTS_URL, COMMENT_SERVICE_URL, buildVideoPageUrl, buildWatchFragmentsUrl, buildCommentServiceUrl} = require('../../../lib/youtube-api/url-builder')
+const {
+  VIDEO_PAGE_URL,
+  WATCH_FRAGMENTS_URL,
+  COMMENT_SERVICE_URL,
+  buildVideoPageUrl,
+  buildWatchFragmentsUrl,
+  buildCommentServiceUrl
+} = require('../../../lib/youtube-api/url-builder')
 
 test('/lib/url-build.js', t => {
   t.test('- exports buildVideoPageUrl() function', t => {
