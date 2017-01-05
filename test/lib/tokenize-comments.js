@@ -9,12 +9,6 @@ test('/lib/tokenize-comments.js', t => {
     t.end()
   })
 
-  t.test('- throws an error if html argument is missing', t => {
-    t.throws(() => tokenizeComments())
-    t.throws(() => tokenizeComments(''))
-    t.end()
-  })
-
   t.test("- returns an empty array if the html doesn't contain any comments", t => {
     const html = '<div><div class="no-comment">nope</div><div class="no-comment">hahaha</div></div>'
     const commentTokens = tokenizeComments(html)
@@ -54,7 +48,7 @@ test('/lib/tokenize-comments.js', t => {
 
     t.equal($comment1.find('.comment-thread-renderer > .comment-renderer').text(), c1, 'finds 1st comment')
     t.equal($comment1.find('.comment-replies-renderer .comment-renderer').text(), r1, 'finds 1st reply')
-    t.equal($comment2.find('.comment-thread-renderer > .comment-renderer').text(), c2, 'finds 1st comment')
+    t.equal($comment2.find('.comment-thread-renderer > .comment-renderer').text(), c2, 'finds 2nd comment')
 
     t.end()
   })
