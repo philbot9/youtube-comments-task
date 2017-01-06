@@ -168,4 +168,35 @@ test('/lib/comment-page-stream.js', t => {
         complete: _ => t.fail('stream should not complete')
       })
   })
+
+  t.test('- stream emits error if load_more_widget_html does not contain a load more button', t => {
+    const videoId = 'videoId'
+    const pageTokens = ['token1']
+
+    const fetchFirstPageToken = td.replace('../../lib/fetch-first-page-token')
+    const Youtube = td.replace('../../lib/youtube-api/youtube-api')
+    const buildCommentPageStream = require('../../lib/comment-page-stream')
+
+    const invalidLoadMoreWidget = '<html><p>whatever</p></html>'
+
+    td.when(fetchFirstPageToken(videoId))
+      .thenReturn(Task.of(pageTokens[0]))
+
+    td.when(Youtube.commentPage(videoId, pageTokens[0]))
+      .thenReturn(Task.of({
+        content_html: contentHtml(0),
+        load_more_widget_html: invalidLoadMoreWidget
+      }))
+
+    buildCommentPageStream(videoId)
+      .subscribe({
+        next: p => t.equal(p, contentHtml(0), 'emits comment page'),
+        error: e => {
+          t.ok(/load more/i.test(e), 'stream emits correct error')
+          td.reset()
+          t.end()
+        },
+        complete: _ => t.fail('stream should not complete')
+      })
+  })
 })

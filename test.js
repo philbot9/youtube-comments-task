@@ -1,7 +1,25 @@
-const buildCPS = require('./lib/comment-page-stream')
+const getSession = require('./lib/youtube-api/session-store')
+const request = require('./lib/utils/request')
 
-buildCPS('kopIN-P712w')
-  .subscribe(c => console.log('page:', c.length))
+getSession('OwFSs_-Kd3Q')
+  .chain(sess => {
+    return request({
+      method: 'POST',
+      url: 'https://www.youtube.com/comment_service_ajax?action_get_comment_replies=1',
+      json: true,
+      form: {
+        page_token: 'EhYSC093RlNzXy1LZDNRwAEAyAEA4AEBGAYyWRpXEiN6MTNmdnhiaWJwZnl1ZDFicjA0Y2dydnJ2em56Y2ZvaHFqdyICCAAqGFVDYVdkNV83SmhiUUJlNGRrblpoc0hKZzILT3dGU3NfLUtkM1E4AEABSPQD',
+        session_token: sess.sessionToken
+      }
+    })
+  })
+  .fork(e => console.error(e),
+        r => console.log(r))
+
+// const buildCPS = require('./lib/comment-page-stream')
+//
+// buildCPS('kopIN-P712w')
+//   .subscribe(c => console.log('page:', c.length))
 
 // const Rx = require('rxjs')
 //
