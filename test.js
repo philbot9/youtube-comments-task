@@ -1,20 +1,29 @@
-const getSession = require('./lib/youtube-api/session-store')
-const request = require('./lib/utils/request')
+const buildCommentStream = require('./index')
 
-getSession('OwFSs_-Kd3Q')
-  .chain(sess => {
-    return request({
-      method: 'POST',
-      url: 'https://www.youtube.com/comment_service_ajax?action_get_comment_replies=1',
-      json: true,
-      form: {
-        page_token: 'EhYSC093RlNzXy1LZDNRwAEAyAEA4AEBGAYyWRpXEiN6MTNmdnhiaWJwZnl1ZDFicjA0Y2dydnJ2em56Y2ZvaHFqdyICCAAqGFVDYVdkNV83SmhiUUJlNGRrblpoc0hKZzILT3dGU3NfLUtkM1E4AEABSPQD',
-        session_token: sess.sessionToken
-      }
-    })
+buildCommentStream('0w_qjxX0uu4')
+  .subscribe({
+    error: e => console.error(e),
+    next: c => console.log(c),
+    complete: () => console.log('DONE')
   })
-  .fork(e => console.error(e),
-        r => console.log(r))
+
+// const getSession = require('./lib/youtube-api/session-store')
+// const request = require('./lib/utils/request')
+
+// getSession('OwFSs_-Kd3Q')
+//   .chain(sess => {
+//     return request({
+//       method: 'POST',
+//       url: 'https://www.youtube.com/comment_service_ajax?action_get_comment_replies=1',
+//       json: true,
+//       form: {
+//         page_token: 'EhYSC093RlNzXy1LZDNRwAEAyAEA4AEBGAYyWRpXEiN6MTNmdnhiaWJwZnl1ZDFicjA0Y2dydnJ2em56Y2ZvaHFqdyICCAAqGFVDYVdkNV83SmhiUUJlNGRrblpoc0hKZzILT3dGU3NfLUtkM1E4AEABSPQD',
+//         session_token: sess.sessionToken
+//       }
+//     })
+//   })
+//   .fork(e => console.error(e),
+//         r => console.log(r))
 
 // const buildCPS = require('./lib/comment-page-stream')
 //

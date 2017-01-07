@@ -6,13 +6,11 @@ const Task = require('data.task')
 const contentHtml = n => `<html>comment_page_${n}</html>`
 
 const loadMoreWidgetHtml = pageToken =>
-  `<html>
-    <button
-      class="comment-section-renderer-paginator"
-      data-uix-load-more-post-body="${pageToken}">
-        btn
-    </button>
-  </html>`
+  `<button
+    class="comment-section-renderer-paginator"
+    data-uix-load-more-post-body="page_token=${pageToken}">
+      btn
+  </button>`
 
 test('/lib/comment-page-stream.js', t => {
   t.test('- exports a function', t => {
@@ -177,7 +175,7 @@ test('/lib/comment-page-stream.js', t => {
     const Youtube = td.replace('../../lib/youtube-api/youtube-api')
     const buildCommentPageStream = require('../../lib/comment-page-stream')
 
-    const invalidLoadMoreWidget = '<html><p>whatever</p></html>'
+    const invalidLoadMoreWidget = '<p>whatever</p>'
 
     td.when(fetchFirstPageToken(videoId))
       .thenReturn(Task.of(pageTokens[0]))
@@ -192,7 +190,7 @@ test('/lib/comment-page-stream.js', t => {
       .subscribe({
         next: p => t.equal(p, contentHtml(0), 'emits comment page'),
         error: e => {
-          t.ok(/load more/i.test(e), 'stream emits correct error')
+          t.ok(/load more widget/i.test(e), 'stream emits correct error')
           td.reset()
           t.end()
         },
