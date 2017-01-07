@@ -1,5 +1,3 @@
-const cheerio = require('cheerio')
-
 const COMMENT_ID = 'z12vvvxaryjywra0h234jdcg5p24zbvol04'
 const COMMENT_AUTHOR = 'the_comment_username'
 const COMMENT_AUTHOR_LINK = '/user/nickname'
