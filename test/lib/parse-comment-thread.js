@@ -58,53 +58,111 @@ test('/lib/parse-comment-thread.js', t => {
         t.end()
       })
   })
-})
 
-// t.test('- parses comment with replies (non-collapsed)', t => {
-//   const comment = {
-//     id: 'commentid',
-//     author: 'comment_author',
-//     authorLink: 'comment_author_link',
-//     authorThumb: 'comment_author_thumb',
-//     text: 'comment_text',
-//     likes: 3,
-//     time: '1 week ago',
-//     timestamp: moment().subtract(1, 'week').format('x'),
-//     hasReplies: true,
-//     numReplies: 2
-//   }
-//
-//   const replies = [
-//     {
-//       id: 'commentid.reply1id',
-//       author: 'reply1_author',
-//       authorLink: 'reply1_author_link',
-//       authorThumb: 'reply1_author_thumb',
-//       text: 'reply1_text',
-//       likes: 10,
-//       time: '10 hours ago',
-//       timestamp: moment().subtract(10, 'hours').format('x')
-//     },
-//     {
-//       id: 'commentid.reply2id',
-//       author: 'reply2_author',
-//       authorLink: 'reply2_author_link',
-//       authorThumb: 'reply2_author_thumb',
-//       text: 'reply2_text',
-//       likes: 0,
-//       time: '2 minutes ago',
-//       timestamp: moment().subtract(2, 'minutes').format('x')
-//     }
-//   ]
-//
-//   const html = sampleComment(comment, replies)
-//
-//   parseComment(cheerio(html))
-//     .fold(t.fail, result => {
-//       validateComment(t, result, comment)
-//
-//       t.ok(typeof result.replies, 'object', 'result contains replies array')
-//       t.equal(result.replies.length, 2, 'array contains correct number of replies')
-//       result.replies.forEach((r, i) => validateComment(t, r, replies[i]))
-//     })
-// })
+  t.test('- parses comment with replies (non-collapsed)', t => {
+    const comment = {
+      id: 'commentid',
+      author: 'comment_author',
+      authorLink: 'comment_author_link',
+      authorThumb: 'comment_author_thumb',
+      text: 'comment_text',
+      likes: 3,
+      time: '1 week ago',
+      timestamp: moment().subtract(1, 'week').format('x'),
+      hasReplies: true,
+      numReplies: 2
+    }
+
+    const replies = [
+      {
+        id: 'commentid.reply1id',
+        author: 'reply1_author',
+        authorLink: 'reply1_author_link',
+        authorThumb: 'reply1_author_thumb',
+        text: 'reply1_text',
+        likes: 10,
+        time: '10 hours ago',
+        timestamp: moment().subtract(10, 'hours').format('x')
+      },
+      {
+        id: 'commentid.reply2id',
+        author: 'reply2_author',
+        authorLink: 'reply2_author_link',
+        authorThumb: 'reply2_author_thumb',
+        text: 'reply2_text',
+        likes: 0,
+        time: '2 minutes ago',
+        timestamp: moment().subtract(2, 'minutes').format('x')
+      }
+    ]
+
+    const html = sampleComment(comment, replies)
+
+    parseCommentThread(cheerio(html))
+      .fold(t.fail, result => {
+        validateComment(t, result, comment)
+
+        t.ok(typeof result.replies, 'object', 'result contains replies array')
+        t.equal(result.replies.length, 2, 'array contains correct number of replies')
+        result.replies.forEach((r, i) => validateComment(t, r, replies[i]))
+        t.end()
+      })
+  })
+
+  t.test('- parses comment replies information (collapsed comments)', t => {
+    const comment = {
+      id: 'commentid',
+      author: 'comment_author',
+      authorLink: 'comment_author_link',
+      authorThumb: 'comment_author_thumb',
+      text: 'comment_text',
+      likes: 3,
+      time: '1 week ago',
+      timestamp: moment().subtract(1, 'week').format('x'),
+      hasReplies: true,
+      numReplies: 3,
+      repliesToken: REPLIES_TOKEN
+    }
+
+    const replies = [
+      {
+        id: 'commentid.reply1id',
+        author: 'reply1_author',
+        authorLink: 'reply1_author_link',
+        authorThumb: 'reply1_author_thumb',
+        text: 'reply1_text',
+        likes: 10,
+        time: '10 hours ago',
+        timestamp: moment().subtract(10, 'hours').format('x')
+      },
+      {
+        id: 'commentid.reply2id',
+        author: 'reply2_author',
+        authorLink: 'reply2_author_link',
+        authorThumb: 'reply2_author_thumb',
+        text: 'reply2_text',
+        likes: 0,
+        time: '2 minutes ago',
+        timestamp: moment().subtract(2, 'minutes').format('x')
+      },
+      {
+        id: 'commentid.reply3id',
+        author: 'reply3_author',
+        authorLink: 'reply3_author_link',
+        authorThumb: 'reply3_author_thumb',
+        text: 'reply3_text',
+        likes: 0,
+        time: '1 minute ago',
+        timestamp: moment().subtract(1, 'minute').format('x')
+      }
+    ]
+
+    const html = sampleComment(comment, replies)
+
+    parseCommentThread(cheerio(html))
+      .fold(t.fail, result => {
+        validateComment(t, result, comment)
+        t.end()
+      })
+  })
+})
