@@ -29,7 +29,7 @@ test('/lib/fetch-first-page-token.js', t => {
     const fetchFirstPageToken = require('../../lib/fetch-first-page-token')
 
     td.when(Youtube.commentsWatchFragment(videoId))
-      .thenReturn(Task.of({'watch-discussion': html}))
+      .thenReturn(Task.of({body: {'watch-discussion': html}}))
 
     fetchFirstPageToken(videoId)
       .fork(t.fail,

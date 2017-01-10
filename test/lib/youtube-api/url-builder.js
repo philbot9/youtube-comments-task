@@ -10,7 +10,7 @@ const {
   buildCommentServiceUrl
 } = require('../../../lib/youtube-api/url-builder')
 
-test('/lib/url-build.js', t => {
+test('/lib/youtube-api/url-build.js', t => {
   t.test('- exports buildVideoPageUrl() function', t => {
     t.ok(buildVideoPageUrl, 'exports buildVideoPageUrl')
     t.equal(typeof buildVideoPageUrl, 'function', 'is of type function')

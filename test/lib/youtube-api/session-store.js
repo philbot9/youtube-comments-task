@@ -4,7 +4,7 @@ const Task = require('data.task')
 
 const { buildVideoPageUrl } = require('../../../lib/youtube-api/url-builder')
 
-test('/lib/session-store', t => {
+test('/lib/youtube-api/session-store', t => {
   t.test(' - module exports a function', t => {
     const getSession = require('../../../lib/youtube-api/session-store')
     t.equal(typeof getSession, 'function', 'is of type function')

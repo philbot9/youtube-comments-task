@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "test": "standard && tape test/*.js test/**/*.js | faucet",
+    "test": "tape test/*.js test/**/*.js test/**/**/*.js | faucet",
     "format": "standard-format --write",
     "watch": "npm-watch"
   },

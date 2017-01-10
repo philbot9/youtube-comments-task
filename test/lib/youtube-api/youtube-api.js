@@ -4,7 +4,7 @@ const Task = require('data.task')
 
 const { buildWatchFragmentsUrl, buildCommentServiceUrl } = require('../../../lib/youtube-api/url-builder')
 
-test('/lib/youtube-api', t => {
+test('/lib/youtube-api/youtube-api', t => {
   t.test('module exports an object', t => {
     const Youtube = require('../../../lib/youtube-api/youtube-api')
     t.equal(typeof Youtube, 'object', 'is of type object')
