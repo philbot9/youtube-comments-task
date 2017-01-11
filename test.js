@@ -1,6 +1,6 @@
 const buildCommentStream = require('./index')
 
-buildCommentStream('0w_qjxX0uu4')
+buildCommentStream('0LdXrpLMK9k')
   .subscribe({
     error: e => console.error(e),
     next: c => console.log(c),
