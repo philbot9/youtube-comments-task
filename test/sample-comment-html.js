@@ -9,6 +9,7 @@ const REPLIES_TOKEN = 'EhYSC2NCVWVpcFhGaXNRwAEAyAEA4AEBGAYyWRpXEiN6MTN3dnZtcG14M
 
 module.exports = {
   sampleComment,
+  sampleReplies,
   COMMENT_ID,
   COMMENT_AUTHOR,
   COMMENT_AUTHOR_LINK,
@@ -28,6 +29,10 @@ module.exports = {
 //   likes: 3,
 //   time: '13 Minutes ago'
 // }
+
+function sampleReplies (replies) {
+  return (replies || []).map(renderComment).join('\n')
+}
 
 function sampleComment (comment, replies, repliesToken) {
   comment = Object.assign({

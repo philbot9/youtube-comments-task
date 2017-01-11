@@ -1,11 +1,10 @@
 const test = require('blue-tape')
-const cheerio = require('cheerio')
+const td = require('testdouble')
+const Task = require('data.task')
 const moment = require('moment')
 
-const parseRepliesRenderer = require('../../lib/parse-replies-renderer')
-
 const isWithinRange = require('../is-within-range')
-const { sampleComment } = require('../sample-comment-html')
+const { sampleReplies } = require('../sample-comment-html')
 
 const validateComment = (t, comment, exp) => {
   t.equal(comment.id, exp.id, 'id is correct')
@@ -18,8 +17,27 @@ const validateComment = (t, comment, exp) => {
   t.ok(isWithinRange(comment.timestamp, exp.timestamp, (60 * 1000)), 'timestamp is correct')
 }
 
-test('/lib/parse-replies-renderer.js', t => {
-  t.test('- parses replies', t => {
+test('/lib/fetch-first-page-token.js', t => {
+  t.test('- module exports a function', t => {
+    const fetchReplies = require('../../lib/fetch-replies')
+    t.equal(typeof fetchReplies, 'function', 'is of type function')
+    t.end()
+  })
+
+  t.test('- fails if comment does not have a repliesToken', t => {
+    const fetchReplies = require('../../lib/fetch-replies')
+    fetchReplies('videoId', {stuff: 'here'})
+      .fork(e => {
+        t.ok(e, 'fails with an error')
+        t.ok(/repliesToken/.test(e), 'error message is corrrect')
+        t.end()
+      }, t.fail)
+  })
+
+  t.test('- fetches replies for a comment', t => {
+    const videoId = 'videoId'
+    const repliesToken = 'repliesToken'
+
     const replies = [
       {
         id: 'commentid.reply1id',
@@ -43,14 +61,19 @@ test('/lib/parse-replies-renderer.js', t => {
       }
     ]
 
-    const html = sampleComment({}, replies)
-    const $repliesRenderer = cheerio(html).find('.comment-replies-renderer')
+    const Youtube = td.replace('../../lib/youtube-api/youtube-api')
+    const fetchReplies = require('../../lib/fetch-replies')
 
-    parseRepliesRenderer($repliesRenderer)
-      .fold(t.fail, result => {
-        t.ok(typeof replies, 'object', 'result contains replies array')
-        t.equal(replies.length, 2, 'array contains correct number of replies')
+    td.when(Youtube.commentReplies(videoId, repliesToken))
+      .thenReturn(Task.of({
+        content_html: sampleReplies(replies)
+      }))
+
+    fetchReplies(videoId, { repliesToken })
+      .fork(t.fail, result => {
+        t.equal(result.length, replies.length)
         result.forEach((r, i) => validateComment(t, r, replies[i]))
+        td.reset()
         t.end()
       })
   })

@@ -59,7 +59,7 @@ test('/lib/youtube-api/url-build.js', t => {
   t.test('- buildWatchFragmentsUrl() uses default fragment if not given', t => {
     const videoId = 'K23jKl24k'
     const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
-    const session = { commentsToken}
+    const session = { commentsToken }
     const defaultFragment = 'comments'
 
     const urlStr = buildWatchFragmentsUrl(videoId, session)
@@ -77,8 +77,10 @@ test('/lib/youtube-api/url-build.js', t => {
     t.end()
   })
 
-  t.test('- buildCommentServiceUrl() returns the comment service url', t => {
-    t.equal(buildCommentServiceUrl(), COMMENT_SERVICE_URL, 'url is correct')
+  t.test('- buildCommentServiceUrl() builds a comment service url', t => {
+    const action = 'action_get_comments'
+    const exp = `${COMMENT_SERVICE_URL}?${action}=1`
+    t.equal(buildCommentServiceUrl(action), exp, 'url is correct')
     t.end()
   })
 })
