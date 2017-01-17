@@ -1,4 +1,4 @@
-const test = require('blue-tape')
+const test = require('tape')
 const td = require('testdouble')
 const Rx = require('rxjs')
 const Task = require('data.task')

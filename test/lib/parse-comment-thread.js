@@ -1,4 +1,4 @@
-const test = require('blue-tape')
+const test = require('tape')
 const cheerio = require('cheerio')
 const moment = require('moment')
 

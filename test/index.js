@@ -1,4 +1,4 @@
-const test = require('blue-tape')
+const test = require('tape')
 const Rx = require('rxjs')
 
 const commentStream = require('../index')

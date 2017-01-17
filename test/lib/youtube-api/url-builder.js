@@ -1,4 +1,4 @@
-const test = require('blue-tape')
+const test = require('tape')
 const nodeUrl = require('url')
 
 const {

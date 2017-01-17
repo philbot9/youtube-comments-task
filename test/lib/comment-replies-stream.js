@@ -1,4 +1,4 @@
-const test = require('blue-tape')
+const test = require('tape')
 const Rx = require('rxjs')
 
 // test('/lib/comment-replies-stream.js', t => {

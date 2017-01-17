@@ -1,4 +1,4 @@
-const test = require('blue-tape')
+const test = require('tape')
 const extractNextPageToken = require('../../lib/extract-next-page-token')
 
 test('/lib/extract-next-page-token', t => {

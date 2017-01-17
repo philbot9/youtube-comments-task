@@ -1,4 +1,4 @@
-const test = require('blue-tape')
+const test = require('tape')
 const Task = require('data.task')
 
 const request = require('../../../lib/utils/request')
