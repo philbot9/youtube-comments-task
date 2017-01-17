@@ -190,7 +190,7 @@ test('/lib/comment-page-stream.js', t => {
       .subscribe({
         next: p => t.equal(p, contentHtml(0), 'emits comment page'),
         error: e => {
-          t.ok(/load more widget/i.test(e), 'stream emits correct error')
+          t.ok(/does not contain a match/i.test(e), 'stream emits correct error')
           td.reset()
           t.end()
         },
