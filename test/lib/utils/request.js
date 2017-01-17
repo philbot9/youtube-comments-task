@@ -14,15 +14,6 @@ test('/lib/utils/request.js', t => {
     t.end()
   })
 
-  t.test(' - fetches a url', t => {
-    request('http://www.google.com/')
-      .fork(t.notOk,
-            html => {
-              t.ok(html, 'result exists')
-              t.end()
-            })
-  })
-
   t.test('- Task is rejected for invalid inputs', t => {
     request()
       .fork(e => {
