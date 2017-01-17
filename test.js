@@ -1,11 +1,14 @@
-const buildCommentStream = require('./index')
-
-buildCommentStream('0LdXrpLMK9k')
-  .subscribe({
-    error: e => console.error(e),
-    next: c => console.log(c),
-    complete: () => console.log('DONE')
-  })
+// const buildCommentStream = require('./index')
+//
+// let count = 0
+//
+// const sub = buildCommentStream('Hrph2EW9VjY')
+//   .takeWhile(_ => count++ < 5)
+//   .subscribe({
+//     error: e => console.error(e),
+//     next: c => console.log(c.id),
+//     complete: () => console.log('DONE')
+//   })
 
 // const getSession = require('./lib/youtube-api/session-store')
 // const request = require('./lib/utils/request')

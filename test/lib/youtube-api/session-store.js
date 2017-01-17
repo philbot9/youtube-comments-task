@@ -23,6 +23,7 @@ test('/lib/youtube-api/session-store', t => {
 
     const request = td.replace('../../../lib/utils/request')
     const getSession = require('../../../lib/youtube-api/session-store')
+
     td.when(request(url)).thenReturn(Task.of(html))
 
     getSession(videoId)
@@ -48,6 +49,7 @@ test('/lib/youtube-api/session-store', t => {
 
     const request = td.replace('../../../lib/utils/request')
     const getSession = require('../../../lib/youtube-api/session-store')
+
     td.when(request(url)).thenReturn(Task.of(html))
 
     t.plan(1)
@@ -68,8 +70,8 @@ test('/lib/youtube-api/session-store', t => {
     const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
     const url = buildVideoPageUrl(videoId)
     const html = `<html><script>
-      var stuff = {'XSRF_TOKEN': "${sessionToken}",}
-      var stuff2 = {'COMMENTS_TOKEN': "${encodeURIComponent(commentsToken)}",}
+      var token1 = {'XSRF_TOKEN': "${sessionToken}",}
+      var token2 = {'COMMENTS_TOKEN': "${encodeURIComponent(commentsToken)}",}
     </script></html>`
 
     const request = td.replace('../../../lib/utils/request')
