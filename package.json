@@ -4,7 +4,7 @@
   "description": "",
   "main": "lib/index.js",
   "watch": {
-    "test": {
+    "unit-test": {
       "patterns": [
         "./",
         "test"
@@ -14,8 +14,10 @@
     }
   },
   "scripts": {
-    "test": "tape test/*.js test/**/*.js test/**/**/*.js | faucet",
-    "coverage": "istanbul cover tape test/*.js test/**/*.js test/**/**/*.js && xdg-open ./coverage/lcov-report/index.html",
+    "test": "npm run unit-test && npm run integration-test",
+    "unit-test": "tape test/*.js test/lib/*.js test/lib/**/*.js | faucet",
+    "integration-test": "tape test/integration-tests/*.js | faucet",
+    "coverage": "istanbul cover tape test/*.js test/lib/*.js test/lib/**/*.js && xdg-open ./coverage/lcov-report/index.html",
     "format": "standard-format --write",
     "watch": "npm-watch"
   },

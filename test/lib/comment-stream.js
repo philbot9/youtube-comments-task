@@ -5,7 +5,7 @@ const Either = require('data.either')
 const Task = require('data.task')
 
 test('/lib/comment-stream', t => {
-  t.test('returns an observable', t => {
+  t.test('- returns an observable', t => {
     const videoId = 'videoId'
 
     const buildCommentPageStream = td.replace('../../lib/comment-page-stream')
@@ -22,7 +22,7 @@ test('/lib/comment-stream', t => {
     t.end()
   })
 
-  t.test('streams comments on one page', t => {
+  t.test('- streams comments on one page', t => {
     const videoId = 'videoId'
     const commentPage = '<div>page1</div>'
     const commentPageTokens = ['token1', 'token2', 'token3']
@@ -74,7 +74,7 @@ test('/lib/comment-stream', t => {
       })
   })
 
-  t.test('streams comments on multiple pages', t => {
+  t.test('- streams comments on multiple pages', t => {
     const videoId = 'videoId'
     const commentPages = [
       '<div>page1</div>',
