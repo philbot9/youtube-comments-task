@@ -15,7 +15,7 @@
   },
   "scripts": {
     "test": "tape test/*.js test/**/*.js test/**/**/*.js | faucet",
-    "coverage": "istanbul cover tape test/*.js test/**/*.js test/**/**/*.js",
+    "coverage": "istanbul cover tape test/*.js test/**/*.js test/**/**/*.js && xdg-open ./coverage/lcov-report/index.html",
     "format": "standard-format --write",
     "watch": "npm-watch"
   },
@@ -55,7 +55,6 @@
   "devDependencies": {
     "faucet": "0.0.1",
     "istanbul": "^0.4.5",
-    "lodash.omit": "^4.5.0",
     "npm-watch": "^0.1.6",
     "standard": "^8.6.0",
     "standard-format": "^2.2.4",

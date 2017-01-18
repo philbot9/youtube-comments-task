@@ -2,8 +2,8 @@ const buildCommentStream = require('./index')
 
 let count = 0
 
-const sub = buildCommentStream('Hrph2EW9VjY')
-  .takeWhile(_ => count++ < 5)
+const sub = buildCommentStream('9bZkp7q19f0')
+  //.takeWhile(_ => count++ < 5)
   .subscribe({
     error: e => console.error(e),
     next: c => console.log(c.id),
