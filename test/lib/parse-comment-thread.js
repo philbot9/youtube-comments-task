@@ -165,4 +165,10 @@ test('/lib/parse-comment-thread.js', t => {
         t.end()
       })
   })
+
+  t.test('parses replies count for a single collapsed reply', t => {
+    // got error: Error: View reply does not contain a match for /^View (?:all\s)?(\d+)/i
+    t.fail('Error: View reply does not contain a match for /^View (?:all\s)?(\d+)/i')
+    t.end()
+  })
 })
