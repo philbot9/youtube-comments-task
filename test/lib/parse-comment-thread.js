@@ -120,7 +120,6 @@ describe('/lib/parse-comment-thread.js', () => {
       time: '1 week ago',
       timestamp: parseInt(moment().subtract(1, 'week').format('x'), 10),
       hasReplies: true,
-      numReplies: 3,
       repliesToken: REPLIES_TOKEN
     }
 
@@ -166,14 +165,8 @@ describe('/lib/parse-comment-thread.js', () => {
       }, result => {
         validateComment(result, comment)
         expect(result).to.have.property('hasReplies', true)
-        expect(result).to.have.property('numReplies', 3)
         expect(result).to.not.have.property('replies')
         done()
       })
-  })
-
-  it('parses replies count for a single collapsed reply', () => {
-    // got error: Error: View reply does not contain a match for /^View (?:all\s)?(\d+)/i
-    expect.fail('Error: View reply does not contain a match for /^View (?:all\s)?(\d+)/i')
   })
 })

@@ -9,7 +9,7 @@ describe('/lib/youtube-api/session-store', () => {
     td.reset()
   })
 
-  it(' - module exports a function', () => {
+  it('module exports a function', () => {
     const getSession = require('../../../lib/youtube-api/session-store')
     expect(getSession).to.be.a('function')
   })
