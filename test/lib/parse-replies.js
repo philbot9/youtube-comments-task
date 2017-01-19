@@ -1,25 +1,26 @@
-const test = require('tape')
+const { expect } = require('chai')
 const cheerio = require('cheerio')
 const moment = require('moment')
 
 const parseReplies = require('../../lib/parse-replies')
 
-const isWithinRange = require('../is-within-range')
 const { sampleComment } = require('../sample-comment-html')
 
-const validateComment = (t, comment, exp) => {
-  t.equal(comment.id, exp.id, 'id is correct')
-  t.equal(comment.author, exp.author, 'author is correct')
-  t.equal(comment.authorLink, exp.authorLink, 'author link is correct')
-  t.equal(comment.authorThumb, exp.authorThumb, 'author thumb is correct')
-  t.equal(comment.text, exp.text, 'text is correct')
-  t.equal(comment.likes, exp.likes, 'comment likes is correct')
-  t.equal(comment.time, exp.time, 'time is correct is correct')
-  t.ok(isWithinRange(comment.timestamp, exp.timestamp, (60 * 1000)), 'timestamp is correct')
+const validateComment = (comment, exp) => {
+  expect(comment).to.be.ok
+
+  expect(comment).to.have.property('id', exp.id)
+  expect(comment).to.have.property('author', exp.author)
+  expect(comment).to.have.property('authorLink', exp.authorLink)
+  expect(comment).to.have.property('authorThumb', exp.authorThumb)
+  expect(comment).to.have.property('text', exp.text)
+  expect(comment).to.have.property('likes', exp.likes)
+  expect(comment).to.have.property('time', exp.time)
+  expect(comment).to.have.property('timestamp').that.is.a('number').closeTo(exp.timestamp, (60*1000))
 }
 
-test('/lib/parse-replies.js', t => {
-  t.test('- parses replies', t => {
+describe('/lib/parse-replies.js', () => {
+  it('- parses replies', done => {
     const replies = [
       {
         id: 'commentid.reply1id',
@@ -29,7 +30,7 @@ test('/lib/parse-replies.js', t => {
         text: 'reply1_text',
         likes: 10,
         time: '10 hours ago',
-        timestamp: moment().subtract(10, 'hours').format('x')
+        timestamp: parseInt(moment().subtract(10, 'hours').format('x'), 10)
       },
       {
         id: 'commentid.reply2id',
@@ -39,7 +40,7 @@ test('/lib/parse-replies.js', t => {
         text: 'reply2_text',
         likes: 0,
         time: '2 minutes ago',
-        timestamp: moment().subtract(2, 'minutes').format('x')
+        timestamp: parseInt(moment().subtract(2, 'minutes').format('x'), 10)
       }
     ]
 
@@ -47,11 +48,13 @@ test('/lib/parse-replies.js', t => {
     const $replies = cheerio(html).find('.comment-replies-renderer')
 
     parseReplies($replies)
-      .fold(t.fail, result => {
-        t.ok(typeof replies, 'object', 'result contains replies array')
-        t.equal(replies.length, 2, 'array contains correct number of replies')
-        result.forEach((r, i) => validateComment(t, r, replies[i]))
-        t.end()
+      .fold(e => {
+        expect.fail(e)
+        done(e)
+      }, result => {
+        expect(replies).to.be.a('array').of.length(2)
+        result.forEach((r, i) => validateComment(r, replies[i]))
+        done()
       })
   })
 })

@@ -1,10 +1,9 @@
-const test = require('tape')
+const { expect } = require('chai')
 const cheerio = require('cheerio')
 const moment = require('moment')
 
 const parseCommentThread = require('../../lib/parse-comment-thread')
 
-const isWithinRange = require('../is-within-range')
 const {
   sampleComment,
   COMMENT_ID,
@@ -17,28 +16,23 @@ const {
   REPLIES_TOKEN
 } = require('../sample-comment-html')
 
-const validateComment = (t, comment, exp) => {
-  t.equal(comment.id, exp.id, 'id is correct')
-  t.equal(comment.author, exp.author, 'author is correct')
-  t.equal(comment.authorLink, exp.authorLink, 'author link is correct')
-  t.equal(comment.authorThumb, exp.authorThumb, 'author thumb is correct')
-  t.equal(comment.text, exp.text, 'text is correct')
-  t.equal(comment.likes, exp.likes, 'comment likes is correct')
-  t.equal(comment.time, exp.time, 'time is correct is correct')
-  t.ok(isWithinRange(comment.timestamp, exp.timestamp, (60 * 1000)), 'timestamp is correct')
-
-  t.equal(comment.hasReplies, exp.hasReplies, 'hasReplies is correct')
-  t.equal(comment.numReplies, exp.numReplies, 'numReplies is correct')
-  t.equal(comment.repliesToken, exp.repliesToken, 'repliesToken is correct')
+const validateComment = (comment, exp) => {
+  expect(comment).to.have.property('id', exp.id)
+  expect(comment).to.have.property('author', exp.author)
+  expect(comment).to.have.property('authorLink', exp.authorLink)
+  expect(comment).to.have.property('authorThumb', exp.authorThumb)
+  expect(comment).to.have.property('text', exp.text)
+  expect(comment).to.have.property('likes', exp.likes)
+  expect(comment).to.have.property('time', exp.time)
+  expect(comment).to.have.property('timestamp').that.is.a('number').closeTo(exp.timestamp, (60 * 1000))
 }
 
-test('/lib/parse-comment-thread.js', t => {
-  t.test('- exports a function', t => {
-    t.equal(typeof parseCommentThread, 'function', 'is of type function')
-    t.end()
+describe('/lib/parse-comment-thread.js', () => {
+  it('- exports a function', () => {
+    expect(parseCommentThread).to.be.a('function')
   })
 
-  t.test('- parses a comment thread without replies', t => {
+  it('- parses a comment thread without replies', (done) => {
     const exp = {
       id: COMMENT_ID,
       author: COMMENT_AUTHOR,
@@ -47,19 +41,23 @@ test('/lib/parse-comment-thread.js', t => {
       text: COMMENT_TEXT,
       likes: COMMENT_LIKES,
       time: '3 months ago',
-      timestamp: moment().subtract(3, 'months').format('x'),
+      timestamp: parseInt(moment().subtract(3, 'months').format('x'), 10),
       hasReplies: false
     }
 
     const html = sampleComment(exp)
     parseCommentThread(cheerio(html))
-      .fold(t.fail, result => {
-        validateComment(t, result, exp)
-        t.end()
+      .fold(e => {
+        expect.fail(e)
+        done(e)
+      }, result => {
+        validateComment(result, exp)
+        expect(result).to.have.property('hasReplies', false)
+        done()
       })
   })
 
-  t.test('- parses comment with replies (non-collapsed)', t => {
+  it('- parses comment with replies (non-collapsed)', (done) => {
     const comment = {
       id: 'commentid',
       author: 'comment_author',
@@ -68,7 +66,7 @@ test('/lib/parse-comment-thread.js', t => {
       text: 'comment_text',
       likes: 3,
       time: '1 week ago',
-      timestamp: moment().subtract(1, 'week').format('x'),
+      timestamp: parseInt(moment().subtract(1, 'week').format('x'), 10),
       hasReplies: true,
       numReplies: 2
     }
@@ -82,7 +80,7 @@ test('/lib/parse-comment-thread.js', t => {
         text: 'reply1_text',
         likes: 10,
         time: '10 hours ago',
-        timestamp: moment().subtract(10, 'hours').format('x')
+        timestamp: parseInt(moment().subtract(10, 'hours').format('x'), 10)
       },
       {
         id: 'commentid.reply2id',
@@ -92,24 +90,26 @@ test('/lib/parse-comment-thread.js', t => {
         text: 'reply2_text',
         likes: 0,
         time: '2 minutes ago',
-        timestamp: moment().subtract(2, 'minutes').format('x')
+        timestamp: parseInt(moment().subtract(2, 'minutes').format('x'), 10)
       }
     ]
 
     const html = sampleComment(comment, replies)
 
     parseCommentThread(cheerio(html))
-      .fold(t.fail, result => {
-        validateComment(t, result, comment)
-
-        t.ok(typeof result.replies, 'object', 'result contains replies array')
-        t.equal(result.replies.length, 2, 'array contains correct number of replies')
-        result.replies.forEach((r, i) => validateComment(t, r, replies[i]))
-        t.end()
+      .fold(e => {
+        expect.fail(e)
+      }, result => {
+        validateComment(result, comment)
+        expect(result).to.have.property('hasReplies', true)
+        expect(result).to.have.property('numReplies', 2)
+        expect(result).to.have.property('replies').which.is.a('array').of.length(2)
+        result.replies.forEach((r, i) => validateComment(r, replies[i]))
+        done()
       })
   })
 
-  t.test('- parses comment replies information (collapsed comments)', t => {
+  it('- parses comment replies information (collapsed comments)', (done) => {
     const comment = {
       id: 'commentid',
       author: 'comment_author',
@@ -118,7 +118,7 @@ test('/lib/parse-comment-thread.js', t => {
       text: 'comment_text',
       likes: 3,
       time: '1 week ago',
-      timestamp: moment().subtract(1, 'week').format('x'),
+      timestamp: parseInt(moment().subtract(1, 'week').format('x'), 10),
       hasReplies: true,
       numReplies: 3,
       repliesToken: REPLIES_TOKEN
@@ -133,7 +133,7 @@ test('/lib/parse-comment-thread.js', t => {
         text: 'reply1_text',
         likes: 10,
         time: '10 hours ago',
-        timestamp: moment().subtract(10, 'hours').format('x')
+        timestamp: parseInt(moment().subtract(10, 'hours').format('x'), 10)
       },
       {
         id: 'commentid.reply2id',
@@ -143,7 +143,7 @@ test('/lib/parse-comment-thread.js', t => {
         text: 'reply2_text',
         likes: 0,
         time: '2 minutes ago',
-        timestamp: moment().subtract(2, 'minutes').format('x')
+        timestamp: parseInt(moment().subtract(2, 'minutes').format('x'), 10)
       },
       {
         id: 'commentid.reply3id',
@@ -153,22 +153,27 @@ test('/lib/parse-comment-thread.js', t => {
         text: 'reply3_text',
         likes: 0,
         time: '1 minute ago',
-        timestamp: moment().subtract(1, 'minute').format('x')
+        timestamp: parseInt(moment().subtract(1, 'minute').format('x'), 10)
       }
     ]
 
     const html = sampleComment(comment, replies)
 
     parseCommentThread(cheerio(html))
-      .fold(t.fail, result => {
-        validateComment(t, result, comment)
-        t.end()
+      .fold(e => {
+        expect.fail(e)
+        done(e)
+      }, result => {
+        validateComment(result, comment)
+        expect(result).to.have.property('hasReplies', true)
+        expect(result).to.have.property('numReplies', 3)
+        expect(result).to.not.have.property('replies')
+        done()
       })
   })
 
-  t.test('parses replies count for a single collapsed reply', t => {
+  it('parses replies count for a single collapsed reply', () => {
     // got error: Error: View reply does not contain a match for /^View (?:all\s)?(\d+)/i
-    t.fail('Error: View reply does not contain a match for /^View (?:all\s)?(\d+)/i')
-    t.end()
+    expect.fail('Error: View reply does not contain a match for /^View (?:all\s)?(\d+)/i')
   })
 })

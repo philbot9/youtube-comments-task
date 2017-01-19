@@ -1,40 +1,45 @@
-const test = require('tape')
+const { expect } = require('chai')
 const td = require('testdouble')
 const Task = require('data.task')
 const moment = require('moment')
 
-const isWithinRange = require('../is-within-range')
 const { sampleReplies } = require('../sample-comment-html')
 
-const validateComment = (t, comment, exp) => {
-  t.equal(comment.id, exp.id, 'id is correct')
-  t.equal(comment.author, exp.author, 'author is correct')
-  t.equal(comment.authorLink, exp.authorLink, 'author link is correct')
-  t.equal(comment.authorThumb, exp.authorThumb, 'author thumb is correct')
-  t.equal(comment.text, exp.text, 'text is correct')
-  t.equal(comment.likes, exp.likes, 'comment likes is correct')
-  t.equal(comment.time, exp.time, 'time is correct is correct')
-  t.ok(isWithinRange(comment.timestamp, exp.timestamp, (60 * 1000)), 'timestamp is correct')
+const validateComment = (comment, exp) => {
+  expect(comment).to.have.property('id', exp.id)
+  expect(comment).to.have.property('author', exp.author)
+  expect(comment).to.have.property('authorLink', exp.authorLink)
+  expect(comment).to.have.property('authorThumb', exp.authorThumb)
+  expect(comment).to.have.property('text', exp.text)
+  expect(comment).to.have.property('likes', exp.likes)
+  expect(comment).to.have.property('time', exp.time)
+  expect(comment).to.have.property('timestamp').that.is.a('number').closeTo(exp.timestamp, (60 * 1000))
 }
 
-test('/lib/fetch-first-page-token.js', t => {
-  t.test('- module exports a function', t => {
-    const fetchReplies = require('../../lib/fetch-replies')
-    t.equal(typeof fetchReplies, 'function', 'is of type function')
-    t.end()
+describe('/lib/fetch-first-page-token.js', () => {
+  afterEach(() => {
+    td.reset()
   })
 
-  t.test('- fails if comment does not have a repliesToken', t => {
+  it('- module exports a function', () => {
+    const fetchReplies = require('../../lib/fetch-replies')
+    expect(fetchReplies).to.be.a('function')
+  })
+
+  it('- fails if comment does not have a repliesToken', done => {
     const fetchReplies = require('../../lib/fetch-replies')
     fetchReplies('videoId', {stuff: 'here'})
       .fork(e => {
-        t.ok(e, 'fails with an error')
-        t.ok(/repliesToken/.test(e), 'error message is corrrect')
-        t.end()
-      }, t.fail)
+        expect(e).to.be.a('string')
+        expect(e).to.match(/repliesToken/)
+        done()
+      }, res => {
+        expect.fail(res)
+        done('expected not to succeed')
+      })
   })
 
-  t.test('- fetches replies for a comment', t => {
+  it('- fetches replies for a comment', done => {
     const videoId = 'videoId'
     const repliesToken = 'repliesToken'
 
@@ -47,7 +52,7 @@ test('/lib/fetch-first-page-token.js', t => {
         text: 'reply1_text',
         likes: 10,
         time: '10 hours ago',
-        timestamp: moment().subtract(10, 'hours').format('x')
+        timestamp: parseInt(moment().subtract(10, 'hours').format('x'), 10)
       },
       {
         id: 'commentid.reply2id',
@@ -57,7 +62,7 @@ test('/lib/fetch-first-page-token.js', t => {
         text: 'reply2_text',
         likes: 0,
         time: '2 minutes ago',
-        timestamp: moment().subtract(2, 'minutes').format('x')
+        timestamp: parseInt(moment().subtract(2, 'minutes').format('x'), 10)
       }
     ]
 
@@ -70,11 +75,13 @@ test('/lib/fetch-first-page-token.js', t => {
       }))
 
     fetchReplies(videoId, { repliesToken })
-      .fork(t.fail, result => {
-        t.equal(result.length, replies.length)
-        result.forEach((r, i) => validateComment(t, r, replies[i]))
-        td.reset()
-        t.end()
+      .fork(e => {
+        expect.fail(e)
+        done(e)
+      }, result => {
+        expect(result).to.be.an('array').of.length(2)
+        result.forEach((r, i) => validateComment(r, replies[i]))
+        done()
       })
   })
 })

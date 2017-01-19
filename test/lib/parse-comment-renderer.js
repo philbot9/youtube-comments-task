@@ -1,10 +1,9 @@
-const test = require('tape')
+const { expect } = require('chai')
 const cheerio = require('cheerio')
 const moment = require('moment')
 
 const parseCommentRenderer = require('../../lib/parse-comment-renderer')
 
-const isWithinRange = require('../is-within-range')
 const {
   sampleComment,
   COMMENT_ID,
@@ -17,13 +16,12 @@ const {
   REPLIES_TOKEN
 } = require('../sample-comment-html')
 
-test('/lib/parse-comment-renderer.js', t => {
-  t.test('- exports a function', t => {
-    t.equal(typeof parseCommentRenderer, 'function', 'is of type function')
-    t.end()
+describe('/lib/parse-comment-renderer.js', () => {
+  it('- exports a function', () => {
+    expect(parseCommentRenderer).to.be.a('function')
   })
 
-  t.test('- parses simple comment fields', t => {
+  it('- parses simple comment fields', done => {
     const exp = {
       id: COMMENT_ID,
       author: COMMENT_AUTHOR,
@@ -32,23 +30,26 @@ test('/lib/parse-comment-renderer.js', t => {
       text: COMMENT_TEXT,
       likes: COMMENT_LIKES,
       time: '3 months ago',
-      timestamp: moment().subtract(3, 'months').format('x')
+      timestamp: parseInt(moment().subtract(3, 'months').format('x'), 10)
     }
 
     const html = sampleComment(exp)
     const $commentRenderer = cheerio.load(html)('.comment-thread-renderer > .comment-renderer:nth-child(1)')
 
     parseCommentRenderer($commentRenderer)
-      .fold(t.fail, result => {
-        t.equal(result.id, exp.id, 'id is correct')
-        t.equal(result.author, exp.author, 'author is correct')
-        t.equal(result.authorLink, exp.authorLink, 'author link is correct')
-        t.equal(result.authorThumb, exp.authorThumb, 'author thumb is correct')
-        t.equal(result.text, exp.text, 'text is correct')
-        t.equal(result.likes, exp.likes, 'likes is correct')
-        t.equal(result.time, exp.time, 'time is correct is correct')
-        t.ok(isWithinRange(result.timestamp, exp.timestamp, (60 * 1000)), 'timestamp is correct')
-        t.end()
+      .fold(e => {
+        expect.fail(e)
+        done(e)
+      }, result => {
+        expect(result).to.have.property('id', exp.id)
+        expect(result).to.have.property('author', exp.author)
+        expect(result).to.have.property('authorLink', exp.authorLink)
+        expect(result).to.have.property('authorThumb', exp.authorThumb)
+        expect(result).to.have.property('text', exp.text)
+        expect(result).to.have.property('likes', exp.likes)
+        expect(result).to.have.property('time', exp.time)
+        expect(result).to.have.property('timestamp').that.is.a('number').closeTo(exp.timestamp, (60 * 1000))
+        done()
       })
   })
 })

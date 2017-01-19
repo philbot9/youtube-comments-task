@@ -1,22 +1,20 @@
-const test = require('tape')
+const { expect } = require('chai')
 const cheerio = require('cheerio')
 
 const tokenizeComments = require('../../lib/tokenize-comments')
 
-test('/lib/tokenize-comments.js', t => {
-  t.test('- exports a function', t => {
-    t.equal(typeof tokenizeComments, 'function', 'is of type function')
-    t.end()
+describe('/lib/tokenize-comments.js', () => {
+  it('- exports a function', () => {
+    expect(tokenizeComments).to.be.a('function')
   })
 
-  t.test("- returns an empty array if the html doesn't contain any comments", t => {
+  it("- returns an empty array if the html doesn't contain any comments", () => {
     const html = '<div><div class="no-comment">nope</div><div class="no-comment">hahaha</div></div>'
     const commentTokens = tokenizeComments(html)
-    t.deepEqual(commentTokens, [])
-    t.end()
+    expect(commentTokens).to.be.a('array').of.length(0)
   })
 
-  t.test('- returns an array of cheerio tokens', t => {
+  it('- returns an array of cheerio tokens', () => {
     const c1 = 'comment1'
     const r1 = 'reply1'
     const c2 = 'comment2'
@@ -39,17 +37,13 @@ test('/lib/tokenize-comments.js', t => {
     ].join('')
 
     const tokenizedComments = tokenizeComments(html)
-    t.ok(tokenizedComments, 'return value exists')
-    t.ok(Array.isArray(tokenizedComments), 'return value is an array')
-    t.equal(tokenizedComments.length, 2, 'found the right number of comments')
+    expect(tokenizedComments).to.be.a('array').of.length(2)
 
     const $comment1 = cheerio(tokenizedComments[0])
     const $comment2 = cheerio(tokenizedComments[1])
 
-    t.equal($comment1.find('.comment-thread-renderer > .comment-renderer').text(), c1, 'finds 1st comment')
-    t.equal($comment1.find('.comment-replies-renderer .comment-renderer').text(), r1, 'finds 1st reply')
-    t.equal($comment2.find('.comment-thread-renderer > .comment-renderer').text(), c2, 'finds 2nd comment')
-
-    t.end()
+    expect($comment1.find('.comment-thread-renderer > .comment-renderer').text()).to.equal(c1)
+    expect($comment1.find('.comment-replies-renderer .comment-renderer').text()).to.equal(r1)
+    expect($comment2.find('.comment-thread-renderer > .comment-renderer').text()).to.equal(c2)
   })
 })

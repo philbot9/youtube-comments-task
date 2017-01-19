@@ -1,12 +1,11 @@
-const test = require('tape')
-const Rx = require('rxjs')
+const { expect } = require('chai')
+const { Observable } = require('rxjs')
 
 const commentStream = require('../index')
 
-test('/index.js', t => {
-  t.test(' - returns an Rx Observable', t => {
+describe('/index.js', () => {
+  it(' - returns an Rx Observable', () => {
     const stream = commentStream('videoId')
-    t.ok(stream instanceof Rx.Observable, 'instance of Rx.Observable')
-    t.end()
+    expect(stream).to.be.an.instanceof(Observable)
   })
 })

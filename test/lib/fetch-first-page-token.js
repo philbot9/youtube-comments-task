@@ -1,4 +1,4 @@
-const test = require('tape')
+const { expect } = require('chai')
 const td = require('testdouble')
 const Task = require('data.task')
 

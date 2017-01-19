@@ -40,6 +40,7 @@
   },
   "homepage": "https://github.com/philbot9/rx-youtube-comments#readme",
   "dependencies": {
+    "chai": "^3.5.0",
     "cheerio": "^0.22.0",
     "control.monads": "^0.6.0",
     "core.lambda": "^1.0.0",
@@ -48,6 +49,7 @@
     "debug": "^2.2.0",
     "immutable": "^3.8.1",
     "immutable-ext": "^1.0.8",
+    "mocha": "^3.2.0",
     "moment": "^2.17.1",
     "promised-until": "^1.0.2",
     "propper": "^1.0.2",
