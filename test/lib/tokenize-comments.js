@@ -4,7 +4,7 @@ const cheerio = require('cheerio')
 const tokenizeComments = require('../../lib/tokenize-comments')
 
 describe('/lib/tokenize-comments.js', () => {
-  it('- exports a function', () => {
+  it('exports a function', () => {
     expect(tokenizeComments).to.be.a('function')
   })
 
@@ -14,7 +14,7 @@ describe('/lib/tokenize-comments.js', () => {
     expect(commentTokens).to.be.a('array').of.length(0)
   })
 
-  it('- returns an array of cheerio tokens', () => {
+  it('returns an array of cheerio tokens', () => {
     const c1 = 'comment1'
     const r1 = 'reply1'
     const c2 = 'comment2'

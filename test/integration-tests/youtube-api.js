@@ -1,57 +1,53 @@
-const test = require('tape')
+const { expect } = require('chai')
 const cheerio = require('cheerio')
 
 const fetchFirstPageToken = require('../../lib/fetch-first-page-token')
 const youtubeApi = require('../../lib/youtube-api/youtube-api')
 
-test('/lib/youtube-api', t => {
-  t.test('- fetches comment page', t => {
+describe('/lib/youtube-api', function () {
+  this.timeout(10000)
+
+  it('fetches a comment page', done => {
     const videoId = 'E9Fmewoe5L4'
     fetchFirstPageToken(videoId)
       .chain(token => youtubeApi.commentPage(videoId, token))
-      .fork(e => {
-        t.fail(e)
-        t.end()
-      }, p => {
-        t.ok(p.content_html, 'response has content_html field')
-        const $ = cheerio.load(p.content_html)
-        t.ok($('.comment-thread-renderer').length > 1, 'content_html has comment-thread-renderers')
-        t.ok($('.comment-renderer').length > 1, 'content_html has comment-renderers')
-        t.end()
-      })
+      .fork(e => done('got an error ' + e),
+            p => {
+              expect(p).to.have.property('content_html').that.is.a('string')
+              const $ = cheerio.load(p.content_html)
+              expect($('.comment-thread-renderer').length).to.be.above(1)
+              expect($('.comment-renderer').length).to.be.above(1)
+              done()
+            })
   })
 
-  t.test('- fetches comment replies', t => {
+  it('fetches comment replies', done => {
     const videoId = 'tVjv8I0BlU4'
     const repliesToken = 'EhYSC3RWanY4STBCbFU0wAEAyAEA4AEBGAYyWRpXEiN6MTJ1eGJjcm1wYWZ2anBxMjA0Y2dwcDQ1bm14anpxNGQxMCICCAAqGFVDWDFRcHRpZ2NzYkJ1YlZxdEIxSks3ZzILdFZqdjhJMEJsVTQ4AEABSPQD'
     youtubeApi.commentReplies(videoId, repliesToken)
-      .fork(e => {
-        t.fail(e)
-        t.end()
-      }, r => {
-        t.ok(r.content_html, 'response has content_html field')
-        const $ = cheerio.load(r.content_html)
-        t.ok($('.comment-renderer').length > 1, 'content_html has comment-renderers')
-        t.end()
-      })
+      .fork(e => done('got an error ' + e),
+            r => {
+              expect(r).to.have.property('content_html').that.is.a('string')
+              const $ = cheerio.load(r.content_html)
+              expect($('.comment-renderer').length).to.be.above(1)
+              done()
+            })
   })
 
-  t.test('- fetches comments watch fragment', t => {
+  it('fetches comments watch fragment', done => {
     const videoId = 'tVjv8I0BlU4'
     youtubeApi.commentsWatchFragment(videoId)
-      .fork(e => {
-        t.fail(e)
-        t.end()
-      }, res => {
-        t.ok(res.name, 'response contains name')
-        t.ok(res.body, 'response contains body')
-        t.ok(res.body['watch-discussion'], 'response contains body.watch-discussion')
-        t.ok(res.foot, 'response contains foot')
+      .fork(e => done('got an error ' + e),
+            r => {
+              expect(r).to.have.property('name').that.is.a('string')
+              expect(r).to.have.property('body').that.is.an('object')
+              expect(r.body).to.have.property('watch-discussion').that.is.a('string')
+              expect(r).to.have.property('foot').that.is.a('string')
 
-        const $ = cheerio.load(res.body['watch-discussion'])
-        t.ok($('.comment-thread-renderer').length > 1, 'body has comment-thread-renderers')
-        t.ok($('.comment-renderer').length > 1, 'body has comment-renderers')
-        t.end()
-      })
+              const $ = cheerio.load(r.body['watch-discussion'])
+              expect($('.comment-thread-renderer').length).to.be.above(1)
+              expect($('.comment-renderer').length).to.be.above(1)
+              done()
+            })
   })
 })

@@ -1,28 +1,26 @@
-const test = require('tape')
+const { expect } = require('chai')
 const Task = require('data.task')
 
 const request = require('../../../lib/utils/request')
 
-test('/lib/utils/request.js', t => {
-  t.test('- exports a function', t => {
-    t.equal(typeof request, 'function', 'is of type function')
-    t.end()
+describe('/lib/utils/request.js', () => {
+  it('exports a function', () => {
+    expect(request).to.be.a('function')
   })
 
-  t.test('- function returns a Task', t => {
-    t.ok(request() instanceof Task, 'is instance of Task')
-    t.end()
+  it('function returns a Task', () => {
+    expect(request()).to.be.instanceof(Task)
   })
 
-  t.test('- Task is rejected for invalid inputs', t => {
+  it('Task is rejected for invalid inputs', done => {
     request()
       .fork(e => {
-        t.ok(e, 'rejected with an error')
+        expect(e).to.exist
         request('http://nosuchdomain.fake')
           .fork(e => {
-            t.ok(e, 'rejected with an error')
-            t.end()
-          }, t.notOk)
-      }, t.notOk)
+            expect(e).to.exist
+            done()
+          }, r => done('expected task to fail'))
+      }, r => done('expected task to fail'))
   })
 })

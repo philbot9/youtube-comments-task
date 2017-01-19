@@ -20,7 +20,7 @@ const validateComment = (comment, exp) => {
 }
 
 describe('/lib/parse-replies.js', () => {
-  it('- parses replies', done => {
+  it('parses replies', done => {
     const replies = [
       {
         id: 'commentid.reply1id',

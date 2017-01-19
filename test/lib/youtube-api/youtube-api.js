@@ -1,23 +1,25 @@
-const test = require('tape')
+const { expect } = require('chai')
 const td = require('testdouble')
 const Task = require('data.task')
 
 const { buildWatchFragmentsUrl, buildCommentServiceUrl } = require('../../../lib/youtube-api/url-builder')
 
-test('/lib/youtube-api/youtube-api', t => {
-  t.test('- module exports an object', t => {
-    const Youtube = require('../../../lib/youtube-api/youtube-api')
-    t.equal(typeof Youtube, 'object', 'is of type object')
-    t.end()
+describe('/lib/youtube-api/youtube-api', () => {
+  afterEach(() => {
+    td.reset()
   })
 
-  t.test('- commentPage is a function on the object', t => {
+  it('module exports an object', () => {
     const Youtube = require('../../../lib/youtube-api/youtube-api')
-    t.equal(typeof Youtube.commentPage, 'function', 'is of type function')
-    t.end()
+    expect(Youtube).to.be.a('object')
   })
 
-  t.test('- commentPage fetches comment page', t => {
+  it('commentPage is a function on the object', () => {
+    const Youtube = require('../../../lib/youtube-api/youtube-api')
+    expect(Youtube).to.have.property('commentPage').that.is.a('function')
+  })
+
+  it('commentPage fetches comment page', done => {
     const videoId = 'videoId'
     const pageToken = 'pageToken'
     const url = buildCommentServiceUrl('action_get_comments')
@@ -46,15 +48,14 @@ test('/lib/youtube-api/youtube-api', t => {
       .thenReturn(Task.of(session))
 
     Youtube.commentPage(videoId, pageToken)
-      .fork(t.fail,
+      .fork(e => done('got error ' + e),
             res => {
-              t.deepEqual(res, apiResponse)
-              td.reset()
-              t.end()
+              expect(res).to.deep.equal(apiResponse)
+              done()
             })
   })
 
-  t.test('- commentPage will re-fetch if first attempt fails', t => {
+  it('commentPage will re-fetch if first attempt fails', done => {
     const videoId = 'videoId'
     const pageToken = 'pageToken'
     const url = buildCommentServiceUrl('action_get_comments')
@@ -82,24 +83,20 @@ test('/lib/youtube-api/youtube-api', t => {
     td.when(getSession(videoId))
       .thenReturn(Task.of(session))
 
-    t.plan(1)
-
     Youtube.commentPage(videoId, pageToken)
-      .fork(t.fail,
+      .fork(e => done('got error ' + e),
             res => {
-              t.deepEqual(res, apiResponse)
-              td.reset()
-              t.end()
+              expect(res).to.deep.equal(apiResponse)
+              done()
             })
   })
 
-  t.test('- commentReplies is a function on the object', t => {
+  it('commentReplies is a function on the object', () => {
     const Youtube = require('../../../lib/youtube-api/youtube-api')
-    t.equal(typeof Youtube.commentReplies, 'function', 'is of type function')
-    t.end()
+    expect(Youtube).to.have.property('commentReplies').that.is.a('function')
   })
 
-  t.test('- commentReplies fetches comment replies', t => {
+  it('commentReplies fetches comment replies', done => {
     const videoId = 'videoId'
     const repliesToken = 'repliesToken'
     const url = buildCommentServiceUrl('action_get_comment_replies')
@@ -128,15 +125,14 @@ test('/lib/youtube-api/youtube-api', t => {
       .thenReturn(Task.of(session))
 
     Youtube.commentReplies(videoId, repliesToken)
-      .fork(t.fail,
+      .fork(e => done('got an error ' + e),
             res => {
-              t.deepEqual(res, apiResponse)
-              td.reset()
-              t.end()
+              expect(res).to.deep.equal(apiResponse)
+              done()
             })
   })
 
-  t.test('- commentReplies will re-fetch if first attempt fails', t => {
+  it('commentReplies will re-fetch if first attempt fails', done => {
     const videoId = 'videoId'
     const repliesToken = 'repliesToken'
     const url = buildCommentServiceUrl('action_get_comment_replies')
@@ -164,24 +160,20 @@ test('/lib/youtube-api/youtube-api', t => {
     td.when(getSession(videoId))
       .thenReturn(Task.of(session))
 
-    t.plan(1)
-
     Youtube.commentReplies(videoId, repliesToken)
-      .fork(t.fail,
+      .fork(e => done('got an error ' + e),
             res => {
-              t.deepEqual(res, apiResponse)
-              td.reset()
-              t.end()
+              expect(res).to.deep.equal(apiResponse)
+              done()
             })
   })
 
-  t.test('- commentsWatchFragment is a function on the object', t => {
+  it('commentsWatchFragment is a function on the object', () => {
     const Youtube = require('../../../lib/youtube-api/youtube-api')
-    t.equal(typeof Youtube.commentsWatchFragment, 'function', 'is of type function')
-    t.end()
+    expect(Youtube).to.have.property('commentsWatchFragment').that.is.a('function')
   })
 
-  t.test('- commentsWatchFragment fetches comments watch fragment', t => {
+  it('commentsWatchFragment fetches comments watch fragment', done => {
     const videoId = 'videoId'
     const session = {sessionToken: 'sess', commentsToken: 'comm'}
     const url = buildWatchFragmentsUrl(videoId, session, ['comments'])
@@ -207,18 +199,15 @@ test('/lib/youtube-api/youtube-api', t => {
     td.when(getSession(videoId))
       .thenReturn(Task.of(session))
 
-    t.plan(1)
-
     Youtube.commentsWatchFragment(videoId, session, request)
-        .fork(t.fail,
+        .fork(e => done('got an error ' + e),
               res => {
-                t.deepEqual(res, apiResponse)
-                td.reset()
-                t.end()
+                expect(res).to.deep.equal(apiResponse)
+                done()
               })
   })
 
-  t.test('- commentsWatchFragment re-fetches if fetch fails', t => {
+  it('commentsWatchFragment re-fetches if fetch fails', done => {
     const videoId = 'videoId'
     const session = {sessionToken: 'sess', commentsToken: 'comm'}
     const url = buildWatchFragmentsUrl(videoId, session, ['comments'])
@@ -244,14 +233,11 @@ test('/lib/youtube-api/youtube-api', t => {
     td.when(getSession(videoId))
       .thenReturn(Task.of(session))
 
-    t.plan(1)
-
     Youtube.commentsWatchFragment(videoId, session, request)
-        .fork(t.fail,
+        .fork(e => done('got an error ' + e),
               res => {
-                t.deepEqual(res, apiResponse)
-                td.reset()
-                t.end()
+                expect(res).to.deep.equal(apiResponse)
+                done()
               })
   })
 })

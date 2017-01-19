@@ -17,11 +17,11 @@ const {
 } = require('../sample-comment-html')
 
 describe('/lib/parse-comment-renderer.js', () => {
-  it('- exports a function', () => {
+  it('exports a function', () => {
     expect(parseCommentRenderer).to.be.a('function')
   })
 
-  it('- parses simple comment fields', done => {
+  it('parses simple comment fields', done => {
     const exp = {
       id: COMMENT_ID,
       author: COMMENT_AUTHOR,

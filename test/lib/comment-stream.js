@@ -1,11 +1,15 @@
-const test = require('tape')
+const { expect } = require('chai')
 const td = require('testdouble')
 const { Observable } = require('rxjs')
 const Either = require('data.either')
 const Task = require('data.task')
 
-test('/lib/comment-stream', t => {
-  t.test('- returns an observable', t => {
+describe('/lib/comment-stream', () => {
+  afterEach(() => {
+    td.reset()
+  })
+
+  it('returns an observable', () => {
     const videoId = 'videoId'
 
     const buildCommentPageStream = td.replace('../../lib/comment-page-stream')
@@ -15,14 +19,10 @@ test('/lib/comment-stream', t => {
       .thenReturn(Observable.empty())
 
     const comments$ = buildCommentStream(videoId)
-    t.ok(comments$)
-    t.ok(comments$ instanceof Observable, 'is instance of observable')
-
-    td.reset()
-    t.end()
+    expect(comments$).to.be.instanceof(Observable)
   })
 
-  t.test('- streams comments on one page', t => {
+  it('streams comments on one page', done => {
     const videoId = 'videoId'
     const commentPage = '<div>page1</div>'
     const commentPageTokens = ['token1', 'token2', 'token3']
@@ -53,28 +53,24 @@ test('/lib/comment-stream', t => {
     td.when(fetchReplies(videoId, comments[1]))
       .thenReturn(Task.of(c2Replies))
 
-    t.plan(4)
-
     const results = []
     buildCommentStream(videoId)
       .subscribe({
         next: c => results.push(c),
         error: e => {
-          t.fail(e)
-          t.end()
+          done('Got error: ' + e)
         },
         complete: () => {
-          t.equal(results.length, 3, 'correct number of comments')
-          t.deepEqual(results[0], comments[0])
-          t.deepEqual(results[1], Object.assign({}, comments[1], {replies: c2Replies}))
-          t.deepEqual(results[2], comments[2])
-          td.reset()
-          t.end()
+          expect(results).to.be.a('array').of.length(3)
+          expect(results[0]).to.deep.equal(comments[0])
+          expect(results[1]).to.deep.equal(Object.assign({}, comments[1], {replies: c2Replies}))
+          expect(results[2]).to.deep.equal(comments[2])
+          done()
         }
       })
   })
 
-  t.test('- streams comments on multiple pages', t => {
+  it('streams comments on multiple pages', done => {
     const videoId = 'videoId'
     const commentPages = [
       '<div>page1</div>',
@@ -117,25 +113,19 @@ test('/lib/comment-stream', t => {
     td.when(fetchReplies(videoId, comments[4]))
       .thenReturn(Task.of(c5Replies))
 
-    t.plan(6)
-
     const results = []
     buildCommentStream(videoId)
       .subscribe({
         next: c => results.push(c),
-        error: e => {
-          t.fail(e)
-          t.end()
-        },
+        error: e => done('Got an error ' + e),
         complete: () => {
-          t.equal(results.length, 5, 'correct number of comments')
-          t.deepEqual(results[0], comments[0])
-          t.deepEqual(results[1], Object.assign({}, comments[1], {replies: c2Replies}))
-          t.deepEqual(results[2], comments[2])
-          t.deepEqual(results[3], comments[3])
-          t.deepEqual(results[4], Object.assign({}, comments[4], {replies: c5Replies}))
-          td.reset()
-          t.end()
+          expect(results).to.be.an('array').of.length(5)
+          expect(results[0]).to.deep.equal(comments[0])
+          expect(results[1]).to.deep.equal(Object.assign({}, comments[1], {replies: c2Replies}))
+          expect(results[2]).to.deep.equal(comments[2])
+          expect(results[3]).to.deep.equal(comments[3])
+          expect(results[4]).to.deep.equal(Object.assign({}, comments[4], {replies: c5Replies}))
+          done()
         }
       })
   })

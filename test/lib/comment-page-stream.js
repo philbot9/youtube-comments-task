@@ -1,4 +1,4 @@
-const test = require('tape')
+const { expect } = require('chai')
 const td = require('testdouble')
 const Rx = require('rxjs')
 const Task = require('data.task')
@@ -12,14 +12,17 @@ const loadMoreWidgetHtml = pageToken =>
       btn
   </button>`
 
-test('/lib/comment-page-stream.js', t => {
-  t.test('- exports a function', t => {
-    const buildCommentPageStream = require('../../lib/comment-page-stream')
-    t.equal(typeof buildCommentPageStream, 'function', 'is of type function')
-    t.end()
+describe('/lib/comment-page-stream.js', () => {
+  afterEach(() => {
+    td.reset()
   })
 
-  t.test('- builds a comment page stream', t => {
+  it('exports a function', () => {
+    const buildCommentPageStream = require('../../lib/comment-page-stream')
+    expect(buildCommentPageStream).to.be.a('function')
+  })
+
+  it('builds a comment page stream', done => {
     const videoId = 'videoId'
     const pageTokens = ['token1']
 
@@ -38,19 +41,18 @@ test('/lib/comment-page-stream.js', t => {
     const results = []
     const stream = buildCommentPageStream(videoId)
 
-    t.ok(stream instanceof Rx.Observable, 'is an observable')
+    expect(stream).to.be.instanceof(Rx.Observable)
     stream.subscribe({
       next: v => results.push(v),
-      error: e => t.fail(`stream error ${e}`),
+      error: e => done(`stream error ${e}`),
       complete: () => {
-        t.deepEqual(results, [contentHtml(1)])
-        td.reset()
-        t.end()
+        expect(results).to.deep.equal([contentHtml(1)])
+        done()
       }
     })
   })
 
-  t.test('- comment page stream emits multiple pages', t => {
+  it('comment page stream emits multiple pages', done => {
     const videoId = 'videoId'
     const pageTokens = ['token1', 'token2', 'token3']
 
@@ -82,16 +84,15 @@ test('/lib/comment-page-stream.js', t => {
     buildCommentPageStream(videoId)
       .subscribe({
         next: v => results.push(v),
-        error: e => t.fail(`stream error ${e}`),
+        error: e => done(`stream error ${e}`),
         complete: () => {
-          t.deepEqual(results, expected)
-          td.reset()
-          t.end()
+          expect(results).to.deep.equal(expected)
+          done()
         }
       })
   })
 
-  t.test('- stream emits error if fetchFirstPageToken fails', t => {
+  it('stream emits error if fetchFirstPageToken fails', done => {
     const videoId = 'videoId'
     const errorMessage = 'errrrrr'
 
@@ -104,17 +105,16 @@ test('/lib/comment-page-stream.js', t => {
 
     buildCommentPageStream(videoId)
       .subscribe({
-        next: _ => t.fail('stream should not emit anything'),
+        next: _ => done('stream should not emit anything'),
         error: e => {
-          t.equal(e, errorMessage, 'stream emits correct error')
-          td.reset()
-          t.end()
+          expect(e).to.equal(errorMessage)
+          done()
         },
-        complete: _ => t.fail('stream should not complete')
+        complete: _ => done('stream should not complete')
       })
   })
 
-  t.test('- stream emits error if fetching commentPage fails', t => {
+  it('stream emits error if fetching commentPage fails', done => {
     const videoId = 'videoId'
     const pageTokens = ['token1']
     const errMsg = 'errrr'
@@ -131,17 +131,16 @@ test('/lib/comment-page-stream.js', t => {
 
     buildCommentPageStream(videoId)
       .subscribe({
-        next: _ => t.fail('stream should not emit anything'),
+        next: _ => done('stream should not emit anything'),
         error: e => {
-          t.equal(e, errMsg, 'stream emits correct error')
-          td.reset()
-          t.end()
+          expect(e).to.equal(errMsg)
+          done()
         },
-        complete: _ => t.fail('stream should not complete')
+        complete: _ => done('stream should not complete')
       })
   })
 
-  t.test('- stream emits error if fetch commentPage returns invalid response', t => {
+  it('stream emits error if fetch commentPage returns invalid response', done => {
     const videoId = 'videoId'
     const pageTokens = ['token1']
 
@@ -157,17 +156,16 @@ test('/lib/comment-page-stream.js', t => {
 
     buildCommentPageStream(videoId)
       .subscribe({
-        next: _ => t.fail('stream should not emit anything'),
+        next: _ => done('stream should not emit anything'),
         error: e => {
-          t.ok(/API response/i.test(e), 'stream emits correct error')
-          td.reset()
-          t.end()
+          expect(e).to.match(/API response/i)
+          done()
         },
-        complete: _ => t.fail('stream should not complete')
+        complete: _ => done('stream should not complete')
       })
   })
 
-  t.test('- stream emits error if load_more_widget_html does not contain a load more button', t => {
+  it('stream emits error if load_more_widget_html does not contain a load more button', done => {
     const videoId = 'videoId'
     const pageTokens = ['token1']
 
@@ -188,13 +186,12 @@ test('/lib/comment-page-stream.js', t => {
 
     buildCommentPageStream(videoId)
       .subscribe({
-        next: p => t.equal(p, contentHtml(0), 'emits comment page'),
+        next: p => expect(p).to.equal(contentHtml(0)),
         error: e => {
-          t.ok(/does not contain a match/i.test(e), 'stream emits correct error')
-          td.reset()
-          t.end()
+          expect(e).to.match(/does not contain a match/i)
+          done()
         },
-        complete: _ => t.fail('stream should not complete')
+        complete: _ => done('stream should not complete')
       })
   })
 })

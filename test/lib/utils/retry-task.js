@@ -1,16 +1,19 @@
-const test = require('tape')
+const { expect } = require('chai')
 const td = require('testdouble')
 const Task = require('data.task')
 
 const retry = require('../../../lib/utils/retry-task')
 
-test('/lib/utils/retry-task.js', t => {
-  t.test('- exports a function', t => {
-    t.equal(typeof retry, 'function', 'is of type function')
-    t.end()
+describe('/lib/utils/retry-task.js', () => {
+  afterEach(() => {
+    td.reset()
   })
 
-  t.test('- task resolves if fn succeeds immediately', t => {
+  it('exports a function', () => {
+    expect(retry).to.be.a('function')
+  })
+
+  it('task resolves if fn succeeds immediately', done => {
     const retryTwice = retry(2)
     const value = 'the value'
     const fn = td.function('fn')
@@ -19,14 +22,14 @@ test('/lib/utils/retry-task.js', t => {
 
     retryTwice(fn)
       .fork(
-        t.notOk,
+        e => done('got an error ' + e),
         res => {
-          t.equal(value, res, 'result is correct')
-          t.end()
+          expect(res).to.equal(value)
+          done()
         })
   })
 
-  t.test('- retry if fn fails', t => {
+  it('retry if fn fails', done => {
     const retryThrice = retry(3)
     const errMsg = 'the error'
     const value = 'the value'
@@ -36,14 +39,14 @@ test('/lib/utils/retry-task.js', t => {
 
     retryThrice(fn)
       .fork(
-        t.notOk,
+        e => done('got an error ' + e),
         res => {
-          t.equal(res, value, 'result is correct')
-          t.end()
+          expect(res).to.equal(value)
+          done()
         })
   })
 
-  t.test('- task is rejected if number of retries is exceeded', t => {
+  it('task is rejected if number of retries is exceeded', done => {
     const retryTwice = retry(2)
     const errMsg = 'the error'
     const value = 'value'
@@ -58,10 +61,10 @@ test('/lib/utils/retry-task.js', t => {
     retryTwice(fn)
       .fork(
         e => {
-          t.equal(errMsg, e, 'error message is correct')
-          t.end()
+          expect(e).to.equal(errMsg)
+          done()
         },
-        t.notOk
+        res => done('expected task to be rejected')
     )
   })
 })

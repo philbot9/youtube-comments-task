@@ -1,27 +1,25 @@
-const test = require('tape')
+const { expect } = require('chai')
 const cheerio = require('cheerio')
 
 const buildCommentPageStream = require('../../lib/comment-page-stream')
 
-test('/lib/comment-page-stream', t => {
-  t.test('- fetches comment pages', t => {
+describe('/lib/comment-page-stream', function () {
+  this.timeout(10000)
+  it('fetches comment pages', function (done) {
     const results = []
     buildCommentPageStream('9bZkp7q19f0')
       .take(3)
       .subscribe({
         next: p => results.push(p),
-        error: e => {
-          t.fail(e)
-          t.end()
-        },
+        error: e => done('got an error ' + e),
         complete: () => {
-          t.equal(results.length, 3)
+          expect(results).to.be.an('array').of.length(3)
           results.forEach(html => {
             const $ = cheerio.load(html)
-            t.ok($('.comment-thread-renderer').length > 1, 'page has comment-thread-renderers')
-            t.ok($('.comment-renderer').length > 1, 'page has comment-renderers')
+            expect($('.comment-thread-renderer').length).to.be.above(1)
+            expect($('.comment-renderer').length).to.be.above(1)
           })
-          t.end()
+          done()
         }
       })
   })

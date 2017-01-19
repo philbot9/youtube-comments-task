@@ -28,11 +28,11 @@ const validateComment = (comment, exp) => {
 }
 
 describe('/lib/parse-comment-thread.js', () => {
-  it('- exports a function', () => {
+  it('exports a function', () => {
     expect(parseCommentThread).to.be.a('function')
   })
 
-  it('- parses a comment thread without replies', (done) => {
+  it('parses a comment thread without replies', (done) => {
     const exp = {
       id: COMMENT_ID,
       author: COMMENT_AUTHOR,
@@ -57,7 +57,7 @@ describe('/lib/parse-comment-thread.js', () => {
       })
   })
 
-  it('- parses comment with replies (non-collapsed)', (done) => {
+  it('parses comment with replies (non-collapsed)', (done) => {
     const comment = {
       id: 'commentid',
       author: 'comment_author',
@@ -109,7 +109,7 @@ describe('/lib/parse-comment-thread.js', () => {
       })
   })
 
-  it('- parses comment replies information (collapsed comments)', (done) => {
+  it('parses comment replies information (collapsed comments)', (done) => {
     const comment = {
       id: 'commentid',
       author: 'comment_author',

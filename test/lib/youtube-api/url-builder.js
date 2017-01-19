@@ -1,4 +1,4 @@
-const test = require('tape')
+const { expect } = require('chai')
 const nodeUrl = require('url')
 
 const {
@@ -10,77 +10,72 @@ const {
   buildCommentServiceUrl
 } = require('../../../lib/youtube-api/url-builder')
 
-test('/lib/youtube-api/url-build.js', t => {
-  t.test('- exports buildVideoPageUrl() function', t => {
-    t.ok(buildVideoPageUrl, 'exports buildVideoPageUrl')
-    t.equal(typeof buildVideoPageUrl, 'function', 'is of type function')
-    t.end()
+describe('/lib/youtube-api/url-build.js', () => {
+  it('exports buildVideoPageUrl() function', () => {
+    expect(buildVideoPageUrl).to.be.a('function')
   })
 
-  t.test('- exports buildWatchFragmentsUrl() function', t => {
-    t.ok(buildWatchFragmentsUrl, 'exports buildWatchFragmentsUrl')
-    t.equal(typeof buildWatchFragmentsUrl, 'function', 'is of type function')
-    t.end()
+  it('exports buildWatchFragmentsUrl() function', () => {
+    expect(buildWatchFragmentsUrl).to.be.a('function')
   })
 
-  t.test('- buildVideoPageUrl() builds a video page url', t => {
+  it('exports a buildCommentServiceUrl() function', () => {
+    expect(buildCommentServiceUrl).to.be.a('function')
+  })
+
+  it('buildVideoPageUrl() builds a video page url', () => {
     const videoId = 'K23jKl24k'
     const urlStr = buildVideoPageUrl(videoId)
 
-    t.ok(urlStr.indexOf(`${VIDEO_PAGE_URL}?`) === 0, 'starts with correct base url')
+    expect(urlStr.indexOf(`${VIDEO_PAGE_URL}?`)).to.equal(0)
 
     const url = nodeUrl.parse(urlStr, true)
-    t.ok(url, 'url parsed successfully')
-    t.deepEqual(url.query, {v: videoId}, 'query contains correct values')
-    t.end()
+    expect(url.query).to.deep.equal({v: videoId})
   })
 
-  t.test('- buildWatchFragmentsUrl() builds a watch fragments url', t => {
+  it('buildWatchFragmentsUrl() builds a watch fragments url', () => {
     const videoId = 'K23jKl24k'
     const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
     const session = { commentsToken}
     const fragments = ['comments', 'andmore']
 
     const urlStr = buildWatchFragmentsUrl(videoId, session, fragments)
-    t.ok(urlStr.indexOf(`${WATCH_FRAGMENTS_URL}?`) === 0, 'starts with correct base url')
+    expect(urlStr.indexOf(`${WATCH_FRAGMENTS_URL}?`)).to.equal(0)
 
     const url = nodeUrl.parse(urlStr, true)
-    t.deepEqual(url.query, {
+    expect(url.query).to.deep.equal({
       v: videoId,
       ctoken: commentsToken,
       frags: fragments.join(','),
       tr: 'time',
       distiller: '1',
       spf: 'load'
-    }, 'query contains correct values')
-    t.end()
+    })
   })
 
-  t.test('- buildWatchFragmentsUrl() uses default fragment if not given', t => {
+  it('buildWatchFragmentsUrl() uses default fragment if not given', () => {
     const videoId = 'K23jKl24k'
     const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
     const session = { commentsToken }
     const defaultFragment = 'comments'
 
     const urlStr = buildWatchFragmentsUrl(videoId, session)
-    t.ok(urlStr.indexOf(`${WATCH_FRAGMENTS_URL}?`) === 0, 'starts with correct base url')
+    expect(urlStr.indexOf(`${WATCH_FRAGMENTS_URL}?`)).to.equal(0)
 
     const url = nodeUrl.parse(urlStr, true)
-    t.deepEqual(url.query, {
+    expect(url.query).to.deep.equal({
       v: videoId,
       ctoken: commentsToken,
       frags: defaultFragment,
       tr: 'time',
       distiller: '1',
       spf: 'load'
-    }, 'query contains correct values')
-    t.end()
+    })
   })
 
-  t.test('- buildCommentServiceUrl() builds a comment service url', t => {
+  it('buildCommentServiceUrl() builds a comment service url', () => {
     const action = 'action_get_comments'
     const exp = `${COMMENT_SERVICE_URL}?${action}=1`
-    t.equal(buildCommentServiceUrl(action), exp, 'url is correct')
-    t.end()
+    expect(buildCommentServiceUrl(action)).to.equal(exp)
   })
 })

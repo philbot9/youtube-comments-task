@@ -21,12 +21,12 @@ describe('/lib/fetch-first-page-token.js', () => {
     td.reset()
   })
 
-  it('- module exports a function', () => {
+  it('module exports a function', () => {
     const fetchReplies = require('../../lib/fetch-replies')
     expect(fetchReplies).to.be.a('function')
   })
 
-  it('- fails if comment does not have a repliesToken', done => {
+  it('fails if comment does not have a repliesToken', done => {
     const fetchReplies = require('../../lib/fetch-replies')
     fetchReplies('videoId', {stuff: 'here'})
       .fork(e => {
@@ -39,7 +39,7 @@ describe('/lib/fetch-first-page-token.js', () => {
       })
   })
 
-  it('- fetches replies for a comment', done => {
+  it('fetches replies for a comment', done => {
     const videoId = 'videoId'
     const repliesToken = 'repliesToken'
 

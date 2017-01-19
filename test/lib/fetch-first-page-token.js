@@ -2,14 +2,17 @@ const { expect } = require('chai')
 const td = require('testdouble')
 const Task = require('data.task')
 
-test('/lib/fetch-first-page-token.js', t => {
-  t.test('- module exports a function', t => {
-    const fetchFirstPageToken = require('../../lib/fetch-first-page-token')
-    t.equal(typeof fetchFirstPageToken, 'function', 'is of type function')
-    t.end()
+describe('/lib/fetch-first-page-token.js', () => {
+  afterEach(() => {
+    td.reset()
   })
 
-  t.test('- fetches the first page token', t => {
+  it('module exports a function', () => {
+    const fetchFirstPageToken = require('../../lib/fetch-first-page-token')
+    expect(fetchFirstPageToken).to.be.a('function')
+  })
+
+  it('fetches the first page token', done => {
     const videoId = 'videoId'
     const pageToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAYyESIPIgsyYTRVeGR5OVRRWTAB'
     const html = [
@@ -32,15 +35,16 @@ test('/lib/fetch-first-page-token.js', t => {
       .thenReturn(Task.of({body: {'watch-discussion': html}}))
 
     fetchFirstPageToken(videoId)
-      .fork(t.fail,
-            res => {
-              t.equal(res, pageToken)
-              td.reset()
-              t.end()
-            })
+      .fork(e => {
+        expect.fail(e)
+        done(e)
+      }, res => {
+        expect(res).to.equal(pageToken)
+        done()
+      })
   })
 
-  t.test('- task fails if API request fails', t => {
+  it('task fails if API request fails', done => {
     const videoId = 'videoId'
     const errMessage = 'API request failed'
 
@@ -52,13 +56,12 @@ test('/lib/fetch-first-page-token.js', t => {
 
     fetchFirstPageToken(videoId)
       .fork(e => {
-        t.equal(e, errMessage)
-        td.reset()
-        t.end()
-      }, t.fail)
+        expect(e).to.equal(errMessage)
+        done()
+      }, res => done('expected to fail'))
   })
 
-  t.test('- task fails if API response is invalid', t => {
+  it('task fails if API response is invalid', done => {
     const videoId = 'videoId'
     const errMessage = 'API request failed'
 
@@ -70,13 +73,13 @@ test('/lib/fetch-first-page-token.js', t => {
 
     fetchFirstPageToken(videoId)
       .fork(e => {
-        t.ok(/invalid api response/i.test(e), 'correct error')
-        td.reset()
-        t.end()
-      }, t.fail)
+        expect(e).to.be.a('string')
+        expect(e).to.match(/invalid api response/i)
+        done()
+      }, res => done('expected to fail'))
   })
 
-  t.test('- task fails if the page token cannot be found', t => {
+  it('task fails if the page token cannot be found', done => {
     const videoId = 'videoId'
     const html = '<html>Some random HTML</html>'
 
@@ -88,9 +91,8 @@ test('/lib/fetch-first-page-token.js', t => {
 
     fetchFirstPageToken(videoId)
       .fork(e => {
-        t.ok(e, 'error exists')
-        td.reset()
-        t.end()
-      }, t.fail)
+        expect(e).to.be.a('string')
+        done()
+      }, res => done('expected to fail'))
   })
 })
