@@ -1,2 +1,1 @@
-const buildCommentStream = require('./lib/comment-stream')
-module.exports = buildCommentStream
+module.exports = require('./lib/fetch-comments')
