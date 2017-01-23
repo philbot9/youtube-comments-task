@@ -1,7 +1,7 @@
 {
   "name": "youtube-comments-task",
   "version": "0.0.1",
-  "description": "Scrape YouTube Video comments",
+  "description": "Scrape comments from YouTube Videos.",
   "main": "index.js",
   "engines": {
     "node": ">=6.0"
