@@ -1,8 +1,11 @@
 {
-  "name": "rx-youtube-comments",
+  "name": "youtube-comments-task",
   "version": "0.0.1",
-  "description": "",
-  "main": "lib/index.js",
+  "description": "Scrape YouTube Video comments",
+  "main": "index.js",
+  "engines": {
+    "node": ">=5.0"
+  },
   "watch": {
     "unit-test": {
       "patterns": [
@@ -23,22 +26,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/philbot9/rx-youtube-comments.git"
+    "url": "git+https://github.com/philbot9/youtube-comments-task.git"
   },
   "keywords": [
     "youtube",
-    "comments",
-    "stream",
-    "rx",
-    "rxjs",
-    "reactive"
+    "comment",
+    "scraper",
+    "task",
+    "functional"
   ],
   "author": "Philip Klostermann <philip.klostermann@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/philbot9/rx-youtube-comments/issues"
+    "url": "https://github.com/philbot9/youtube-comments-task/issues"
   },
-  "homepage": "https://github.com/philbot9/rx-youtube-comments#readme",
+  "homepage": "https://github.com/philbot9/youtube-comments-task#readme",
   "dependencies": {
     "cheerio": "^0.22.0",
     "control.monads": "^0.6.0",
@@ -50,10 +52,8 @@
     "immutable-ext": "^1.0.8",
     "lodash.omit": "^4.5.0",
     "moment": "^2.17.1",
-    "promised-until": "^1.0.2",
     "propper": "^1.0.2",
-    "request": "^2.74.0",
-    "rxjs": "^5.0.3"
+    "request": "^2.74.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",
