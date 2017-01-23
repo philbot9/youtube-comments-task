@@ -8,10 +8,10 @@ describe('/lib/youtube-api', function () {
   this.timeout(10000)
 
   it('fetches a comment page', done => {
-    const videoId = 'E9Fmewoe5L4'
+    const videoId = 'pvAsqPbz9Ro'
     fetchFirstPageToken(videoId)
       .chain(token => youtubeApi.commentPage(videoId, token))
-      .fork(e => done('got an error ' + e),
+      .fork(e => done('got an error ' + e.substr(0, 100)),
             p => {
               expect(p).to.have.property('content_html').that.is.a('string')
               const $ = cheerio.load(p.content_html)
@@ -22,10 +22,10 @@ describe('/lib/youtube-api', function () {
   })
 
   it('fetches comment replies', done => {
-    const videoId = 'tVjv8I0BlU4'
+    const videoId = 'pvAsqPbz9Ro'
     const repliesToken = 'EhYSC3RWanY4STBCbFU0wAEAyAEA4AEBGAYyWRpXEiN6MTJ1eGJjcm1wYWZ2anBxMjA0Y2dwcDQ1bm14anpxNGQxMCICCAAqGFVDWDFRcHRpZ2NzYkJ1YlZxdEIxSks3ZzILdFZqdjhJMEJsVTQ4AEABSPQD'
     youtubeApi.commentReplies(videoId, repliesToken)
-      .fork(e => done('got an error ' + e),
+      .fork(e => done('got an error ' + e.substr(0, 100)),
             r => {
               expect(r).to.have.property('content_html').that.is.a('string')
               const $ = cheerio.load(r.content_html)
@@ -35,9 +35,9 @@ describe('/lib/youtube-api', function () {
   })
 
   it('fetches comments watch fragment', done => {
-    const videoId = 'tVjv8I0BlU4'
+    const videoId = 'pvAsqPbz9Ro'
     youtubeApi.commentsWatchFragment(videoId)
-      .fork(e => done('got an error ' + e),
+      .fork(e => done('got an error ' + e.substr(0, 100)),
             r => {
               expect(r).to.have.property('name').that.is.a('string')
               expect(r).to.have.property('body').that.is.an('object')
