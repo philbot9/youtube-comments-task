@@ -4,7 +4,7 @@
   "description": "Scrape YouTube Video comments",
   "main": "index.js",
   "engines": {
-    "node": ">=5.0"
+    "node": ">=6.0"
   },
   "watch": {
     "unit-test": {
