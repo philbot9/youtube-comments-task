@@ -52,4 +52,34 @@ describe('/lib/parse-comment-renderer.js', () => {
         done()
       })
   })
+
+  it('handles missing fields on comment', done => {
+    const exp = {
+      id: COMMENT_ID,
+      author: COMMENT_AUTHOR,
+      authorLink: COMMENT_AUTHOR_LINK,
+      authorThumb: COMMENT_AUTHOR_THUMB,
+      text: COMMENT_TEXT,
+      likes: COMMENT_LIKES,
+      time: '3 months ago',
+      timestamp: parseInt(moment().subtract(3, 'months').format('x'), 10)
+    }
+    const html = sampleComment(exp)
+    const $commentRenderer = cheerio.load(html)('.comment-thread-renderer > .comment-renderer:nth-child(1)')
+    $commentRenderer.removeAttr('data-cid')
+    $commentRenderer.find('.comment-author-text').text('')
+    $commentRenderer.find('a.comment-author-text').removeAttr('href')
+    $commentRenderer.find('.comment-author-thumbnail img').remove()
+    $commentRenderer.find('.comment-renderer-content > .comment-renderer-text > .comment-renderer-text-content').remove()
+    $commentRenderer.find('.comment-action-buttons-toolbar > .comment-renderer-like-count.on').remove()
+    $commentRenderer.find('.comment-renderer-header > .comment-renderer-time').remove()
+
+    parseCommentRenderer($commentRenderer)
+      .fold(e => {
+        done(e)
+      }, result => {
+        expect(result).to.deep.equal({})
+        done()
+      })
+  })
 })
