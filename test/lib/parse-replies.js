@@ -17,6 +17,7 @@ const validateComment = (comment, exp) => {
   expect(comment).to.have.property('likes', exp.likes)
   expect(comment).to.have.property('time', exp.time)
   expect(comment).to.have.property('timestamp').that.is.a('number').closeTo(exp.timestamp, (60*1000))
+  expect(comment).to.have.property('edited', exp.edited)
 }
 
 describe('/lib/parse-replies.js', () => {
@@ -30,7 +31,8 @@ describe('/lib/parse-replies.js', () => {
         text: 'reply1_text',
         likes: 10,
         time: '10 hours ago',
-        timestamp: parseInt(moment().subtract(10, 'hours').format('x'), 10)
+        timestamp: parseInt(moment().subtract(10, 'hours').format('x'), 10),
+        edited: true
       },
       {
         id: 'commentid.reply2id',
@@ -40,7 +42,8 @@ describe('/lib/parse-replies.js', () => {
         text: 'reply2_text',
         likes: 0,
         time: '2 minutes ago',
-        timestamp: parseInt(moment().subtract(2, 'minutes').format('x'), 10)
+        timestamp: parseInt(moment().subtract(2, 'minutes').format('x'), 10),
+        edited: false
       }
     ]
 

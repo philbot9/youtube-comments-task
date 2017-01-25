@@ -25,6 +25,7 @@ const validateComment = (comment, exp) => {
   expect(comment).to.have.property('likes', exp.likes)
   expect(comment).to.have.property('time', exp.time)
   expect(comment).to.have.property('timestamp').that.is.a('number').closeTo(exp.timestamp, (60 * 1000))
+  expect(comment).to.have.property('edited', exp.edited)
 }
 
 describe('/lib/parse-comment-thread.js', () => {
@@ -42,6 +43,7 @@ describe('/lib/parse-comment-thread.js', () => {
       likes: COMMENT_LIKES,
       time: '3 months ago',
       timestamp: parseInt(moment().subtract(3, 'months').format('x'), 10),
+      edited: false,
       hasReplies: false
     }
 
@@ -67,6 +69,7 @@ describe('/lib/parse-comment-thread.js', () => {
       likes: 3,
       time: '1 week ago',
       timestamp: parseInt(moment().subtract(1, 'week').format('x'), 10),
+      edited: false,
       hasReplies: true,
       numReplies: 2
     }
@@ -80,7 +83,8 @@ describe('/lib/parse-comment-thread.js', () => {
         text: 'reply1_text',
         likes: 10,
         time: '10 hours ago',
-        timestamp: parseInt(moment().subtract(10, 'hours').format('x'), 10)
+        timestamp: parseInt(moment().subtract(10, 'hours').format('x'), 10),
+        edited: true
       },
       {
         id: 'commentid.reply2id',
@@ -90,7 +94,8 @@ describe('/lib/parse-comment-thread.js', () => {
         text: 'reply2_text',
         likes: 0,
         time: '2 minutes ago',
-        timestamp: parseInt(moment().subtract(2, 'minutes').format('x'), 10)
+        timestamp: parseInt(moment().subtract(2, 'minutes').format('x'), 10),
+        edited: false
       }
     ]
 
@@ -120,7 +125,8 @@ describe('/lib/parse-comment-thread.js', () => {
       time: '1 week ago',
       timestamp: parseInt(moment().subtract(1, 'week').format('x'), 10),
       hasReplies: true,
-      repliesToken: REPLIES_TOKEN
+      repliesToken: REPLIES_TOKEN,
+      edited: true
     }
 
     const replies = [
@@ -132,7 +138,8 @@ describe('/lib/parse-comment-thread.js', () => {
         text: 'reply1_text',
         likes: 10,
         time: '10 hours ago',
-        timestamp: parseInt(moment().subtract(10, 'hours').format('x'), 10)
+        timestamp: parseInt(moment().subtract(10, 'hours').format('x'), 10),
+        edited: true
       },
       {
         id: 'commentid.reply2id',
@@ -142,7 +149,8 @@ describe('/lib/parse-comment-thread.js', () => {
         text: 'reply2_text',
         likes: 0,
         time: '2 minutes ago',
-        timestamp: parseInt(moment().subtract(2, 'minutes').format('x'), 10)
+        timestamp: parseInt(moment().subtract(2, 'minutes').format('x'), 10),
+        edited: true
       },
       {
         id: 'commentid.reply3id',
@@ -152,7 +160,8 @@ describe('/lib/parse-comment-thread.js', () => {
         text: 'reply3_text',
         likes: 0,
         time: '1 minute ago',
-        timestamp: parseInt(moment().subtract(1, 'minute').format('x'), 10)
+        timestamp: parseInt(moment().subtract(1, 'minute').format('x'), 10),
+        edited: true
       }
     ]
 

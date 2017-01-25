@@ -20,6 +20,7 @@ describe('/lib/fetch-replies', function () {
                 expect(r).to.have.property('likes').that.is.a('number').at.least(0)
                 expect(r).to.have.property('time').that.is.a('string')
                 expect(r).to.have.property('timestamp').that.is.a('number').above(0)
+                expect(r).to.have.property('edited').that.is.a('boolean')
               })
               done()
             })

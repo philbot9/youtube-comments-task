@@ -5,6 +5,7 @@ const COMMENT_AUTHOR_THUMB = 'https://yt3.ggpht.com/-05yJ3zLwwv0/AAAAAAAAAAI/AAA
 const COMMENT_TEXT = 'This is the actual comment text.'
 const COMMENT_LIKES = 3
 const COMMENT_TIME = '1 month ago'
+const COMMENT_EDITED = false
 const REPLIES_TOKEN = 'EhYSC2NCVWVpcFhGaXNRwAEAyAEA4AEBGAYyWRpXEiN6MTN3dnZtcG14MmFpeGp2cDIyNWV4aDVqbG4yem5nNGQwNCICCAAqGFVDM1hUelZ6YUhRRWQzMHJRYnV2Q3RUUTILY0JVZWlwWEZpc1E4AEABSP=='
 
 module.exports = {
@@ -17,6 +18,7 @@ module.exports = {
   COMMENT_TIME,
   COMMENT_TEXT,
   COMMENT_LIKES,
+  COMMENT_EDITED,
   REPLIES_TOKEN
 }
 
@@ -42,7 +44,8 @@ function sampleComment (comment, replies, repliesToken) {
     authorThumb: COMMENT_AUTHOR_THUMB,
     text: COMMENT_TEXT,
     likes: COMMENT_LIKES,
-    time: COMMENT_TIME
+    time: COMMENT_TIME,
+    edited: COMMENT_EDITED
   }, (comment || {}))
 
   replies = replies || []
@@ -119,7 +122,7 @@ function renderComment (c) {
         </a>
         <span class="comment-renderer-time" tabindex="0">
           <a href="/watch?v=cBUeipXFisQ&amp;lc=z13gvfiadmaqurm5b04ccnn54za4ex3x204.1480561616711242" class=" yt-uix-sessionlink  spf-link " data-sessionlink="itct=CIsBELZ1GAEiEwje7rLas6zRAhWTK04KHevKBco">
-            ${c.time}
+            ${c.time}${c.edited ? ' (edited)' : ''}
           </a>
         </span>
       </div>

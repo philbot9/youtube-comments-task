@@ -11,7 +11,8 @@ const validateComment = c => {
   expect(c).to.have.property('text').that.is.a('string').of.length.at.least(1)
   expect(c).to.have.property('likes').that.is.a('number').of.at.least(0)
   expect(c).to.have.property('time').that.is.a('string').of.length.at.least(1)
-  expect(c).to.have.property('timestamp').that.is.a('number').above(0)
+  expect(c).to.have.property('timestamp').that.is.a('number').above(0),
+  expect(c).to.have.property('edited').that.is.a('boolean')
 }
 
 describe('/lib/comment-stream', function () {

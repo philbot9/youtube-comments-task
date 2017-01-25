@@ -13,6 +13,7 @@ const {
   COMMENT_TIME,
   COMMENT_TEXT,
   COMMENT_LIKES,
+  COMMENT_EDITED,
   REPLIES_TOKEN
 } = require('../sample-comment-html')
 
@@ -30,7 +31,8 @@ describe('/lib/parse-comment-renderer.js', () => {
       text: COMMENT_TEXT,
       likes: COMMENT_LIKES,
       time: '3 months ago',
-      timestamp: parseInt(moment().subtract(3, 'months').format('x'), 10)
+      timestamp: parseInt(moment().subtract(3, 'months').format('x'), 10),
+      edited: COMMENT_EDITED
     }
 
     const html = sampleComment(exp)
@@ -62,7 +64,8 @@ describe('/lib/parse-comment-renderer.js', () => {
       text: COMMENT_TEXT,
       likes: COMMENT_LIKES,
       time: '3 months ago',
-      timestamp: parseInt(moment().subtract(3, 'months').format('x'), 10)
+      timestamp: parseInt(moment().subtract(3, 'months').format('x'), 10),
+      edited: COMMENT_EDITED
     }
     const html = sampleComment(exp)
     const $commentRenderer = cheerio.load(html)('.comment-thread-renderer > .comment-renderer:nth-child(1)')
