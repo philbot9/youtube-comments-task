@@ -8,7 +8,7 @@ describe('/lib/youtube-api', function () {
   this.timeout(10000)
 
   it('fetches a comment page', done => {
-    const videoId = 'pvAsqPbz9Ro'
+    const videoId = 'h_tkIpwbsxY'
     fetchFirstPageToken(videoId)
       .chain(token => youtubeApi.commentPage(videoId, token))
       .fork(e => done('got an error ' + e.substr(0, 100)),
@@ -22,7 +22,7 @@ describe('/lib/youtube-api', function () {
   })
 
   it('fetches comment replies', done => {
-    const videoId = 'pvAsqPbz9Ro'
+    const videoId = 'h_tkIpwbsxY'
     const repliesToken = 'EhYSC3RWanY4STBCbFU0wAEAyAEA4AEBGAYyWRpXEiN6MTJ1eGJjcm1wYWZ2anBxMjA0Y2dwcDQ1bm14anpxNGQxMCICCAAqGFVDWDFRcHRpZ2NzYkJ1YlZxdEIxSks3ZzILdFZqdjhJMEJsVTQ4AEABSPQD'
     youtubeApi.commentReplies(videoId, repliesToken)
       .fork(e => done('got an error ' + e.substr(0, 100)),
@@ -35,7 +35,7 @@ describe('/lib/youtube-api', function () {
   })
 
   it('fetches comments watch fragment', done => {
-    const videoId = 'pvAsqPbz9Ro'
+    const videoId = 'h_tkIpwbsxY'
     youtubeApi.commentsWatchFragment(videoId)
       .fork(e => done('got an error ' + e.substr(0, 100)),
             r => {
