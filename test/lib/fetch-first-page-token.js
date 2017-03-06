@@ -14,19 +14,28 @@ describe('/lib/fetch-first-page-token.js', () => {
 
   it('fetches the first page token', done => {
     const videoId = 'videoId'
-    const pageToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAYyESIPIgsyYTRVeGR5OVRRWTAB'
-    const html = [
-      '<div>div class="comment-section-sort-menu"><div class="yt-uix-menu-content">',
-      '<ul>',
-      '<li>',
-      '<button data-token="EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAYyESIPIgsyYTRVeGR5OVRRWTAA">false</button>',
-      '</li>',
-      '<li>',
-      '<button data-menu_name="newest-first" data-token="' + pageToken + '">real</button>',
-      '</li>',
-      '</ul>',
-      '</div></div></div>'
-    ].join('')
+    const pageToken = 'EhYSC2hfdGtJcHdic3hZwAEAyAEA4AEBGAYyEyIPIgtoX3RrSXB3YnN4WTABMAA%3D'
+    const encodedPageToken = encodeURIComponent(pageToken)
+    const html = `
+      <div>
+        <div class="yt-uix-menu comment-section-sort-menu">
+          <button class="yt-uix-button yt-uix-button-size-default" type="button">Button</button>
+          <div class="yt-uix-menu-content yt-ui-menu-content" role="menu"
+            <ul tabindex="0" class="yt-uix-kbd-nav yt-uix-kbd-nav-list">
+              <li>
+                <button type="button" class="yt-ui-menu-item comment-section-sort-menu-item" data-token="WROOOONG" data-menu_name="n/a">
+                  Not it
+                </button>
+              </li>
+              <li>
+                <button type="button" class="yt-ui-menu-item comment-section-sort-menu-item" data-token="${encodedPageToken}" data-menu_name="n/a">
+                  Newest First
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>`
 
     const Youtube = td.replace('../../lib/youtube-api/youtube-api')
     const fetchFirstPageToken = require('../../lib/fetch-first-page-token')
@@ -36,8 +45,7 @@ describe('/lib/fetch-first-page-token.js', () => {
 
     fetchFirstPageToken(videoId)
       .fork(e => {
-        expect.fail(e)
-        done(e)
+        done(`ERROR: ${e}`)
       }, res => {
         expect(res).to.equal(pageToken)
         done()
