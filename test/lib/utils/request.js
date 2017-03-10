@@ -12,7 +12,7 @@ describe('/lib/utils/request.js', () => {
     expect(request()).to.be.instanceof(Task)
   })
 
-  it('Task is rejected for invalid inputs', done => {
+  it('Task is rejected for invalid URLs', done => {
     request()
       .fork(e => {
         expect(e).to.exist
@@ -22,5 +22,23 @@ describe('/lib/utils/request.js', () => {
             done()
           }, r => done('expected task to fail'))
       }, r => done('expected task to fail'))
+  })
+
+  it('Task is rejected for invalid status codes', done => {
+      request('http://google.com/no/such/path')
+        .fork(e => {
+          expect(e).to.exist
+          done()
+        }, r => done('expected task to fail'))
+  })
+
+  it('Task is fulfilled for valid requests', done => {
+    request('http://www.google.com/')
+      .fork(e => done(`got an error ${e}`),
+            x => {
+              expect(x).to.be.a('string').of.length.above(500)
+              expect(x).to.match(/<html/i)
+              done()
+            })
   })
 })
