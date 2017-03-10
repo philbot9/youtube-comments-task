@@ -8,6 +8,6 @@ const fetchAllComments = (videoId, pageToken, fetched = []) =>
         ? fetchAllComments(videoId, nextPageToken, fetched.concat(comments))
         : Task.of(fetched.concat(comments)))
 
-fetchAllComments('h_tkIpwbsxY')
+fetchAllComments('OkcP5Od86r0')
   .fork(e => console.error('ERROR', e),
         allComments => console.log(allComments))

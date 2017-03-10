@@ -68,16 +68,27 @@ describe('/lib/fetch-comments.js', () => {
   it('task fails with an error if fetch fails', done => {
     const videoId = 'videoId'
     const pageToken = 'token1'
-    const errMsg = 'fetch failed error msg'
+    const message = 'fetch failed error msg'
+    const expectedError = { message }
+
     const Youtube = td.replace('../../lib/youtube-api/youtube-api')
+    const errorHandler = td.replace('../../lib/error-handler')
     const fetchCommentPage = require('../../lib/fetch-comment-page')
 
     td.when(Youtube.commentPage(videoId, pageToken))
-      .thenReturn(Task.rejected(errMsg))
+      .thenReturn(Task.rejected(message))
+
+    td.when(errorHandler.scraperError({
+      videoId,
+      message,
+      component: 'fetch-comment-page',
+      operation: 'fetch-comment-page'
+    }))
+      .thenReturn(expectedError)
 
     fetchCommentPage(videoId, pageToken)
       .fork(e => {
-        expect(e).to.equal(errMsg)
+        expect(e).to.deep.equal(expectedError)
         done()
       }, _ => done('task should not succeed'))
   })
@@ -85,32 +96,26 @@ describe('/lib/fetch-comments.js', () => {
   it('fails with an error if response is invalid', done => {
     const videoId = 'videoId'
     const pageToken = 'token1'
-    const errMsg = 'fetch failed error msg'
+    const expectedError = { error: 'here' }
+
     const Youtube = td.replace('../../lib/youtube-api/youtube-api')
+    const errorHandler = td.replace('../../lib/error-handler')
     const fetchCommentPage = require('../../lib/fetch-comment-page')
 
     td.when(Youtube.commentPage(videoId, pageToken))
       .thenReturn(Task.of({nonsense: 'yep'}))
 
-    fetchCommentPage(videoId, pageToken)
-      .fork(e => {
-        expect(e).to.match(/content_html/i)
-        done()
-      }, _ => done('task should not succeed'))
-  })
-
-  it('fails with an error if response is invalid', done => {
-    const videoId = 'videoId'
-    const pageToken = 'token1'
-    const Youtube = td.replace('../../lib/youtube-api/youtube-api')
-    const fetchCommentPage = require('../../lib/fetch-comment-page')
-
-    td.when(Youtube.commentPage(videoId, pageToken))
-      .thenReturn(Task.of({nonsense: 'yep'}))
+    td.when(errorHandler.scraperError({
+      videoId,
+      message: 'API response does not contain a "content_html" field',
+      component: 'fetch-comment-page',
+      operation: 'fetch-comment-page'
+    }))
+      .thenReturn(expectedError)
 
     fetchCommentPage(videoId, pageToken)
       .fork(e => {
-        expect(e).to.match(/content_html/i)
+        expect(e).to.deep.equal(expectedError)
         done()
       }, _ => done('task should not succeed'))
   })
@@ -118,7 +123,10 @@ describe('/lib/fetch-comments.js', () => {
   it('fails with an error if the load_more_widget_html does not contain a next page token', done => {
     const videoId = 'videoId'
     const pageToken = 'token1'
+    const expectedError = { error: 'here' }
+
     const Youtube = td.replace('../../lib/youtube-api/youtube-api')
+    const errorHandler = td.replace('../../lib/error-handler')
     const fetchCommentPage = require('../../lib/fetch-comment-page')
 
     td.when(Youtube.commentPage(videoId, pageToken))
@@ -127,11 +135,18 @@ describe('/lib/fetch-comments.js', () => {
         load_more_widget_html: '<div>bla</div>'
       }))
 
+    td.when(errorHandler.scraperError({
+      videoId,
+      message: 'API resonse load_more_widget_html does not contain a next page token',
+      component: 'fetch-comment-page',
+      operation: 'fetch-comment-page'
+    }))
+      .thenReturn(expectedError)
+
     fetchCommentPage(videoId, pageToken)
       .fork(e => {
-        expect(e).to.match(/load_more_widget_html/i)
+        expect(e).to.deep.equal(expectedError)
         done()
       }, _ => done('task should not succeed'))
   })
-
 })

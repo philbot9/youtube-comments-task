@@ -85,4 +85,11 @@ describe('/lib/parse-comment-renderer.js', () => {
         done()
       })
   })
+
+  it('fails if $commentRenderer parameter is missing', () => {
+    parseCommentRenderer()
+      .fold(e => {
+        expect(e).to.equal('$commentRenderer parameter must be defined')
+      }, result => done(`should fail ${result}`))
+  })
 })

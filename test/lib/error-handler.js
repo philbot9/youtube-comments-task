@@ -3,7 +3,7 @@ const { expect } = require('chai')
 const errorHandler = require('../../lib/error-handler')
 const errorTypes = require('../../lib/error-types')
 
-describe.only('/lib/error-handler.js', () => {
+describe('/lib/error-handler.js', () => {
   it('exports an object with function fields', () => {
     expect(errorHandler).to.be.a('object')
     expect(errorHandler).to.have.property('videoPageError').which.is.a('function')

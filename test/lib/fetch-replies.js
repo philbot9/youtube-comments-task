@@ -27,11 +27,52 @@ describe('/lib/fetch-first-page-token.js', () => {
   })
 
   it('fails if comment does not have a repliesToken', done => {
+    const videoId = 'videoId'
+    const expectedError = { error: 'here' }
+    const errorHandler = td.replace('../../lib/error-handler')
     const fetchReplies = require('../../lib/fetch-replies')
+
+    td.when(errorHandler.scraperError({
+      videoId,
+      message: 'Comment parameter object does not have a repliesToken field',
+      component: 'fetch-replies',
+      operation: 'fetch-replies'
+    }))
+      .thenReturn(expectedError)
+
     fetchReplies('videoId', {stuff: 'here'})
       .fork(e => {
-        expect(e).to.be.a('string')
-        expect(e).to.match(/repliesToken/)
+        expect(e).to.deep.equal(expectedError)
+        done()
+      }, res => {
+        expect.fail(res)
+        done('expected not to succeed')
+      })
+  })
+
+  it('fails if API response is invalid', done => {
+    const videoId = 'videoId'
+    const repliesToken = 'repliesToken'
+    const expectedError = { error: 'here' }
+
+    const Youtube = td.replace('../../lib/youtube-api/youtube-api')
+    const errorHandler = td.replace('../../lib/error-handler')
+    const fetchReplies = require('../../lib/fetch-replies')
+
+    td.when(Youtube.commentReplies(videoId, repliesToken))
+      .thenReturn(Task.of({ nonsense: 'yep' }))
+
+    td.when(errorHandler.scraperError({
+      videoId,
+      message: 'Invalid Replies-API response, does not contain content_html field',
+      component: 'fetch-replies',
+      operation: 'fetch-replies'
+    }))
+      .thenReturn(expectedError)
+
+    fetchReplies('videoId', { repliesToken })
+      .fork(e => {
+        expect(e).to.deep.equal(expectedError)
         done()
       }, res => {
         expect.fail(res)

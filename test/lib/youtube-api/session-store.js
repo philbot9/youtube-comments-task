@@ -43,21 +43,53 @@ describe('/lib/youtube-api/session-store', () => {
     const videoId = 'the_video_id'
     const sessionToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
     const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
+    const expectedError = { error: 'here' }
     const url = buildVideoPageUrl(videoId)
     const html = `<html><script>
       var stuff = {'NOTHING_TOKEN': "${sessionToken}",}
-      var stuff2 = {'SOMETHING_ELSE_TOKEN': "${encodeURIComponent(commentsToken)}",}
+      var stuff2 = {'COMMENTS_TOKEN': "${encodeURIComponent(commentsToken)}",}
     </script></html>`
 
     const request = td.replace('../../../lib/utils/request')
+    const errorHandler = td.replace('../../../lib/error-handler')
     const getSession = require('../../../lib/youtube-api/session-store')
 
+    td.when(errorHandler.videoPageError({component: 'session-store', operation: 'extractSessionToken', html}))
+      .thenReturn(expectedError)
     td.when(request(url)).thenReturn(Task.of(html))
 
     getSession(videoId)
       .fork(
         e => {
-          expect(e).to.exist
+          expect(e).to.deep.equal(expectedError)
+          done()
+        },
+        res => done('expected task to fail'))
+  })
+
+  it('task fails if comments token cannot be found', done => {
+    const videoId = 'the_video_id'
+    const sessionToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
+    const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
+    const expectedError = { error: 'here' }
+    const url = buildVideoPageUrl(videoId)
+    const html = `<html><script>
+      var stuff = {'XSRF_TOKEN': "${sessionToken}",}
+      var stuff2 = {'SOMETHING_ELSE_TOKEN': "${encodeURIComponent(commentsToken)}",}
+    </script></html>`
+
+    const request = td.replace('../../../lib/utils/request')
+    const errorHandler = td.replace('../../../lib/error-handler')
+    const getSession = require('../../../lib/youtube-api/session-store')
+
+    td.when(errorHandler.videoPageError({component: 'session-store', operation: 'extractCommentsToken', html}))
+      .thenReturn(expectedError)
+    td.when(request(url)).thenReturn(Task.of(html))
+
+    getSession(videoId)
+      .fork(
+        e => {
+          expect(e).to.deep.equal(expectedError)
           done()
         },
         res => done('expected task to fail'))
@@ -88,6 +120,32 @@ describe('/lib/youtube-api/session-store', () => {
                 expect(s).to.deep.equal({sessionToken, commentsToken})
                 done()
               })
+        })
+  })
+
+  it('retries if fetching video page fails', done => {
+    const videoId = 'the_video_id'
+    const sessionToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
+    const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
+    const url = buildVideoPageUrl(videoId)
+    const html = `<html><script>
+      var token1 = {'XSRF_TOKEN': "${sessionToken}",}
+      var token2 = {'COMMENTS_TOKEN': "${encodeURIComponent(commentsToken)}",}
+    </script></html>`
+
+    const request = td.replace('../../../lib/utils/request')
+    const getSession = require('../../../lib/youtube-api/session-store')
+
+    td.when(request(url)).thenReturn(
+      Task.rejected('first one fails'),
+      Task.of(html))
+
+    getSession(videoId)
+      .fork(
+        e => done('got an error ' + e),
+        s => {
+          expect(s).to.deep.equal({sessionToken, commentsToken})
+          done()
         })
   })
 })

@@ -178,4 +178,11 @@ describe('/lib/parse-comment-thread.js', () => {
         done()
       })
   })
+
+  it('fails if $commentThread parameter is missing', () => {
+    parseCommentThread()
+      .fold(e => {
+        expect(e).to.equal('$commentThread parameter must be defined')
+      }, result => done(`should fail ${result}`))
+  })
 })
