@@ -4,6 +4,20 @@ Scrape comments, including their replies, from a YouTube video.
 
 [![Build Status](https://travis-ci.org/philbot9/youtube-comments-task.svg?branch=master)](https://travis-ci.org/philbot9/youtube-comments-task)
 
+[Installation](#installation)
+[Usage](#usage)
+[Result](#result)
+[Errors](#errors)
+[Task](#task)
+[Compatibility](#compatibility)
+[Examples](#examples)
+
+## Installation
+
+``` bash
+npm install --save youtube-comments-task
+```
+
 ## Usage
 
 The module exports a single function:
@@ -23,13 +37,51 @@ The result is an object with the following properties.
 
 **Note:** If the fetched page is the last page, the result does not contain the `nextPageToken` property.
 
+## Result
+
+```
+{
+  id: {{ comment id}},
+  author: {{ comment author name }},
+  authorLink: {{ comment author link (channel) }},
+  authorThumb: {{ comment author avatar thumb url }},
+  text: {{ comment text }},
+  likes: {{ comment up-votes }},
+  time: {{ how long ago the comment was posted (relative, e.g. '1 year ago') }},
+  timestamp: {{ timestamp when comment was posted in milliseconds (absolute, e.g. 1457661439642 }},
+  edited: {{ whether the comment was edited by the authro (true/false) }},
+  hasReplies: {{ whether the comment has replies (true/fasle) }},
+  repliesToken: {{ token used to fetch replies for the comment }},
+  numReplies: {{ number of replies }},
+  replies: [ {{ reply objects (same fields as comments) }} ]
+}
+```
+
+## Errors
+
+Errors are as descriptive and (hopefully) useful as possible. Private, deleted, and unavailable videos are detected, and an appropriate error type is assigned. Error types are defined in [/src/lib/error-types.js](/src/lib/error-types.js).
+
+A typical error object has the following fields.
+
+```
+{
+  type: {{ error type }},
+  message: {{ error message }},
+  videoId: {{ YouTube video id }},
+  component: {{ module component }},
+  operation: {{ operation that failed }}
+}
+```
+
 ## Task
 
 The module uses [Folktale's Task monad](http://docs.folktalejs.org/en/latest/api/data/task/) ([data.task](https://github.com/folktale/data.task)) to handle asynchronicity and to allow for easy composition.
 
-## Requirements
+If you'd rather use **Promises** instead of Tasks, check out [youtube-comment-api](https://github.com/philbot9/youtube-comment-api).
 
-The module requires **Node.js version 6.0** or higher.
+## Compatibility
+
+The module is transpiled with **Babel** and is compatible with node.js versions **>= 0.12**.
 
 ## Examples
 
