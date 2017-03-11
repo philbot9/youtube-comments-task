@@ -27,24 +27,24 @@ describe('/lib/utils/request.js', () => {
   })
 
   it('Task is rejected for invalid status codes', function (done) {
-      this.timeout(10000)
+    this.timeout(10000)
 
-      request('http://google.com/no/such/path')
-        .fork(e => {
-          expect(e).to.exist
-          done()
-        }, r => done('expected task to fail'))
+    request('http://google.com/no/such/path')
+      .fork(e => {
+        expect(e).to.exist
+        done()
+      }, r => done('expected task to fail'))
   })
 
   it('Task is fulfilled for valid requests', function (done) {
     this.timeout(10000)
-    
+
     request('http://www.google.com/')
       .fork(e => done(`got an error ${e}`),
-            x => {
-              expect(x).to.be.a('string').of.length.above(500)
-              expect(x).to.match(/<html/i)
-              done()
-            })
+        x => {
+          expect(x).to.be.a('string').of.length.above(500)
+          expect(x).to.match(/<html/i)
+          done()
+        })
   })
 })

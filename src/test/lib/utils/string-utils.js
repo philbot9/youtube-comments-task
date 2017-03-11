@@ -16,26 +16,26 @@ describe('/lib/utils/string-utils.js', () => {
   it('strToInt parses a string to an int', () => {
     strUtils.strToInt('199')
       .fold(e => expect.fail(`got an error ${e}`),
-            x => expect(x).to.equal(199))
+        x => expect(x).to.equal(199))
   })
 
   it('strToInt fails if the string cannot be parsed', () => {
     strUtils.strToInt('ABSC')
       .fold(e => {
-              expect(e).to.exist
-            },
-            x => {
-              expect.fail(`expected to fail ${x}`)
-            })
+        expect(e).to.exist
+      },
+        x => {
+          expect.fail(`expected to fail ${x}`)
+        })
   })
 
   it('regExec executes a regular expression on a string', () => {
     strUtils.regExec(/a(b)c/, 'abc')
       .fold(e => expect.fail(`got an error ${e}`),
-            m => {
-              expect(m).to.be.a('array').of.length(2)
-              expect(m[1]).to.equal('b')
-            })
+        m => {
+          expect(m).to.be.a('array').of.length(2)
+          expect(m[1]).to.equal('b')
+        })
   })
 
   it('regExec failes if there is no match', () => {

@@ -4,18 +4,7 @@ const moment = require('moment')
 
 const parseCommentRenderer = require('../../lib/parse-comment-renderer')
 
-const {
-  sampleComment,
-  COMMENT_ID,
-  COMMENT_AUTHOR,
-  COMMENT_AUTHOR_LINK,
-  COMMENT_AUTHOR_THUMB,
-  COMMENT_TIME,
-  COMMENT_TEXT,
-  COMMENT_LIKES,
-  COMMENT_EDITED,
-  REPLIES_TOKEN
-} = require('../sample-comment-html')
+const {sampleComment, COMMENT_ID, COMMENT_AUTHOR, COMMENT_AUTHOR_LINK, COMMENT_AUTHOR_THUMB, COMMENT_TIME, COMMENT_TEXT, COMMENT_LIKES, COMMENT_EDITED, REPLIES_TOKEN} = require('../sample-comment-html')
 
 describe('/lib/parse-comment-renderer.js', () => {
   it('exports a function', () => {

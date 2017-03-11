@@ -33,11 +33,11 @@ describe('/lib/fetch-comments.js', () => {
 
     fetchCommentPage(videoId, pageToken)
       .fork(e => done(`Got an error: ${e}`),
-            p => {
-              expect(p).to.have.property('commentHtml').equal(html)
-              expect(p).not.to.have.property('nextPageToken')
-              done()
-            })
+        p => {
+          expect(p).to.have.property('commentHtml').equal(html)
+          expect(p).not.to.have.property('nextPageToken')
+          done()
+        })
   })
 
   it('includes the next page token in the result', done => {
@@ -58,18 +58,18 @@ describe('/lib/fetch-comments.js', () => {
 
     fetchCommentPage(videoId, pageToken)
       .fork(e => done(`Got an error: ${e}`),
-            p => {
-              expect(p).to.have.property('commentHtml').equal(commentHtml)
-              expect(p).to.have.property('nextPageToken').equal(nextPageToken)
-              done()
-            })
+        p => {
+          expect(p).to.have.property('commentHtml').equal(commentHtml)
+          expect(p).to.have.property('nextPageToken').equal(nextPageToken)
+          done()
+        })
   })
 
   it('task fails with an error if fetch fails', done => {
     const videoId = 'videoId'
     const pageToken = 'token1'
     const message = 'fetch failed error msg'
-    const expectedError = { message }
+    const expectedError = { message}
 
     const Youtube = td.replace('../../lib/youtube-api/youtube-api')
     const errorHandler = td.replace('../../lib/error-handler')

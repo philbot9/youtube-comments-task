@@ -25,8 +25,7 @@ const buildWatchFragmentsUrl = (videoId, session, fragments = ['comments']) => {
   return `${WATCH_FRAGMENTS_URL}?${query}`
 }
 
-const buildCommentServiceUrl = action =>
-  `${COMMENT_SERVICE_URL}?${action}=1`
+const buildCommentServiceUrl = action => `${COMMENT_SERVICE_URL}?${action}=1`
 
 module.exports = {
   VIDEO_PAGE_URL,
@@ -34,5 +33,4 @@ module.exports = {
   COMMENT_SERVICE_URL,
   buildVideoPageUrl,
   buildWatchFragmentsUrl,
-  buildCommentServiceUrl
-}
+buildCommentServiceUrl}

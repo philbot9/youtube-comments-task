@@ -9,7 +9,7 @@ describe('/lib/tokenize-comments.js', () => {
     expect(tokenizeComments).to.be.a('function')
   })
 
-  it('returns an empty array if the html doesn\'t contain any comments', () => {
+  it("returns an empty array if the html doesn't contain any comments", () => {
     const html = '<div><div class="no-comment">nope</div><div class="no-comment">hahaha</div></div>'
     const result = tokenizeComments(html)
     expect(result).to.be.instanceof(Either)

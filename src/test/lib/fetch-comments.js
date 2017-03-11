@@ -16,7 +16,7 @@ describe('/lib/comment-stream', () => {
   it('fetches a single first page (no pageToken provided)', done => {
     const videoId = 'videoId'
     const commentHtml = '<div>page1</div>'
-    const commentPage = { commentHtml }
+    const commentPage = { commentHtml}
     const pageToken = 'token1'
     const commentPageTokens = [ 'ct1', 'ct2', 'ct3' ]
     const comments = [
@@ -52,22 +52,22 @@ describe('/lib/comment-stream', () => {
 
     fetchComments(videoId)
       .fork(e => done('Got an error: ' + e),
-      res => {
-        expect(res).to.have.property('comments')
-        expect(res).not.to.have.property('nextPageToken')
+        res => {
+          expect(res).to.have.property('comments')
+          expect(res).not.to.have.property('nextPageToken')
 
-        expect(res.comments).to.be.an('array').of.length(3)
-        expect(res.comments[0]).to.deep.equal(comments[0])
-        expect(res.comments[1]).to.deep.equal(Object.assign({}, comments[1], {replies: c2Replies}))
-        expect(res.comments[2]).to.deep.equal(comments[2])
-        done()
-      })
+          expect(res.comments).to.be.an('array').of.length(3)
+          expect(res.comments[0]).to.deep.equal(comments[0])
+          expect(res.comments[1]).to.deep.equal(Object.assign({}, comments[1], {replies: c2Replies}))
+          expect(res.comments[2]).to.deep.equal(comments[2])
+          done()
+        })
   })
 
   it('fetches a page when given a pageToken', done => {
     const videoId = 'videoId'
     const commentHtml = '<div>page1</div>'
-    const commentPage = { commentHtml }
+    const commentPage = { commentHtml}
     const pageToken = 'token1'
     const commentPageTokens = [ 'ct1', 'ct2', 'ct3' ]
     const comments = [
@@ -106,15 +106,15 @@ describe('/lib/comment-stream', () => {
 
     fetchComments(videoId, pageToken)
       .fork(e => done('Got an error: ' + e),
-      res => {
-        expect(res).to.have.property('comments')
-        expect(res).not.to.have.property('nextPageToken')
+        res => {
+          expect(res).to.have.property('comments')
+          expect(res).not.to.have.property('nextPageToken')
 
-        expect(res.comments).to.be.an('array').of.length(3)
-        expect(res.comments[0]).to.deep.equal(comments[0])
-        expect(res.comments[1]).to.deep.equal(Object.assign({}, comments[1], {replies: c2Replies}))
-        expect(res.comments[2]).to.deep.equal(comments[2])
-        done()
-      })
+          expect(res.comments).to.be.an('array').of.length(3)
+          expect(res.comments[0]).to.deep.equal(comments[0])
+          expect(res.comments[1]).to.deep.equal(Object.assign({}, comments[1], {replies: c2Replies}))
+          expect(res.comments[2]).to.deep.equal(comments[2])
+          done()
+        })
   })
 })

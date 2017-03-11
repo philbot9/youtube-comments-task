@@ -12,13 +12,13 @@ describe('/lib/youtube-api', function () {
     fetchFirstPageToken(videoId)
       .chain(token => youtubeApi.commentPage(videoId, token))
       .fork(e => done('got an error ' + e.substr(0, 100)),
-            p => {
-              expect(p).to.have.property('content_html').that.is.a('string')
-              const $ = cheerio.load(p.content_html)
-              expect($('.comment-thread-renderer').length).to.be.above(1)
-              expect($('.comment-renderer').length).to.be.above(1)
-              done()
-            })
+        p => {
+          expect(p).to.have.property('content_html').that.is.a('string')
+          const $ = cheerio.load(p.content_html)
+          expect($('.comment-thread-renderer').length).to.be.above(1)
+          expect($('.comment-renderer').length).to.be.above(1)
+          done()
+        })
   })
 
   it('fetches comment replies', done => {
@@ -26,28 +26,28 @@ describe('/lib/youtube-api', function () {
     const repliesToken = 'EhYSC3RWanY4STBCbFU0wAEAyAEA4AEBGAYyWRpXEiN6MTJ1eGJjcm1wYWZ2anBxMjA0Y2dwcDQ1bm14anpxNGQxMCICCAAqGFVDWDFRcHRpZ2NzYkJ1YlZxdEIxSks3ZzILdFZqdjhJMEJsVTQ4AEABSPQD'
     youtubeApi.commentReplies(videoId, repliesToken)
       .fork(e => done('got an error ' + e.substr(0, 100)),
-            r => {
-              expect(r).to.have.property('content_html').that.is.a('string')
-              const $ = cheerio.load(r.content_html)
-              expect($('.comment-renderer').length).to.be.above(1)
-              done()
-            })
+        r => {
+          expect(r).to.have.property('content_html').that.is.a('string')
+          const $ = cheerio.load(r.content_html)
+          expect($('.comment-renderer').length).to.be.above(1)
+          done()
+        })
   })
 
   it('fetches comments watch fragment', done => {
     const videoId = 'h_tkIpwbsxY'
     youtubeApi.commentsWatchFragment(videoId)
       .fork(e => done('got an error ' + e.substr(0, 100)),
-            r => {
-              expect(r).to.have.property('name').that.is.a('string')
-              expect(r).to.have.property('body').that.is.an('object')
-              expect(r.body).to.have.property('watch-discussion').that.is.a('string')
-              expect(r).to.have.property('foot').that.is.a('string')
+        r => {
+          expect(r).to.have.property('name').that.is.a('string')
+          expect(r).to.have.property('body').that.is.an('object')
+          expect(r.body).to.have.property('watch-discussion').that.is.a('string')
+          expect(r).to.have.property('foot').that.is.a('string')
 
-              const $ = cheerio.load(r.body['watch-discussion'])
-              expect($('.comment-thread-renderer').length).to.be.above(1)
-              expect($('.comment-renderer').length).to.be.above(1)
-              done()
-            })
+          const $ = cheerio.load(r.body['watch-discussion'])
+          expect($('.comment-thread-renderer').length).to.be.above(1)
+          expect($('.comment-renderer').length).to.be.above(1)
+          done()
+        })
   })
 })

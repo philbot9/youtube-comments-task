@@ -16,14 +16,14 @@ describe('/lib/error-handler.js', () => {
     const operation = 'test-operation'
     const videoId = 'test-video'
 
-    expect(errorHandler.videoPageError({ component, operation, videoId }))
+    expect(errorHandler.videoPageError({ component, operation, videoId}))
       .to.deep.equal({
-        component,
-        operation,
-        videoId,
-        type: errorTypes.VIDEO_ERROR,
-        message: 'unknown error'
-      })
+      component,
+      operation,
+      videoId,
+      type: errorTypes.VIDEO_ERROR,
+      message: 'unknown error'
+    })
   })
 
   it(`videoPageError detects ${errorTypes.VIDEO_ERROR_COUNTRY_RESTRICTION} errors`, () => {
@@ -41,14 +41,14 @@ describe('/lib/error-handler.js', () => {
       </div>
     `
 
-    expect(errorHandler.videoPageError({ component, operation, videoId, html }))
+    expect(errorHandler.videoPageError({ component, operation, videoId, html}))
       .to.deep.equal({
-        component,
-        operation,
-        videoId,
-        message,
-        type: errorTypes.VIDEO_ERROR_COUNTRY_RESTRICTION
-      })
+      component,
+      operation,
+      videoId,
+      message,
+      type: errorTypes.VIDEO_ERROR_COUNTRY_RESTRICTION
+    })
   })
 
   it(`videoPageError detects ${errorTypes.VIDEO_ERROR_UNAVAILABLE} errors`, () => {
@@ -66,14 +66,14 @@ describe('/lib/error-handler.js', () => {
       </div>
     `
 
-    expect(errorHandler.videoPageError({ component, operation, videoId, html }))
+    expect(errorHandler.videoPageError({ component, operation, videoId, html}))
       .to.deep.equal({
-        component,
-        operation,
-        videoId,
-        message,
-        type: errorTypes.VIDEO_ERROR_UNAVAILABLE
-      })
+      component,
+      operation,
+      videoId,
+      message,
+      type: errorTypes.VIDEO_ERROR_UNAVAILABLE
+    })
   })
 
   it(`videoPageError detects ${errorTypes.VIDEO_ERROR_PRIVATE} errors`, () => {
@@ -91,14 +91,14 @@ describe('/lib/error-handler.js', () => {
       </div>
     `
 
-    expect(errorHandler.videoPageError({ component, operation, videoId, html }))
+    expect(errorHandler.videoPageError({ component, operation, videoId, html}))
       .to.deep.equal({
-        component,
-        operation,
-        videoId,
-        message,
-        type: errorTypes.VIDEO_ERROR_PRIVATE
-      })
+      component,
+      operation,
+      videoId,
+      message,
+      type: errorTypes.VIDEO_ERROR_PRIVATE
+    })
   })
 
   it(`noCommentsError returns a ${errorTypes.VIDEO_ERROR_NO_COMMENTS} error`, () => {
@@ -107,14 +107,14 @@ describe('/lib/error-handler.js', () => {
     const videoId = 'test-video'
     const message = 'The video does not have any comments.'
 
-    expect(errorHandler.noCommentsError({ component, operation, videoId }))
+    expect(errorHandler.noCommentsError({ component, operation, videoId}))
       .to.deep.equal({
-        component,
-        operation,
-        videoId,
-        message,
-        type: errorTypes.VIDEO_ERROR_NO_COMMENTS
-      })
+      component,
+      operation,
+      videoId,
+      message,
+      type: errorTypes.VIDEO_ERROR_NO_COMMENTS
+    })
   })
 
   it(`scraperError returns a ${errorTypes.SCRAPER_ERROR} error`, () => {
@@ -123,13 +123,13 @@ describe('/lib/error-handler.js', () => {
     const videoId = 'test-video'
     const message = 'The video does not have any comments.'
 
-    expect(errorHandler.scraperError({ component, operation, videoId, message }))
+    expect(errorHandler.scraperError({ component, operation, videoId, message}))
       .to.deep.equal({
-        component,
-        operation,
-        videoId,
-        message,
-        type: errorTypes.SCRAPER_ERROR
-      })
+      component,
+      operation,
+      videoId,
+      message,
+      type: errorTypes.SCRAPER_ERROR
+    })
   })
 })

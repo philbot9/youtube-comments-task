@@ -49,10 +49,10 @@ describe('/lib/youtube-api/youtube-api', () => {
 
     Youtube.commentPage(videoId, pageToken)
       .fork(e => done('got error ' + e),
-            res => {
-              expect(res).to.deep.equal(apiResponse)
-              done()
-            })
+        res => {
+          expect(res).to.deep.equal(apiResponse)
+          done()
+        })
   })
 
   it('commentPage will re-fetch if first attempt fails', done => {
@@ -85,10 +85,10 @@ describe('/lib/youtube-api/youtube-api', () => {
 
     Youtube.commentPage(videoId, pageToken)
       .fork(e => done('got error ' + e),
-            res => {
-              expect(res).to.deep.equal(apiResponse)
-              done()
-            })
+        res => {
+          expect(res).to.deep.equal(apiResponse)
+          done()
+        })
   })
 
   it('commentReplies is a function on the object', () => {
@@ -126,10 +126,10 @@ describe('/lib/youtube-api/youtube-api', () => {
 
     Youtube.commentReplies(videoId, repliesToken)
       .fork(e => done('got an error ' + e),
-            res => {
-              expect(res).to.deep.equal(apiResponse)
-              done()
-            })
+        res => {
+          expect(res).to.deep.equal(apiResponse)
+          done()
+        })
   })
 
   it('commentReplies will re-fetch if first attempt fails', done => {
@@ -162,10 +162,10 @@ describe('/lib/youtube-api/youtube-api', () => {
 
     Youtube.commentReplies(videoId, repliesToken)
       .fork(e => done('got an error ' + e),
-            res => {
-              expect(res).to.deep.equal(apiResponse)
-              done()
-            })
+        res => {
+          expect(res).to.deep.equal(apiResponse)
+          done()
+        })
   })
 
   it('commentsWatchFragment is a function on the object', () => {
@@ -200,11 +200,11 @@ describe('/lib/youtube-api/youtube-api', () => {
       .thenReturn(Task.of(session))
 
     Youtube.commentsWatchFragment(videoId, session, request)
-        .fork(e => done('got an error ' + e),
-              res => {
-                expect(res).to.deep.equal(apiResponse)
-                done()
-              })
+      .fork(e => done('got an error ' + e),
+        res => {
+          expect(res).to.deep.equal(apiResponse)
+          done()
+        })
   })
 
   it('commentsWatchFragment re-fetches if fetch fails', done => {
@@ -234,10 +234,10 @@ describe('/lib/youtube-api/youtube-api', () => {
       .thenReturn(Task.of(session))
 
     Youtube.commentsWatchFragment(videoId, session, request)
-        .fork(e => done('got an error ' + e),
-              res => {
-                expect(res).to.deep.equal(apiResponse)
-                done()
-              })
+      .fork(e => done('got an error ' + e),
+        res => {
+          expect(res).to.deep.equal(apiResponse)
+          done()
+        })
   })
 })

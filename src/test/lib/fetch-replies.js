@@ -70,7 +70,7 @@ describe('/lib/fetch-first-page-token.js', () => {
     }))
       .thenReturn(expectedError)
 
-    fetchReplies('videoId', { repliesToken })
+    fetchReplies('videoId', { repliesToken})
       .fork(e => {
         expect(e).to.deep.equal(expectedError)
         done()
@@ -115,7 +115,7 @@ describe('/lib/fetch-first-page-token.js', () => {
         content_html: sampleReplies(replies)
       }))
 
-    fetchReplies(videoId, { repliesToken })
+    fetchReplies(videoId, { repliesToken})
       .fork(e => {
         expect.fail(e)
         done(e)

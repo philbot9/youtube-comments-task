@@ -19,8 +19,7 @@ module.exports = {
   COMMENT_TEXT,
   COMMENT_LIKES,
   COMMENT_EDITED,
-  REPLIES_TOKEN
-}
+REPLIES_TOKEN}
 
 // comment = {
 //   id: '1l2k3j12lkjjlaksdjkl',

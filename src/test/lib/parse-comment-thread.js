@@ -4,17 +4,7 @@ const moment = require('moment')
 
 const parseCommentThread = require('../../lib/parse-comment-thread')
 
-const {
-  sampleComment,
-  COMMENT_ID,
-  COMMENT_AUTHOR,
-  COMMENT_AUTHOR_LINK,
-  COMMENT_AUTHOR_THUMB,
-  COMMENT_TIME,
-  COMMENT_TEXT,
-  COMMENT_LIKES,
-  REPLIES_TOKEN
-} = require('../sample-comment-html')
+const {sampleComment, COMMENT_ID, COMMENT_AUTHOR, COMMENT_AUTHOR_LINK, COMMENT_AUTHOR_THUMB, COMMENT_TIME, COMMENT_TEXT, COMMENT_LIKES, REPLIES_TOKEN} = require('../sample-comment-html')
 
 const validateComment = (comment, exp) => {
   expect(comment).to.have.property('id', exp.id)

@@ -18,8 +18,7 @@ describe('/lib/utils/traverse-array.js', () => {
   it('fails if an array member fails', () => {
     const error = 'error'
     let count = 0
-    const res = traverse(arr, Either.of, x =>
-      count++ !== 3 ? Either.of(x) : Either.Left(error))
+    const res = traverse(arr, Either.of, x => count++ !== 3 ? Either.of(x) : Either.Left(error))
 
     res.fold(e => {
       expect(e).to.deep.equal(error)

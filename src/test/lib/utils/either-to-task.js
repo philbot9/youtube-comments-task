@@ -13,10 +13,10 @@ describe('/lib/utils/request.js', () => {
     const value = 'value'
     eitherToTask(Either.of(value))
       .fork(e => done('got an error ' + e),
-            v => {
-              expect(v).to.equal(value)
-              done()
-            })
+        v => {
+          expect(v).to.equal(value)
+          done()
+        })
   })
 
   it('transforms an Either.Left to a successful Task', done => {
