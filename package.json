@@ -2,27 +2,18 @@
   "name": "youtube-comments-task",
   "version": "1.2.0",
   "description": "Scrape comments from YouTube Videos.",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "engines": {
     "node": ">=6.0"
   },
-  "watch": {
-    "unit-test": {
-      "patterns": [
-        "./",
-        "test"
-      ],
-      "extensions": "js",
-      "quiet": true
-    }
-  },
   "scripts": {
-    "test": "npm run unit-test && npm run integration-test",
-    "unit-test": "mocha test/*.js test/lib/*.js test/lib/**/*.js",
-    "integration-test": "mocha test/integration-tests/*.js",
+    "build": "babel src -d dist",
     "coverage": "nyc --reporter=html mocha test/*.js test/lib/*.js test/lib/**/*.js && xdg-open ./coverage/index.html",
-    "format": "standard-format --write",
-    "watch": "npm-watch"
+    "format": "standard-format --write src/",
+    "integration-test": "mocha dist/test/integration-tests/*.js",
+    "prepublish": "npm run build",
+    "test": "npm run build && npm run unit-test && npm run integration-test",
+    "unit-test": "mocha dist/test/*.js dist/test/lib/*.js dist/test/lib/**/*.js"
   },
   "repository": {
     "type": "git",
@@ -57,9 +48,10 @@
     "retry-task": "^1.0.1"
   },
   "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-preset-env": "^1.2.1",
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
-    "npm-watch": "^0.1.6",
     "nyc": "^10.1.2",
     "standard": "^8.6.0",
     "standard-format": "^2.2.4",

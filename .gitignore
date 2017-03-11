@@ -1,5 +1,5 @@
-# ignore build
-build/
+# ignore dist
+dist/
 
 # Logs
 logs
