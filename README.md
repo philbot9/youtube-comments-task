@@ -9,7 +9,7 @@ Scrape comments, including their replies, from a YouTube video.
 
 * [Installation](#installation)
 * [Usage](#usage)
-* [Result](#result)
+* [Comment Data](#comment-data)
 * [Errors](#errors)
 * [Task](#task)
 * [Compatibility](#compatibility)
@@ -27,7 +27,7 @@ The module exports a single function:
 
 `fetchComments(videoId[,pageToken])`
 
-The function accepts the YouTube `videoId` and an optional `pageToken`, and returns a Task that resolves to the corresponding page of comments. If the `pageToken` is not provided it fetches the first page of comments.
+The function accepts the YouTube `videoId` and an optional `pageToken`, and returns a [**Task**](#task) that resolves to the corresponding page of comments. If the `pageToken` is not provided it fetches the first page of comments.
 
 The result is an object with the following properties.
 
@@ -40,7 +40,7 @@ The result is an object with the following properties.
 
 **Note:** If the fetched page is the last page, the result does not contain the `nextPageToken` property.
 
-## Result
+## Comment Data
 
 ```
 {
