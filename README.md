@@ -4,13 +4,16 @@ Scrape comments, including their replies, from a YouTube video.
 
 [![Build Status](https://travis-ci.org/philbot9/youtube-comments-task.svg?branch=master)](https://travis-ci.org/philbot9/youtube-comments-task)
 
-[Installation](#installation)
-[Usage](#usage)
-[Result](#result)
-[Errors](#errors)
-[Task](#task)
-[Compatibility](#compatibility)
-[Examples](#examples)
+
+## Contents
+
+* [Installation](#installation)
+* [Usage](#usage)
+* [Result](#result)
+* [Errors](#errors)
+* [Task](#task)
+* [Compatibility](#compatibility)
+* [Examples](#examples)
 
 ## Installation
 
