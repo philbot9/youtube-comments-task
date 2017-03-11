@@ -1,6 +1,5 @@
 const { expect } = require('chai')
 const cheerio = require('cheerio')
-const { List } = require('immutable-ext')
 const Either = require('data.either')
 
 const tokenizeComments = require('../../lib/tokenize-comments')
@@ -10,7 +9,7 @@ describe('/lib/tokenize-comments.js', () => {
     expect(tokenizeComments).to.be.a('function')
   })
 
-  it('returns an empty List if the html doesn\'t contain any comments', () => {
+  it('returns an empty array if the html doesn\'t contain any comments', () => {
     const html = '<div><div class="no-comment">nope</div><div class="no-comment">hahaha</div></div>'
     const result = tokenizeComments(html)
     expect(result).to.be.instanceof(Either)
@@ -18,12 +17,11 @@ describe('/lib/tokenize-comments.js', () => {
     result.fold(
       e => expect.fail('Should not have an error ' + e),
       commentTokens => {
-        expect(commentTokens).to.be.instanceof(List)
-        expect(commentTokens.size).to.equal(0)
+        expect(commentTokens).to.be.a('array').of.length(0)
       })
   })
 
-  it('returns a List of cheerio tokens', () => {
+  it('returns an array of cheerio tokens', () => {
     const c1 = 'comment1'
     const r1 = 'reply1'
     const c2 = 'comment2'
@@ -50,11 +48,10 @@ describe('/lib/tokenize-comments.js', () => {
     result.fold(
       e => expect.fail('Should not have an error ' + e),
       commentTokens => {
-        expect(commentTokens).to.be.instanceof(List)
-        expect(commentTokens.size).to.equal(2)
+        expect(commentTokens).to.be.a('array').of.length(2)
 
-        const $comment1 = cheerio(commentTokens.get(0))
-        const $comment2 = cheerio(commentTokens.get(1))
+        const $comment1 = cheerio(commentTokens[0])
+        const $comment2 = cheerio(commentTokens[1])
         expect($comment1.find('.comment-thread-renderer > .comment-renderer').text()).to.equal(c1)
         expect($comment1.find('.comment-replies-renderer .comment-renderer').text()).to.equal(r1)
         expect($comment2.find('.comment-thread-renderer > .comment-renderer').text()).to.equal(c2)

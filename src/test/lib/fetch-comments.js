@@ -1,7 +1,6 @@
 const { expect } = require('chai')
 const td = require('testdouble')
 const Either = require('data.either')
-const { List } = require('immutable-ext')
 const Task = require('data.task')
 
 describe('/lib/comment-stream', () => {
@@ -19,7 +18,7 @@ describe('/lib/comment-stream', () => {
     const commentHtml = '<div>page1</div>'
     const commentPage = { commentHtml }
     const pageToken = 'token1'
-    const commentPageTokens = List.of('ct1', 'ct2', 'ct3')
+    const commentPageTokens = [ 'ct1', 'ct2', 'ct3' ]
     const comments = [
       {id: 'c1', hasReplies: false},
       {id: 'c2', hasReplies: true, numReplies: 3},
@@ -44,7 +43,7 @@ describe('/lib/comment-stream', () => {
       .thenReturn(Either.of(commentPageTokens))
 
     comments.forEach((c, i) => {
-      td.when(parseCommentThread(commentPageTokens.get(i)))
+      td.when(parseCommentThread(commentPageTokens[i]))
         .thenReturn(Either.of(c))
     })
 
@@ -70,7 +69,7 @@ describe('/lib/comment-stream', () => {
     const commentHtml = '<div>page1</div>'
     const commentPage = { commentHtml }
     const pageToken = 'token1'
-    const commentPageTokens = List.of('ct1', 'ct2', 'ct3')
+    const commentPageTokens = [ 'ct1', 'ct2', 'ct3' ]
     const comments = [
       {id: 'c1', hasReplies: false},
       {id: 'c2', hasReplies: true, numReplies: 3},
@@ -98,7 +97,7 @@ describe('/lib/comment-stream', () => {
       .thenReturn(Either.of(commentPageTokens))
 
     comments.forEach((c, i) => {
-      td.when(parseCommentThread(commentPageTokens.get(i)))
+      td.when(parseCommentThread(commentPageTokens[i]))
         .thenReturn(Either.of(c))
     })
 

@@ -6,6 +6,7 @@ const fetchCommentPage = require('./fetch-comment-page')
 const tokenizeComments = require('./tokenize-comments')
 const parseCommentThread = require('./parse-comment-thread')
 const fetchReplies = require('./fetch-replies')
+const traverse = require('./utils/traverse-array')
 
 const parseComments = $commentThread =>
   parseCommentThread($commentThread)
@@ -32,10 +33,10 @@ const fetchComments = (videoId, pageToken) =>
     .chain(t => fetchCommentPage(videoId, t))
     .chain(({ commentHtml, nextPageToken }) =>
       tokenizeComments(commentHtml)
-        .chain(cs => cs.traverse(Task.of, parseComments))
-        .chain(cs => cs.traverse(Task.of, c => addReplies(videoId, c)))
-        .map(cs => Object.assign({},
-          { comments: cs.toJS() },
+        .chain(cs => traverse(cs, Task.of, parseComments))
+        .chain(cs => traverse(cs, Task.of, c => addReplies(videoId, c)))
+        .map(comments => Object.assign({},
+          { comments },
           nextPageToken ? { nextPageToken } : {})))
 
 module.exports = fetchComments

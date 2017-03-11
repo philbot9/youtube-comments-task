@@ -3,12 +3,9 @@
   "version": "1.2.0",
   "description": "Scrape comments from YouTube Videos.",
   "main": "./dist/index.js",
-  "engines": {
-    "node": ">=6.0"
-  },
   "scripts": {
     "build": "babel src -d dist",
-    "coverage": "nyc --reporter=html mocha test/*.js test/lib/*.js test/lib/**/*.js && xdg-open ./coverage/index.html",
+    "coverage": "nyc --reporter=html mocha src/test/*.js src/test/lib/*.js src/test/lib/**/*.js && xdg-open ./coverage/index.html",
     "format": "standard-format --write src/",
     "integration-test": "mocha dist/test/integration-tests/*.js",
     "prepublish": "npm run build",
@@ -39,8 +36,6 @@
     "data.either": "^1.4.0",
     "data.task": "^3.1.1",
     "debug": "^2.2.0",
-    "immutable": "^3.8.1",
-    "immutable-ext": "^1.0.8",
     "moment": "^2.17.1",
     "propper": "^1.0.2",
     "ramda": "^0.23.0",
