@@ -3,12 +3,12 @@ const td = require('testdouble')
 const Either = require('data.either')
 const Task = require('data.task')
 
-describe('/lib/comment-stream', () => {
+describe('/lib/fetch-replies', () => {
   afterEach(() => {
     td.reset()
   })
 
-  it('rexports a function', () => {
+  it('exports a function', () => {
     const fetchComments = require('../../lib/fetch-comments')
     expect(fetchComments).to.be.a('function')
   })
@@ -114,6 +114,51 @@ describe('/lib/comment-stream', () => {
           expect(res.comments[0]).to.deep.equal(comments[0])
           expect(res.comments[1]).to.deep.equal(Object.assign({}, comments[1], {replies: c2Replies}))
           expect(res.comments[2]).to.deep.equal(comments[2])
+          done()
+        })
+  })
+
+  it('corrects reply fields for comments whose replies cannot be fetched', done => {
+    const videoId = 'videoId'
+    const commentHtml = '<div>page1</div>'
+    const commentPage = { commentHtml }
+    const pageToken = 'token1'
+    const repliesToken = 'replies_token'
+    const commentPageTokens = [ 'ct1' ]
+    const comments = [
+      {id: 'c1', hasReplies: true, repliesToken},
+    ]
+    const c1Replies = []
+
+    const fetchFirstPageToken = td.replace('../../lib/fetch-first-page-token')
+    const fetchCommentPage = td.replace('../../lib/fetch-comment-page')
+    const tokenizeComments = td.replace('../../lib/tokenize-comments')
+    const parseCommentThread = td.replace('../../lib/parse-comment-thread')
+    const fetchReplies = td.replace('../../lib/fetch-replies')
+    const fetchComments = require('../../lib/fetch-comments')
+
+    td.when(fetchCommentPage(videoId, pageToken))
+      .thenReturn(Task.of(commentPage))
+
+    td.when(tokenizeComments(commentHtml))
+      .thenReturn(Either.of(commentPageTokens))
+
+    comments.forEach((c, i) => {
+      td.when(parseCommentThread(commentPageTokens[i]))
+        .thenReturn(Either.of(c))
+    })
+
+    td.when(fetchReplies(videoId, comments[0]))
+      .thenReturn(Task.of(c1Replies))
+
+    fetchComments(videoId, pageToken)
+      .fork(e => done('Got an error: ' + e),
+        res => {
+          expect(res).to.have.property('comments')
+          expect(res).not.to.have.property('nextPageToken')
+
+          expect(res.comments).to.be.a('array').of.length(1)
+          expect(res.comments[0]).to.deep.equal({id: 'c1', hasReplies: false})
           done()
         })
   })

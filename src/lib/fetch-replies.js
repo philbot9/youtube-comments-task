@@ -1,5 +1,6 @@
 const Task = require('data.task')
 const Either = require('data.either')
+const debug = require('debug')('fetch-replies')
 
 const { commentReplies } = require('./youtube-api/youtube-api')
 const { cheerio } = require('./utils/cheerio-utils')
@@ -15,6 +16,10 @@ const getContentHtml = r => Either.fromNullable(r.content_html)
   .fold(Task.rejected, Task.of)
 
 const parseCommentReplies = $replies => parseReplies($replies)
+  .orElse(e => {
+    debug('Unable to parse comment replies: %s', e)
+    return Either.of([])
+  })
   .fold(Task.rejected, Task.of)
 
 const fetchReplies = (videoId, comment) => getRepliesToken(comment)

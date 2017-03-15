@@ -125,4 +125,25 @@ describe('/lib/fetch-first-page-token.js', () => {
         done()
       })
   })
+
+  it('Returns an empty array if replies cannot be parsed', done => {
+    const videoId = 'videoId'
+    const repliesToken = 'replies_token'
+
+    const Youtube = td.replace('../../lib/youtube-api/youtube-api')
+    const fetchReplies = require('../../lib/fetch-replies')
+
+    td.when(Youtube.commentReplies(videoId, repliesToken))
+      .thenReturn(Task.of({
+        content_html: ''
+      }))
+
+    fetchReplies(videoId, { repliesToken})
+      .fork(e => {
+        done('not expected to fail ' + e)
+      }, res => {
+        expect(res).to.be.a('array').of.length(0)
+        done()
+      })
+  })
 })
