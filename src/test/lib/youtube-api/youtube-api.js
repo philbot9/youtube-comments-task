@@ -251,4 +251,39 @@ describe('/lib/youtube-api/youtube-api', () => {
       }
     )
   })
+
+  it('results in an error if the reponse does not have a body', done => {
+    const videoId = 'videoId'
+    const session = { sessionToken: 'sess', commentsToken: 'comm' }
+    const url = buildWatchFragmentsUrl(videoId, session, ['comments'])
+
+    const getSession = td.replace('../../../lib/youtube-api/session-store')
+    const request = td.replace('../../../lib/utils/request')
+    const Youtube = require('../../../lib/youtube-api/youtube-api')
+
+    const requestMatcher = td.matchers.contains({
+      method: 'POST',
+      url: url,
+      json: true,
+      form: {
+        session_token: session.sessionToken
+      }
+    })
+
+    td
+      .when(request(requestMatcher))
+      .thenReturn(Task.rejected('na-ah'), Task.of({ some: 'garbage' }))
+
+    td.when(getSession(videoId)).thenReturn(Task.of(session))
+
+    Youtube.commentsWatchFragment(videoId, session, request).fork(
+      e => {
+        expect(e).to.match(/body/i)
+        done()
+      },
+      res => {
+        done('should not succeed ' + res)
+      }
+    )
+  })
 })
