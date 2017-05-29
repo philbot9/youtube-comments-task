@@ -16,7 +16,10 @@ const validateComment = (comment, exp) => {
   expect(comment).to.have.property('text', exp.text)
   expect(comment).to.have.property('likes', exp.likes)
   expect(comment).to.have.property('time', exp.time)
-  expect(comment).to.have.property('timestamp').that.is.a('number').closeTo(exp.timestamp, (60 * 1000))
+  expect(comment).to.have
+    .property('timestamp')
+    .that.is.a('number')
+    .closeTo(exp.timestamp, 60 * 1000)
   expect(comment).to.have.property('edited', exp.edited)
 }
 
@@ -56,15 +59,17 @@ describe('/lib/parse-replies.js', () => {
     const html = sampleComment({}, replies)
     const $replies = cheerio(html).find('.comment-replies-renderer')
 
-    parseReplies($replies)
-      .fold(e => {
+    parseReplies($replies).fold(
+      e => {
         expect.fail(e)
         done(e)
-      }, result => {
+      },
+      result => {
         expect(replies).to.be.a('array').of.length(2)
         result.forEach((r, i) => validateComment(r, replies[i]))
         done()
-      })
+      }
+    )
   })
 
   it('fails if parsing of one reply fails', () => {
@@ -102,14 +107,17 @@ describe('/lib/parse-replies.js', () => {
     const result1 = 'result1'
     const error = 'error'
 
-    td.when(parseCommentRenderer(), { ignoreExtraArgs: true })
+    td
+      .when(parseCommentRenderer(), { ignoreExtraArgs: true })
       .thenReturn(Either.of(result1), Either.Left(error))
 
-    parseReplies($replies)
-      .fold(e => {
+    parseReplies($replies).fold(
+      e => {
         expect(e).to.equal(error)
-      }, result => {
+      },
+      result => {
         expect.fail(`expected to fail ${result}`)
-      })
+      }
+    )
   })
 })

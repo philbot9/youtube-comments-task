@@ -6,7 +6,7 @@
   "scripts": {
     "build": "babel src -d dist",
     "coverage": "nyc --reporter=html mocha src/test/*.js src/test/lib/*.js src/test/lib/**/*.js && xdg-open ./coverage/index.html",
-    "format": "standard-format --write",
+    "format": "prettier-standard './src/**/*.js'",
     "integration-test": "mocha dist/test/integration-tests/*.js",
     "prepublish": "npm run build",
     "test": "npm run build && npm run unit-test && npm run integration-test",
@@ -49,6 +49,7 @@
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
     "nyc": "^10.1.2",
+    "prettier-standard": "^5.0.0",
     "standard": "^8.6.0",
     "standard-format": "^2.2.4",
     "testdouble": "^1.10.1"

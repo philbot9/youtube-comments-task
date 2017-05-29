@@ -11,33 +11,42 @@ describe('/lib/utils/request.js', () => {
 
   it('transforms an Either.Right to a rejected Task', done => {
     const value = 'value'
-    eitherToTask(Either.of(value))
-      .fork(e => done('got an error ' + e),
-        v => {
-          expect(v).to.equal(value)
-          done()
-        })
+    eitherToTask(Either.of(value)).fork(
+      e => done('got an error ' + e),
+      v => {
+        expect(v).to.equal(value)
+        done()
+      }
+    )
   })
 
   it('transforms an Either.Left to a successful Task', done => {
     const value = 'value'
-    eitherToTask(Either.Left(value))
-      .fork(v => {
+    eitherToTask(Either.Left(value)).fork(
+      v => {
         expect(v).to.equal(value)
         done()
-      }, res => done('expected task to fail'))
+      },
+      res => done('expected task to fail')
+    )
   })
 
   it('natural transformation property holds', done => {
     const e = Either.of(1)
     const f = x => x + 1
 
-    eitherToTask(e).map(f).fork(e => done('got an error ' + e), r1 => {
-      eitherToTask(e.map(f)).fork(e => done('got an error ' + e), r2 => {
-        expect(r1).to.equal(2)
-        expect(r2).to.equal(2)
-        done()
-      })
-    })
+    eitherToTask(e).map(f).fork(
+      e => done('got an error ' + e),
+      r1 => {
+        eitherToTask(e.map(f)).fork(
+          e => done('got an error ' + e),
+          r2 => {
+            expect(r1).to.equal(2)
+            expect(r2).to.equal(2)
+            done()
+          }
+        )
+      }
+    )
   })
 })

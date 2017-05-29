@@ -1,12 +1,14 @@
 const COMMENT_ID = 'z12vvvxaryjywra0h234jdcg5p24zbvol04'
 const COMMENT_AUTHOR = 'the_comment_username'
 const COMMENT_AUTHOR_LINK = '/user/nickname'
-const COMMENT_AUTHOR_THUMB = 'https://yt3.ggpht.com/-05yJ3zLwwv0/AAAAAAAAAAI/AAAAAAAAAAA/o-ubSLg7wjM/s32-c-k-no-mo-rj-c0xffffff/photo.jpg'
+const COMMENT_AUTHOR_THUMB =
+  'https://yt3.ggpht.com/-05yJ3zLwwv0/AAAAAAAAAAI/AAAAAAAAAAA/o-ubSLg7wjM/s32-c-k-no-mo-rj-c0xffffff/photo.jpg'
 const COMMENT_TEXT = 'This is the actual comment text.'
 const COMMENT_LIKES = 3
 const COMMENT_TIME = '1 month ago'
 const COMMENT_EDITED = false
-const REPLIES_TOKEN = 'EhYSC2NCVWVpcFhGaXNRwAEAyAEA4AEBGAYyWRpXEiN6MTN3dnZtcG14MmFpeGp2cDIyNWV4aDVqbG4yem5nNGQwNCICCAAqGFVDM1hUelZ6YUhRRWQzMHJRYnV2Q3RUUTILY0JVZWlwWEZpc1E4AEABSP=='
+const REPLIES_TOKEN =
+  'EhYSC2NCVWVpcFhGaXNRwAEAyAEA4AEBGAYyWRpXEiN6MTN3dnZtcG14MmFpeGp2cDIyNWV4aDVqbG4yem5nNGQwNCICCAAqGFVDM1hUelZ6YUhRRWQzMHJRYnV2Q3RUUTILY0JVZWlwWEZpc1E4AEABSP=='
 
 module.exports = {
   sampleComment,
@@ -19,7 +21,8 @@ module.exports = {
   COMMENT_TEXT,
   COMMENT_LIKES,
   COMMENT_EDITED,
-REPLIES_TOKEN}
+  REPLIES_TOKEN
+}
 
 // comment = {
 //   id: '1l2k3j12lkjjlaksdjkl',
@@ -36,16 +39,19 @@ function sampleReplies (replies) {
 }
 
 function sampleComment (comment, replies, repliesToken) {
-  comment = Object.assign({
-    id: COMMENT_ID,
-    author: COMMENT_AUTHOR,
-    authorLink: COMMENT_AUTHOR_LINK,
-    authorThumb: COMMENT_AUTHOR_THUMB,
-    text: COMMENT_TEXT,
-    likes: COMMENT_LIKES,
-    time: COMMENT_TIME,
-    edited: COMMENT_EDITED
-  }, (comment || {}))
+  comment = Object.assign(
+    {
+      id: COMMENT_ID,
+      author: COMMENT_AUTHOR,
+      authorLink: COMMENT_AUTHOR_LINK,
+      authorThumb: COMMENT_AUTHOR_THUMB,
+      text: COMMENT_TEXT,
+      likes: COMMENT_LIKES,
+      time: COMMENT_TIME,
+      edited: COMMENT_EDITED
+    },
+    comment || {}
+  )
 
   replies = replies || []
   repliesToken = repliesToken || REPLIES_TOKEN

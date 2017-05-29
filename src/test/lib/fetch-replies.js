@@ -13,7 +13,10 @@ const validateComment = (comment, exp) => {
   expect(comment).to.have.property('text', exp.text)
   expect(comment).to.have.property('likes', exp.likes)
   expect(comment).to.have.property('time', exp.time)
-  expect(comment).to.have.property('timestamp').that.is.a('number').closeTo(exp.timestamp, (60 * 1000))
+  expect(comment).to.have
+    .property('timestamp')
+    .that.is.a('number')
+    .closeTo(exp.timestamp, 60 * 1000)
 }
 
 describe('/lib/fetch-first-page-token.js', () => {
@@ -32,22 +35,27 @@ describe('/lib/fetch-first-page-token.js', () => {
     const errorHandler = td.replace('../../lib/error-handler')
     const fetchReplies = require('../../lib/fetch-replies')
 
-    td.when(errorHandler.scraperError({
-      videoId,
-      message: 'Comment parameter object does not have a repliesToken field',
-      component: 'fetch-replies',
-      operation: 'fetch-replies'
-    }))
+    td
+      .when(
+        errorHandler.scraperError({
+          videoId,
+          message: 'Comment parameter object does not have a repliesToken field',
+          component: 'fetch-replies',
+          operation: 'fetch-replies'
+        })
+      )
       .thenReturn(expectedError)
 
-    fetchReplies('videoId', {stuff: 'here'})
-      .fork(e => {
+    fetchReplies('videoId', { stuff: 'here' }).fork(
+      e => {
         expect(e).to.deep.equal(expectedError)
         done()
-      }, res => {
+      },
+      res => {
         expect.fail(res)
         done('expected not to succeed')
-      })
+      }
+    )
   })
 
   it('fails if API response is invalid', done => {
@@ -59,25 +67,31 @@ describe('/lib/fetch-first-page-token.js', () => {
     const errorHandler = td.replace('../../lib/error-handler')
     const fetchReplies = require('../../lib/fetch-replies')
 
-    td.when(Youtube.commentReplies(videoId, repliesToken))
+    td
+      .when(Youtube.commentReplies(videoId, repliesToken))
       .thenReturn(Task.of({ nonsense: 'yep' }))
 
-    td.when(errorHandler.scraperError({
-      videoId,
-      message: 'Invalid Replies-API response, does not contain content_html field',
-      component: 'fetch-replies',
-      operation: 'fetch-replies'
-    }))
+    td
+      .when(
+        errorHandler.scraperError({
+          videoId,
+          message: 'Invalid Replies-API response, does not contain content_html field',
+          component: 'fetch-replies',
+          operation: 'fetch-replies'
+        })
+      )
       .thenReturn(expectedError)
 
-    fetchReplies('videoId', { repliesToken})
-      .fork(e => {
+    fetchReplies('videoId', { repliesToken }).fork(
+      e => {
         expect(e).to.deep.equal(expectedError)
         done()
-      }, res => {
+      },
+      res => {
         expect.fail(res)
         done('expected not to succeed')
-      })
+      }
+    )
   })
 
   it('fetches replies for a comment', done => {
@@ -110,20 +124,23 @@ describe('/lib/fetch-first-page-token.js', () => {
     const Youtube = td.replace('../../lib/youtube-api/youtube-api')
     const fetchReplies = require('../../lib/fetch-replies')
 
-    td.when(Youtube.commentReplies(videoId, repliesToken))
-      .thenReturn(Task.of({
+    td.when(Youtube.commentReplies(videoId, repliesToken)).thenReturn(
+      Task.of({
         content_html: sampleReplies(replies)
-      }))
+      })
+    )
 
-    fetchReplies(videoId, { repliesToken})
-      .fork(e => {
+    fetchReplies(videoId, { repliesToken }).fork(
+      e => {
         expect.fail(e)
         done(e)
-      }, result => {
+      },
+      result => {
         expect(result).to.be.an('array').of.length(2)
         result.forEach((r, i) => validateComment(r, replies[i]))
         done()
-      })
+      }
+    )
   })
 
   it('Returns an empty array if replies cannot be parsed', done => {
@@ -133,17 +150,20 @@ describe('/lib/fetch-first-page-token.js', () => {
     const Youtube = td.replace('../../lib/youtube-api/youtube-api')
     const fetchReplies = require('../../lib/fetch-replies')
 
-    td.when(Youtube.commentReplies(videoId, repliesToken))
-      .thenReturn(Task.of({
+    td.when(Youtube.commentReplies(videoId, repliesToken)).thenReturn(
+      Task.of({
         content_html: ''
-      }))
+      })
+    )
 
-    fetchReplies(videoId, { repliesToken})
-      .fork(e => {
+    fetchReplies(videoId, { repliesToken }).fork(
+      e => {
         done('not expected to fail ' + e)
-      }, res => {
+      },
+      res => {
         expect(res).to.be.a('array').of.length(0)
         done()
-      })
+      }
+    )
   })
 })

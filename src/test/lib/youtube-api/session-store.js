@@ -16,7 +16,8 @@ describe('/lib/youtube-api/session-store', () => {
 
   it('session store fetches new session tokens', done => {
     const videoId = 'first_video_id'
-    const sessionToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
+    const sessionToken =
+      'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
     const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
     const url = buildVideoPageUrl(videoId)
     const html = `<html><script>
@@ -29,19 +30,19 @@ describe('/lib/youtube-api/session-store', () => {
 
     td.when(request(url)).thenReturn(Task.of(html))
 
-    getSession(videoId)
-      .fork(
-        e => done('got an error ' + e),
-        s => {
-          expect(s).to.deep.equal({sessionToken, commentsToken})
-          done()
-        }
+    getSession(videoId).fork(
+      e => done('got an error ' + e),
+      s => {
+        expect(s).to.deep.equal({ sessionToken, commentsToken })
+        done()
+      }
     )
   })
 
   it('task fails if session token cannot be found', done => {
     const videoId = 'the_video_id'
-    const sessionToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
+    const sessionToken =
+      'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
     const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
     const expectedError = { error: 'here' }
     const url = buildVideoPageUrl(videoId)
@@ -54,22 +55,30 @@ describe('/lib/youtube-api/session-store', () => {
     const errorHandler = td.replace('../../../lib/error-handler')
     const getSession = require('../../../lib/youtube-api/session-store')
 
-    td.when(errorHandler.videoPageError({component: 'session-store', operation: 'extractSessionToken', html}))
+    td
+      .when(
+        errorHandler.videoPageError({
+          component: 'session-store',
+          operation: 'extractSessionToken',
+          html
+        })
+      )
       .thenReturn(expectedError)
     td.when(request(url)).thenReturn(Task.of(html))
 
-    getSession(videoId)
-      .fork(
-        e => {
-          expect(e).to.deep.equal(expectedError)
-          done()
-        },
-        res => done('expected task to fail'))
+    getSession(videoId).fork(
+      e => {
+        expect(e).to.deep.equal(expectedError)
+        done()
+      },
+      res => done('expected task to fail')
+    )
   })
 
   it('task fails if comments token cannot be found', done => {
     const videoId = 'the_video_id'
-    const sessionToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
+    const sessionToken =
+      'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
     const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
     const expectedError = { error: 'here' }
     const url = buildVideoPageUrl(videoId)
@@ -82,22 +91,30 @@ describe('/lib/youtube-api/session-store', () => {
     const errorHandler = td.replace('../../../lib/error-handler')
     const getSession = require('../../../lib/youtube-api/session-store')
 
-    td.when(errorHandler.videoPageError({component: 'session-store', operation: 'extractCommentsToken', html}))
+    td
+      .when(
+        errorHandler.videoPageError({
+          component: 'session-store',
+          operation: 'extractCommentsToken',
+          html
+        })
+      )
       .thenReturn(expectedError)
     td.when(request(url)).thenReturn(Task.of(html))
 
-    getSession(videoId)
-      .fork(
-        e => {
-          expect(e).to.deep.equal(expectedError)
-          done()
-        },
-        res => done('expected task to fail'))
+    getSession(videoId).fork(
+      e => {
+        expect(e).to.deep.equal(expectedError)
+        done()
+      },
+      res => done('expected task to fail')
+    )
   })
 
   it('session store caches tokens', done => {
     const videoId = 'the_video_id'
-    const sessionToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
+    const sessionToken =
+      'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
     const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
     const url = buildVideoPageUrl(videoId)
     const html = `<html><script>
@@ -107,25 +124,28 @@ describe('/lib/youtube-api/session-store', () => {
 
     const request = td.replace('../../../lib/utils/request')
     const getSession = require('../../../lib/youtube-api/session-store')
-    td.when(request(url)).thenReturn(Task.of(html), Task.rejected('one request only'))
+    td
+      .when(request(url))
+      .thenReturn(Task.of(html), Task.rejected('one request only'))
 
-    getSession(videoId)
-      .fork(
-        e => done('got an error ' + e),
-        s => {
-          getSession(videoId)
-            .fork(
-              e => done('got an error ' + e),
-              s => {
-                expect(s).to.deep.equal({sessionToken, commentsToken})
-                done()
-              })
-        })
+    getSession(videoId).fork(
+      e => done('got an error ' + e),
+      s => {
+        getSession(videoId).fork(
+          e => done('got an error ' + e),
+          s => {
+            expect(s).to.deep.equal({ sessionToken, commentsToken })
+            done()
+          }
+        )
+      }
+    )
   })
 
   it('retries if fetching video page fails', done => {
     const videoId = 'the_video_id'
-    const sessionToken = 'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
+    const sessionToken =
+      'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
     const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
     const url = buildVideoPageUrl(videoId)
     const html = `<html><script>
@@ -136,16 +156,16 @@ describe('/lib/youtube-api/session-store', () => {
     const request = td.replace('../../../lib/utils/request')
     const getSession = require('../../../lib/youtube-api/session-store')
 
-    td.when(request(url)).thenReturn(
-      Task.rejected('first one fails'),
-      Task.of(html))
+    td
+      .when(request(url))
+      .thenReturn(Task.rejected('first one fails'), Task.of(html))
 
-    getSession(videoId)
-      .fork(
-        e => done('got an error ' + e),
-        s => {
-          expect(s).to.deep.equal({sessionToken, commentsToken})
-          done()
-        })
+    getSession(videoId).fork(
+      e => done('got an error ' + e),
+      s => {
+        expect(s).to.deep.equal({ sessionToken, commentsToken })
+        done()
+      }
+    )
   })
 })

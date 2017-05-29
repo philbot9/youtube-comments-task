@@ -1,7 +1,14 @@
 const { expect } = require('chai')
 const nodeUrl = require('url')
 
-const {VIDEO_PAGE_URL, WATCH_FRAGMENTS_URL, COMMENT_SERVICE_URL, buildVideoPageUrl, buildWatchFragmentsUrl, buildCommentServiceUrl} = require('../../../lib/youtube-api/url-builder')
+const {
+  VIDEO_PAGE_URL,
+  WATCH_FRAGMENTS_URL,
+  COMMENT_SERVICE_URL,
+  buildVideoPageUrl,
+  buildWatchFragmentsUrl,
+  buildCommentServiceUrl
+} = require('../../../lib/youtube-api/url-builder')
 
 describe('/lib/youtube-api/url-build.js', () => {
   it('exports buildVideoPageUrl() function', () => {
@@ -23,13 +30,13 @@ describe('/lib/youtube-api/url-build.js', () => {
     expect(urlStr.indexOf(`${VIDEO_PAGE_URL}?`)).to.equal(0)
 
     const url = nodeUrl.parse(urlStr, true)
-    expect(url.query).to.deep.equal({v: videoId})
+    expect(url.query).to.deep.equal({ v: videoId })
   })
 
   it('buildWatchFragmentsUrl() builds a watch fragments url', () => {
     const videoId = 'K23jKl24k'
     const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
-    const session = { commentsToken}
+    const session = { commentsToken }
     const fragments = ['comments', 'andmore']
 
     const urlStr = buildWatchFragmentsUrl(videoId, session, fragments)
@@ -49,7 +56,7 @@ describe('/lib/youtube-api/url-build.js', () => {
   it('buildWatchFragmentsUrl() uses default fragment if not given', () => {
     const videoId = 'K23jKl24k'
     const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
-    const session = { commentsToken}
+    const session = { commentsToken }
     const defaultFragment = 'comments'
 
     const urlStr = buildWatchFragmentsUrl(videoId, session)

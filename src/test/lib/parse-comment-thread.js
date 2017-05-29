@@ -4,7 +4,17 @@ const moment = require('moment')
 
 const parseCommentThread = require('../../lib/parse-comment-thread')
 
-const {sampleComment, COMMENT_ID, COMMENT_AUTHOR, COMMENT_AUTHOR_LINK, COMMENT_AUTHOR_THUMB, COMMENT_TIME, COMMENT_TEXT, COMMENT_LIKES, REPLIES_TOKEN} = require('../sample-comment-html')
+const {
+  sampleComment,
+  COMMENT_ID,
+  COMMENT_AUTHOR,
+  COMMENT_AUTHOR_LINK,
+  COMMENT_AUTHOR_THUMB,
+  COMMENT_TIME,
+  COMMENT_TEXT,
+  COMMENT_LIKES,
+  REPLIES_TOKEN
+} = require('../sample-comment-html')
 
 const validateComment = (comment, exp) => {
   expect(comment).to.have.property('id', exp.id)
@@ -14,7 +24,10 @@ const validateComment = (comment, exp) => {
   expect(comment).to.have.property('text', exp.text)
   expect(comment).to.have.property('likes', exp.likes)
   expect(comment).to.have.property('time', exp.time)
-  expect(comment).to.have.property('timestamp').that.is.a('number').closeTo(exp.timestamp, (60 * 1000))
+  expect(comment).to.have
+    .property('timestamp')
+    .that.is.a('number')
+    .closeTo(exp.timestamp, 60 * 1000)
   expect(comment).to.have.property('edited', exp.edited)
 }
 
@@ -23,7 +36,7 @@ describe('/lib/parse-comment-thread.js', () => {
     expect(parseCommentThread).to.be.a('function')
   })
 
-  it('parses a comment thread without replies', (done) => {
+  it('parses a comment thread without replies', done => {
     const exp = {
       id: COMMENT_ID,
       author: COMMENT_AUTHOR,
@@ -38,18 +51,20 @@ describe('/lib/parse-comment-thread.js', () => {
     }
 
     const html = sampleComment(exp)
-    parseCommentThread(cheerio(html))
-      .fold(e => {
+    parseCommentThread(cheerio(html)).fold(
+      e => {
         expect.fail(e)
         done(e)
-      }, result => {
+      },
+      result => {
         validateComment(result, exp)
         expect(result).to.have.property('hasReplies', false)
         done()
-      })
+      }
+    )
   })
 
-  it('parses comment with replies (non-collapsed)', (done) => {
+  it('parses comment with replies (non-collapsed)', done => {
     const comment = {
       id: 'commentid',
       author: 'comment_author',
@@ -91,20 +106,25 @@ describe('/lib/parse-comment-thread.js', () => {
 
     const html = sampleComment(comment, replies)
 
-    parseCommentThread(cheerio(html))
-      .fold(e => {
+    parseCommentThread(cheerio(html)).fold(
+      e => {
         expect.fail(e)
-      }, result => {
+      },
+      result => {
         validateComment(result, comment)
         expect(result).to.have.property('hasReplies', true)
         expect(result).to.have.property('numReplies', 2)
-        expect(result).to.have.property('replies').which.is.a('array').of.length(2)
+        expect(result).to.have
+          .property('replies')
+          .which.is.a('array')
+          .of.length(2)
         result.replies.forEach((r, i) => validateComment(r, replies[i]))
         done()
-      })
+      }
+    )
   })
 
-  it('parses comment replies information (collapsed comments)', (done) => {
+  it('parses comment replies information (collapsed comments)', done => {
     const comment = {
       id: 'commentid',
       author: 'comment_author',
@@ -157,22 +177,26 @@ describe('/lib/parse-comment-thread.js', () => {
 
     const html = sampleComment(comment, replies)
 
-    parseCommentThread(cheerio(html))
-      .fold(e => {
+    parseCommentThread(cheerio(html)).fold(
+      e => {
         expect.fail(e)
         done(e)
-      }, result => {
+      },
+      result => {
         validateComment(result, comment)
         expect(result).to.have.property('hasReplies', true)
         expect(result).to.not.have.property('replies')
         done()
-      })
+      }
+    )
   })
 
   it('fails if $commentThread parameter is missing', () => {
-    parseCommentThread()
-      .fold(e => {
+    parseCommentThread().fold(
+      e => {
         expect(e).to.equal('$commentThread parameter must be defined')
-      }, result => done(`should fail ${result}`))
+      },
+      result => done(`should fail ${result}`)
+    )
   })
 })

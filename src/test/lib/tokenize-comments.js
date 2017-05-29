@@ -10,7 +10,8 @@ describe('/lib/tokenize-comments.js', () => {
   })
 
   it("returns an empty array if the html doesn't contain any comments", () => {
-    const html = '<div><div class="no-comment">nope</div><div class="no-comment">hahaha</div></div>'
+    const html =
+      '<div><div class="no-comment">nope</div><div class="no-comment">hahaha</div></div>'
     const result = tokenizeComments(html)
     expect(result).to.be.instanceof(Either)
 
@@ -18,7 +19,8 @@ describe('/lib/tokenize-comments.js', () => {
       e => expect.fail('Should not have an error ' + e),
       commentTokens => {
         expect(commentTokens).to.be.a('array').of.length(0)
-      })
+      }
+    )
   })
 
   it('returns an array of cheerio tokens', () => {
@@ -52,9 +54,16 @@ describe('/lib/tokenize-comments.js', () => {
 
         const $comment1 = cheerio(commentTokens[0])
         const $comment2 = cheerio(commentTokens[1])
-        expect($comment1.find('.comment-thread-renderer > .comment-renderer').text()).to.equal(c1)
-        expect($comment1.find('.comment-replies-renderer .comment-renderer').text()).to.equal(r1)
-        expect($comment2.find('.comment-thread-renderer > .comment-renderer').text()).to.equal(c2)
-      })
+        expect(
+          $comment1.find('.comment-thread-renderer > .comment-renderer').text()
+        ).to.equal(c1)
+        expect(
+          $comment1.find('.comment-replies-renderer .comment-renderer').text()
+        ).to.equal(r1)
+        expect(
+          $comment2.find('.comment-thread-renderer > .comment-renderer').text()
+        ).to.equal(c2)
+      }
+    )
   })
 })

@@ -14,7 +14,8 @@ describe('/lib/fetch-first-page-token.js', () => {
 
   it('fetches the first page token', done => {
     const videoId = 'videoId'
-    const pageToken = 'EhYSC2hfdGtJcHdic3hZwAEAyAEA4AEBGAYyEyIPIgtoX3RrSXB3YnN4WTABMAA%3D'
+    const pageToken =
+      'EhYSC2hfdGtJcHdic3hZwAEAyAEA4AEBGAYyEyIPIgtoX3RrSXB3YnN4WTABMAA%3D'
     const encodedPageToken = encodeURIComponent(pageToken)
     const html = `
       <div class="comment-section-renderer">
@@ -43,16 +44,19 @@ describe('/lib/fetch-first-page-token.js', () => {
     const Youtube = td.replace('../../lib/youtube-api/youtube-api')
     const fetchFirstPageToken = require('../../lib/fetch-first-page-token')
 
-    td.when(Youtube.commentsWatchFragment(videoId))
-      .thenReturn(Task.of({body: {'watch-discussion': html}}))
+    td
+      .when(Youtube.commentsWatchFragment(videoId))
+      .thenReturn(Task.of({ body: { 'watch-discussion': html } }))
 
-    fetchFirstPageToken(videoId)
-      .fork(e => {
+    fetchFirstPageToken(videoId).fork(
+      e => {
         done(`ERROR: ${JSON.stringify(e, null, 2)}`)
-      }, res => {
+      },
+      res => {
         expect(res).to.equal(pageToken)
         done()
-      })
+      }
+    )
   })
 
   it('task fails if API request fails', done => {
@@ -64,22 +68,28 @@ describe('/lib/fetch-first-page-token.js', () => {
     const errorHandler = td.replace('../../lib/error-handler')
     const fetchFirstPageToken = require('../../lib/fetch-first-page-token')
 
-    td.when(Youtube.commentsWatchFragment(videoId))
+    td
+      .when(Youtube.commentsWatchFragment(videoId))
       .thenReturn(Task.rejected(errMessage))
 
-    td.when(errorHandler.scraperError({
-      videoId,
-      message: errMessage,
-      component: 'fetch-first-page-token',
-      operation: 'fetch-first-page-token'
-    }))
+    td
+      .when(
+        errorHandler.scraperError({
+          videoId,
+          message: errMessage,
+          component: 'fetch-first-page-token',
+          operation: 'fetch-first-page-token'
+        })
+      )
       .thenReturn(expectedError)
 
-    fetchFirstPageToken(videoId)
-      .fork(e => {
+    fetchFirstPageToken(videoId).fork(
+      e => {
         expect(e).to.deep.equal(expectedError)
         done()
-      }, res => done('expected to fail'))
+      },
+      res => done('expected to fail')
+    )
   })
 
   it('task fails if API response is invalid', done => {
@@ -90,22 +100,28 @@ describe('/lib/fetch-first-page-token.js', () => {
     const errorHandler = td.replace('../../lib/error-handler')
     const fetchFirstPageToken = require('../../lib/fetch-first-page-token')
 
-    td.when(Youtube.commentsWatchFragment(videoId))
-      .thenReturn(Task.of({nothing: 'here'}))
+    td
+      .when(Youtube.commentsWatchFragment(videoId))
+      .thenReturn(Task.of({ nothing: 'here' }))
 
-    td.when(errorHandler.scraperError({
-      videoId,
-      message: 'Invalid API response. Missing field "watch-discussion"',
-      component: 'fetch-first-page-token',
-      operation: 'fetch-first-page-token'
-    }))
+    td
+      .when(
+        errorHandler.scraperError({
+          videoId,
+          message: 'Invalid API response. Missing field "watch-discussion"',
+          component: 'fetch-first-page-token',
+          operation: 'fetch-first-page-token'
+        })
+      )
       .thenReturn(expectedError)
 
-    fetchFirstPageToken(videoId)
-      .fork(e => {
+    fetchFirstPageToken(videoId).fork(
+      e => {
         expect(e).to.deep.equal(expectedError)
         done()
-      }, res => done('expected to fail'))
+      },
+      res => done('expected to fail')
+    )
   })
 
   it('task fails if the watch-discussion html is invalid', done => {
@@ -115,14 +131,19 @@ describe('/lib/fetch-first-page-token.js', () => {
     const Youtube = td.replace('../../lib/youtube-api/youtube-api')
     const fetchFirstPageToken = require('../../lib/fetch-first-page-token')
 
-    td.when(Youtube.commentsWatchFragment(videoId))
-      .thenReturn(Task.of({ body: {'watch-discussion': html }}))
+    td
+      .when(Youtube.commentsWatchFragment(videoId))
+      .thenReturn(Task.of({ body: { 'watch-discussion': html } }))
 
-    fetchFirstPageToken(videoId)
-      .fork(e => {
-        expect(e).to.be.a('object').that.has.property('type', 'video-error/no-comments')
+    fetchFirstPageToken(videoId).fork(
+      e => {
+        expect(e).to.be
+          .a('object')
+          .that.has.property('type', 'video-error/no-comments')
         done()
-      }, res => done('expected to fail'))
+      },
+      res => done('expected to fail')
+    )
   })
 
   it('task fails if there are no comments', done => {
@@ -141,23 +162,29 @@ describe('/lib/fetch-first-page-token.js', () => {
     const errorHandler = td.replace('../../lib/error-handler')
     const fetchFirstPageToken = require('../../lib/fetch-first-page-token')
 
-    td.when(Youtube.commentsWatchFragment(videoId))
-      .thenReturn(Task.of({ body: {'watch-discussion': html} }))
+    td
+      .when(Youtube.commentsWatchFragment(videoId))
+      .thenReturn(Task.of({ body: { 'watch-discussion': html } }))
 
-    td.when(errorHandler.noCommentsError({
-      videoId,
-      component: 'fetch-first-page-token',
-      operation: 'extractToken'
-    }))
+    td
+      .when(
+        errorHandler.noCommentsError({
+          videoId,
+          component: 'fetch-first-page-token',
+          operation: 'extractToken'
+        })
+      )
       .thenReturn(expectedError)
 
-    fetchFirstPageToken(videoId)
-      .fork(e => {
+    fetchFirstPageToken(videoId).fork(
+      e => {
         expect(e).to.deep.equal(expectedError)
         done()
-      }, res => {
+      },
+      res => {
         done('Task should not complete.')
-      })
+      }
+    )
   })
 
   it('task fails if content_html does not contain a "Newest First" button', done => {
@@ -176,23 +203,31 @@ describe('/lib/fetch-first-page-token.js', () => {
     const errorHandler = td.replace('../../lib/error-handler')
     const fetchFirstPageToken = require('../../lib/fetch-first-page-token')
 
-    td.when(Youtube.commentsWatchFragment(videoId))
-      .thenReturn(Task.of({ body: { 'watch-discussion': html }}))
+    td
+      .when(Youtube.commentsWatchFragment(videoId))
+      .thenReturn(Task.of({ body: { 'watch-discussion': html } }))
 
-    td.when(errorHandler.scraperError(td.matchers.contains({
-      videoId,
-      component: 'fetch-first-page-token',
-      operation: 'fetch-first-page-token'
-    })))
+    td
+      .when(
+        errorHandler.scraperError(
+          td.matchers.contains({
+            videoId,
+            component: 'fetch-first-page-token',
+            operation: 'fetch-first-page-token'
+          })
+        )
+      )
       .thenReturn(expectedError)
 
-    fetchFirstPageToken(videoId)
-      .fork(e => {
+    fetchFirstPageToken(videoId).fork(
+      e => {
         expect(e).to.deep.equal(expectedError)
         done()
-      }, res => {
+      },
+      res => {
         done('Task should not complete.')
-      })
+      }
+    )
   })
 
   it('task fails if "Newest First" button does not have a "data-token" attribute', done => {
@@ -226,22 +261,30 @@ describe('/lib/fetch-first-page-token.js', () => {
     const errorHandler = td.replace('../../lib/error-handler')
     const fetchFirstPageToken = require('../../lib/fetch-first-page-token')
 
-    td.when(Youtube.commentsWatchFragment(videoId))
-      .thenReturn(Task.of({ body: { 'watch-discussion': html }}))
+    td
+      .when(Youtube.commentsWatchFragment(videoId))
+      .thenReturn(Task.of({ body: { 'watch-discussion': html } }))
 
-    td.when(errorHandler.scraperError(td.matchers.contains({
-      videoId,
-      component: 'fetch-first-page-token',
-      operation: 'fetch-first-page-token'
-    })))
+    td
+      .when(
+        errorHandler.scraperError(
+          td.matchers.contains({
+            videoId,
+            component: 'fetch-first-page-token',
+            operation: 'fetch-first-page-token'
+          })
+        )
+      )
       .thenReturn(expectedError)
 
-    fetchFirstPageToken(videoId)
-      .fork(e => {
+    fetchFirstPageToken(videoId).fork(
+      e => {
         expect(e).to.deep.equal(expectedError)
         done()
-      }, res => {
+      },
+      res => {
         done('Task should not complete.')
-      })
+      }
+    )
   })
 })

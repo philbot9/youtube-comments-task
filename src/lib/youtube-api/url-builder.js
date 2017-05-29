@@ -33,4 +33,5 @@ module.exports = {
   COMMENT_SERVICE_URL,
   buildVideoPageUrl,
   buildWatchFragmentsUrl,
-buildCommentServiceUrl}
+  buildCommentServiceUrl
+}

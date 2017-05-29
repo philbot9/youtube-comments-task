@@ -1,7 +1,10 @@
 const { delayedRetry } = require('retry-task')
 const request = require('../utils/request')
 const getSession = require('./session-store')
-const { buildWatchFragmentsUrl, buildCommentServiceUrl } = require('./url-builder')
+const {
+  buildWatchFragmentsUrl,
+  buildCommentServiceUrl
+} = require('./url-builder')
 
 // TODO: make # retries configurable
 const withRetries = delayedRetry(3, n => n * n * 500)
@@ -20,25 +23,37 @@ const buildJsonPostRequest = (url, form) => ({
   },
   json: true,
   url,
-form})
+  form
+})
 
-const commentPage = (videoId, pageToken) => getSession(videoId)
-  .map(sess => buildJsonPostRequest(
-    buildCommentServiceUrl('action_get_comments'),
-    buildRequestForm(sess, pageToken)))
-  .chain(requestWithRetries)
+const commentPage = (videoId, pageToken) =>
+  getSession(videoId)
+    .map(sess =>
+      buildJsonPostRequest(
+        buildCommentServiceUrl('action_get_comments'),
+        buildRequestForm(sess, pageToken)
+      )
+    )
+    .chain(requestWithRetries)
 
-const commentReplies = (videoId, repliesToken) => getSession(videoId)
-  .map(sess => buildJsonPostRequest(
-    buildCommentServiceUrl('action_get_comment_replies'),
-    buildRequestForm(sess, repliesToken)
-  ))
-  .chain(requestWithRetries)
+const commentReplies = (videoId, repliesToken) =>
+  getSession(videoId)
+    .map(sess =>
+      buildJsonPostRequest(
+        buildCommentServiceUrl('action_get_comment_replies'),
+        buildRequestForm(sess, repliesToken)
+      )
+    )
+    .chain(requestWithRetries)
 
-const commentsWatchFragment = videoId => getSession(videoId)
-  .map(sess => buildJsonPostRequest(
-    buildWatchFragmentsUrl(videoId, sess, ['comments']),
-    buildRequestForm(sess)))
-  .chain(requestWithRetries)
+const commentsWatchFragment = videoId =>
+  getSession(videoId)
+    .map(sess =>
+      buildJsonPostRequest(
+        buildWatchFragmentsUrl(videoId, sess, ['comments']),
+        buildRequestForm(sess)
+      )
+    )
+    .chain(requestWithRetries)
 
-module.exports = { commentPage, commentReplies, commentsWatchFragment}
+module.exports = { commentPage, commentReplies, commentsWatchFragment }
