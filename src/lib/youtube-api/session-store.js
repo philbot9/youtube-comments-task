@@ -54,4 +54,24 @@ const getSession = videoId =>
     ])
   )
 
-module.exports = getSession
+// TODO: make cacheTtl configurable
+const cacheTtl = 1000 * 60 * 2 // 2 minutes
+const cache = {}
+
+/*
+ * NOTE: this function is impure (shame on me), but I don't know how else to
+ *       cache lazy async operations.
+ */
+const cachedGetSession = videoId => {
+  if (cache.data && cache.maxAge > Date.now()) {
+    return Task.of(cache.data)
+  }
+
+  return getSession(videoId).map(res => {
+    cache.data = Object.assign({}, res)
+    cache.maxAge = Date.now() + cacheTtl
+    return res
+  })
+}
+
+module.exports = cachedGetSession

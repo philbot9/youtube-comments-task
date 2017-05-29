@@ -103,10 +103,14 @@ describe('/lib/fetch-comments', function () {
     const video1Id = '9bZkp7q19f0'
     const video2Id = 'Ukg_U3CnJWI'
 
-    traverse([video1Id, video2Id], Task.of, fetchComments).fork(
+    traverse(
+      [video1Id, video1Id, video2Id, video2Id],
+      Task.of,
+      fetchComments
+    ).fork(
       e => done('Got an error: ' + e),
       ps => {
-        expect(ps).to.be.an('array').of.length(2)
+        expect(ps).to.be.an('array').of.length(4)
         ps.forEach(p => {
           expect(p).to.have
             .property('comments')
