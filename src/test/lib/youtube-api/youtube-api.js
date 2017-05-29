@@ -28,7 +28,8 @@ describe('/lib/youtube-api/youtube-api', () => {
     const url = buildCommentServiceUrl('action_get_comments')
     const html = '<p>comment page</p>'
     const apiResponse = { content_html: html }
-    const session = { sessionToken: 'sess', commentsToken: 'comm' }
+    const cookieJar = { cookies: 'yep' }
+    const session = { sessionToken: 'sess', commentsToken: 'comm', cookieJar }
 
     const getSession = td.replace('../../../lib/youtube-api/session-store')
     const request = td.replace('../../../lib/utils/request')
@@ -44,7 +45,7 @@ describe('/lib/youtube-api/youtube-api', () => {
       }
     })
 
-    td.when(request(requestMatcher)).thenReturn(Task.of(apiResponse))
+    td.when(request(requestMatcher)).thenReturn(Task.of({ body: apiResponse }))
 
     td.when(getSession(videoId)).thenReturn(Task.of(session))
 
@@ -63,7 +64,8 @@ describe('/lib/youtube-api/youtube-api', () => {
     const url = buildCommentServiceUrl('action_get_comments')
     const html = '<p>comment page</p>'
     const apiResponse = { content_html: html }
-    const session = { sessionToken: 'sess', commentsToken: 'comm' }
+    const cookieJar = { cookies: 'yep' }
+    const session = { sessionToken: 'sess', commentsToken: 'comm', cookieJar }
 
     const getSession = td.replace('../../../lib/youtube-api/session-store')
     const request = td.replace('../../../lib/utils/request')
@@ -81,7 +83,7 @@ describe('/lib/youtube-api/youtube-api', () => {
 
     td
       .when(request(requestMatcher))
-      .thenReturn(Task.rejected('na-ah'), Task.of(apiResponse))
+      .thenReturn(Task.rejected('na-ah'), Task.of({ body: apiResponse }))
 
     td.when(getSession(videoId)).thenReturn(Task.of(session))
 
@@ -105,7 +107,8 @@ describe('/lib/youtube-api/youtube-api', () => {
     const url = buildCommentServiceUrl('action_get_comment_replies')
     const html = '<p>replies content</p>'
     const apiResponse = { content_html: html }
-    const session = { sessionToken: 'sess', commentsToken: 'comm' }
+    const cookieJar = { cookies: 'yep' }
+    const session = { sessionToken: 'sess', commentsToken: 'comm', cookieJar }
 
     const getSession = td.replace('../../../lib/youtube-api/session-store')
     const request = td.replace('../../../lib/utils/request')
@@ -121,7 +124,7 @@ describe('/lib/youtube-api/youtube-api', () => {
       }
     })
 
-    td.when(request(requestMatcher)).thenReturn(Task.of(apiResponse))
+    td.when(request(requestMatcher)).thenReturn(Task.of({ body: apiResponse }))
 
     td.when(getSession(videoId)).thenReturn(Task.of(session))
 
@@ -140,7 +143,8 @@ describe('/lib/youtube-api/youtube-api', () => {
     const url = buildCommentServiceUrl('action_get_comment_replies')
     const html = '<p>comment page</p>'
     const apiResponse = { content_html: html }
-    const session = { sessionToken: 'sess', commentsToken: 'comm' }
+    const cookieJar = { cookies: 'yep' }
+    const session = { sessionToken: 'sess', commentsToken: 'comm', cookieJar }
 
     const getSession = td.replace('../../../lib/youtube-api/session-store')
     const request = td.replace('../../../lib/utils/request')
@@ -158,7 +162,7 @@ describe('/lib/youtube-api/youtube-api', () => {
 
     td
       .when(request(requestMatcher))
-      .thenReturn(Task.rejected('na-ah'), Task.of(apiResponse))
+      .thenReturn(Task.rejected('na-ah'), Task.of({ body: apiResponse }))
 
     td.when(getSession(videoId)).thenReturn(Task.of(session))
 
@@ -200,7 +204,7 @@ describe('/lib/youtube-api/youtube-api', () => {
 
     td
       .when(request(requestMatcher))
-      .thenReturn(Task.rejected('na-ah'), Task.of(apiResponse))
+      .thenReturn(Task.rejected('na-ah'), Task.of({ body: apiResponse }))
 
     td.when(getSession(videoId)).thenReturn(Task.of(session))
 
@@ -235,7 +239,7 @@ describe('/lib/youtube-api/youtube-api', () => {
 
     td
       .when(request(requestMatcher))
-      .thenReturn(Task.rejected('na-ah'), Task.of(apiResponse))
+      .thenReturn(Task.rejected('na-ah'), Task.of({ body: apiResponse }))
 
     td.when(getSession(videoId)).thenReturn(Task.of(session))
 

@@ -14,26 +14,27 @@ describe('/lib/youtube-api/session-store', () => {
     expect(getSession).to.be.a('function')
   })
 
-  it('session store fetches new session tokens', done => {
+  it('session store fetches tokens and cookies', done => {
     const videoId = 'first_video_id'
     const sessionToken =
       'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
     const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
     const url = buildVideoPageUrl(videoId)
-    const html = `<html><script>
+    const body = `<html><script>
       var stuff = {'XSRF_TOKEN': "${sessionToken}",}
       var stuff2 = {'COMMENTS_TOKEN': "${encodeURIComponent(commentsToken)}",}
     </script></html>`
+    const cookieJar = { cookies: 'yep' }
 
     const request = td.replace('../../../lib/utils/request')
     const getSession = require('../../../lib/youtube-api/session-store')
 
-    td.when(request(url)).thenReturn(Task.of(html))
+    td.when(request(url)).thenReturn(Task.of({ body, cookieJar }))
 
     getSession(videoId).fork(
       e => done('got an error ' + e),
       s => {
-        expect(s).to.deep.equal({ sessionToken, commentsToken })
+        expect(s).to.deep.equal({ sessionToken, commentsToken, cookieJar })
         done()
       }
     )
@@ -46,25 +47,26 @@ describe('/lib/youtube-api/session-store', () => {
     const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
     const expectedError = { error: 'here' }
     const url = buildVideoPageUrl(videoId)
-    const html = `<html><script>
+    const body = `<html><script>
       var stuff = {'NOTHING_TOKEN': "${sessionToken}",}
       var stuff2 = {'COMMENTS_TOKEN': "${encodeURIComponent(commentsToken)}",}
     </script></html>`
+    const cookieJar = { cookies: 'yep' }
 
     const request = td.replace('../../../lib/utils/request')
     const errorHandler = td.replace('../../../lib/error-handler')
     const getSession = require('../../../lib/youtube-api/session-store')
 
+    td.when(request(url)).thenReturn(Task.of({ body, cookieJar }))
     td
       .when(
         errorHandler.videoPageError({
           component: 'session-store',
           operation: 'extractSessionToken',
-          html
+          html: body
         })
       )
       .thenReturn(expectedError)
-    td.when(request(url)).thenReturn(Task.of(html))
 
     getSession(videoId).fork(
       e => {
@@ -82,10 +84,11 @@ describe('/lib/youtube-api/session-store', () => {
     const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
     const expectedError = { error: 'here' }
     const url = buildVideoPageUrl(videoId)
-    const html = `<html><script>
+    const body = `<html><script>
       var stuff = {'XSRF_TOKEN': "${sessionToken}",}
       var stuff2 = {'SOMETHING_ELSE_TOKEN': "${encodeURIComponent(commentsToken)}",}
     </script></html>`
+    const cookieJar = { cookies: 'yep' }
 
     const request = td.replace('../../../lib/utils/request')
     const errorHandler = td.replace('../../../lib/error-handler')
@@ -96,11 +99,11 @@ describe('/lib/youtube-api/session-store', () => {
         errorHandler.videoPageError({
           component: 'session-store',
           operation: 'extractCommentsToken',
-          html
+          html: body
         })
       )
       .thenReturn(expectedError)
-    td.when(request(url)).thenReturn(Task.of(html))
+    td.when(request(url)).thenReturn(Task.of({ body, cookieJar }))
 
     getSession(videoId).fork(
       e => {
@@ -111,59 +114,32 @@ describe('/lib/youtube-api/session-store', () => {
     )
   })
 
-  it('session store caches tokens', done => {
-    const videoId = 'the_video_id'
-    const sessionToken =
-      'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
-    const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
-    const url = buildVideoPageUrl(videoId)
-    const html = `<html><script>
-      var token1 = {'XSRF_TOKEN': "${sessionToken}",}
-      var token2 = {'COMMENTS_TOKEN': "${encodeURIComponent(commentsToken)}",}
-    </script></html>`
-
-    const request = td.replace('../../../lib/utils/request')
-    const getSession = require('../../../lib/youtube-api/session-store')
-    td
-      .when(request(url))
-      .thenReturn(Task.of(html), Task.rejected('one request only'))
-
-    getSession(videoId).fork(
-      e => done('got an error ' + e),
-      s => {
-        getSession(videoId).fork(
-          e => done('got an error ' + e),
-          s => {
-            expect(s).to.deep.equal({ sessionToken, commentsToken })
-            done()
-          }
-        )
-      }
-    )
-  })
-
   it('retries if fetching video page fails', done => {
     const videoId = 'the_video_id'
     const sessionToken =
       'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
     const commentsToken = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
     const url = buildVideoPageUrl(videoId)
-    const html = `<html><script>
+    const body = `<html><script>
       var token1 = {'XSRF_TOKEN': "${sessionToken}",}
       var token2 = {'COMMENTS_TOKEN': "${encodeURIComponent(commentsToken)}",}
     </script></html>`
+    const cookieJar = { cookies: 'yep' }
 
     const request = td.replace('../../../lib/utils/request')
     const getSession = require('../../../lib/youtube-api/session-store')
 
     td
       .when(request(url))
-      .thenReturn(Task.rejected('first one fails'), Task.of(html))
+      .thenReturn(
+        Task.rejected('first one fails'),
+        Task.of({ body, cookieJar })
+      )
 
     getSession(videoId).fork(
       e => done('got an error ' + e),
       s => {
-        expect(s).to.deep.equal({ sessionToken, commentsToken })
+        expect(s).to.deep.equal({ sessionToken, commentsToken, cookieJar })
         done()
       }
     )

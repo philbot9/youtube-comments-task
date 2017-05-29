@@ -1,6 +1,6 @@
 const Task = require('data.task')
 const Either = require('data.either')
-const { liftM2 } = require('control.monads')
+const { liftMN } = require('control.monads')
 const { delayedRetry } = require('retry-task')
 
 const eitherToTask = require('../utils/either-to-task')
@@ -39,41 +39,19 @@ const fetchVideoPage = videoId => request(buildVideoPageUrl(videoId))
 const fetchVideoPageWithRetries = videoId =>
   withRetries(() => fetchVideoPage(videoId))
 
-const buildSession = (sessionToken, commentsToken) => ({
+const buildSession = (sessionToken, commentsToken, cookieJar) => ({
   sessionToken,
-  commentsToken
+  commentsToken,
+  cookieJar
 })
 
 const getSession = videoId =>
-  fetchVideoPageWithRetries(videoId).chain(html =>
-    liftM2(
-      buildSession,
-      eitherToTask(extractSessionToken(html)),
-      eitherToTask(extractCommentsToken(html))
-    )
+  fetchVideoPageWithRetries(videoId).chain(({ body, cookieJar }) =>
+    liftMN(buildSession, [
+      eitherToTask(extractSessionToken(body)),
+      eitherToTask(extractCommentsToken(body)),
+      Task.of(cookieJar)
+    ])
   )
 
-// TODO: make cacheTtl configurable
-const cacheTtl = 1000 * 60 * 5 // 5 minutes
-const cache = {}
-
-/*
- * NOTE: this function is impure (shame on me), but I don't know how else to
- *       memoize lazy async operations.
- */
-const memoizedGetSession = videoId => {
-  const cached = cache[videoId]
-  if (cached && cached.maxAge > Date.now()) {
-    return Task.of(cached.data)
-  }
-
-  return getSession(videoId).map(
-    res =>
-      (cache[videoId] = {
-        data: res,
-        maxAge: Date.now() + cacheTtl
-      }).data
-  )
-}
-
-module.exports = memoizedGetSession
+module.exports = getSession

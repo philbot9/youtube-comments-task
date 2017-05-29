@@ -48,8 +48,8 @@ describe('/lib/utils/request.js', () => {
     request('http://www.google.com/').fork(
       e => done(`got an error ${e}`),
       x => {
-        expect(x).to.be.a('string').of.length.above(500)
-        expect(x).to.match(/<html/i)
+        expect(x).to.be.an('object').with.property('body')
+        expect(x.body).to.be.a('string').and.to.match(/<html/i)
         done()
       }
     )

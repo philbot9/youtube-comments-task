@@ -10,7 +10,8 @@
     "integration-test": "mocha dist/test/integration-tests/*.js",
     "prepublish": "npm run build",
     "test": "npm run build && npm run unit-test && npm run integration-test",
-    "unit-test": "mocha dist/test/*.js dist/test/lib/*.js dist/test/lib/**/*.js"
+    "unit-test": "mocha 'dist/test/*.js' 'dist/test/lib/**/*.js'",
+    "unit-test:src": "mocha 'src/test/*.js' 'src/test/lib/**/*.js'"
   },
   "repository": {
     "type": "git",

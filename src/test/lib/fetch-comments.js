@@ -3,7 +3,7 @@ const td = require('testdouble')
 const Either = require('data.either')
 const Task = require('data.task')
 
-describe.only('/lib/fetch-replies', () => {
+describe('/lib/fetch-replies', () => {
   afterEach(() => {
     td.reset()
   })
