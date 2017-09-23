@@ -31,29 +31,29 @@
   },
   "homepage": "https://github.com/philbot9/youtube-comments-task#readme",
   "dependencies": {
+    "chai": "^4.1.2",
     "cheerio": "^0.22.0",
     "control.monads": "^0.6.0",
     "core.lambda": "^1.0.0",
     "data.either": "^1.4.0",
     "data.task": "^3.1.1",
     "debug": "^2.2.0",
+    "mocha": "^3.5.3",
     "moment": "^2.17.1",
+    "nyc": "^11.2.1",
     "propper": "^1.0.2",
     "ramda": "^0.23.0",
     "request": "2.81.0",
     "request-promise": "^4.2.2",
-    "retry-task": "^1.0.1"
+    "retry-task": "^1.0.1",
+    "testdouble": "^3.2.6"
   },
   "devDependencies": {
     "babel-cli": "^6.23.0",
     "babel-plugin-transform-object-assign": "^6.22.0",
     "babel-preset-env": "^1.2.1",
-    "chai": "^3.5.0",
-    "mocha": "^3.2.0",
-    "nyc": "^10.1.2",
     "prettier-standard": "^5.0.0",
     "standard": "^8.6.0",
-    "standard-format": "^2.2.4",
-    "testdouble": "^1.10.1"
+    "standard-format": "^2.2.4"
   }
 }
