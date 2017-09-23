@@ -9,7 +9,10 @@ describe('/lib/fetch-first-page-token', function () {
     fetchFirstPageToken('h_tkIpwbsxY').fork(
       e => done('got an error ' + e),
       t => {
-        expect(t).to.be.a('string').of.length(64).that.match(/[\w\d]+=$/)
+        expect(t).to.be
+          .a('string')
+          .lengthOf.at.least(64)
+          .that.match(/^[\w\d]+=+$/)
         done()
       }
     )
