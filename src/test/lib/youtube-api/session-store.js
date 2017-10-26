@@ -153,7 +153,7 @@ describe('/lib/youtube-api/session-store', () => {
           commentsToken: commentsToken1,
           cookieJar: cookieJar1
         })
-        return getSession(video2Id)
+        return getSession(video1Id)
       })
       .fork(
         e => {
@@ -161,6 +161,62 @@ describe('/lib/youtube-api/session-store', () => {
         },
         res => {
           expect(res).to.deep.equal({
+            sessionToken: sessionToken1,
+            commentsToken: commentsToken1,
+            cookieJar: cookieJar1
+          })
+          done()
+        }
+      )
+  })
+
+  it('does not use cached session for different videos', done => {
+    const video1Id = 'the_first_video_id'
+    const sessionToken1 =
+      'QUFLUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
+    const commentsToken1 = 'EhYSCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
+    const body1 = `<html><script>
+      var stuff = {'XSRF_TOKEN': "${sessionToken1}",}
+      var stuff2 = {'COMMENTS_TOKEN': "${encodeURIComponent(commentsToken1)}",}
+    </script></html>`
+    const cookieJar1 = { cookies: 'yep1' }
+
+    const video2Id = 'the_second_video_id'
+    const sessionToken2 =
+      'ABCEDEUhqbDZ4eC1NMnZoRTBaYWdJZjhvanpZMXNPdFMtd3xBQ3Jtc0tsZ21BdmtSOHd5ZV9Oekd1cEVGdmR2TlhrZkFpaGJOcGhOZzg1YmtmUTljYVV3V2R3dGxFdTl4TkN3WWNHVFo3b0ZpZXV0VnhYYVFrMGh1OHkyRzR1UGNvYmNoblRSZ0NhbXdIbFRXUmIyUGdPZkh1TWRkREJ2d3hsSDFRdlhRZEM0dHNoUDJVdjJncXB2V211dFBCUlFPSHl2d2c='
+    const commentsToken2 = 'ABCSSaCzJhNFV4ZHk5VFFZwAEAyAEA4AEBGAY='
+    const body2 = `<html><script>
+      var stuff = {'XSRF_TOKEN': "${sessionToken2}",}
+      var stuff2 = {'COMMENTS_TOKEN': "${encodeURIComponent(commentsToken2)}",}
+    </script></html>`
+    const cookieJar2 = { cookies: 'yep2' }
+
+    const request = td.replace('../../../lib/utils/request')
+    const errorHandler = td.replace('../../../lib/error-handler')
+    const getSession = require('../../../lib/youtube-api/session-store')
+
+    td
+      .when(request(td.matchers.isA(String)))
+      .thenReturn(
+        Task.of({ body: body1, cookieJar: cookieJar1 }),
+        Task.of({ body: body2, cookieJar: cookieJar2 })
+      )
+
+    getSession(video1Id)
+      .chain(res => {
+        expect(res).to.deep.equal({
+          sessionToken: sessionToken1,
+          commentsToken: commentsToken1,
+          cookieJar: cookieJar1
+        })
+        return getSession(video2Id)
+      })
+      .fork(
+        e => {
+          done('should not be rejected ' + e)
+        },
+        res => {
+          expect(res).not.to.deep.equal({
             sessionToken: sessionToken1,
             commentsToken: commentsToken1,
             cookieJar: cookieJar1
