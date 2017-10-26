@@ -63,13 +63,17 @@ const cache = {}
  *       cache lazy async operations.
  */
 const cachedGetSession = videoId => {
-  if (cache.data && cache.maxAge > Date.now()) {
-    return Task.of(cache.data)
+  const cached = cache[videoId]
+  if (cached && cached.data && cached.maxAge > Date.now()) {
+    return Task.of(cached.data)
+  } else if (cached && cached.maxAge <= Date.now()) {
+    delete cache[videoId]
   }
 
   return getSession(videoId).map(res => {
-    cache.data = Object.assign({}, res)
-    cache.maxAge = Date.now() + cacheTtl
+    cache[videoId] = {}
+    cache[videoId].data = Object.assign({}, res)
+    cache[videoId].maxAge = Date.now() + cacheTtl
     return res
   })
 }
