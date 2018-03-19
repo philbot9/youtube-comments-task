@@ -166,7 +166,7 @@ describe('/lib/fetch-replies', () => {
     )
   })
 
-  it('fails if fetching replies fails', done => {
+  it('does not fail if fetching replies fails', done => {
     const videoId = 'videoId'
     const commentHtml = '<div>page1</div>'
     const commentPage = { commentHtml }
@@ -181,11 +181,6 @@ describe('/lib/fetch-replies', () => {
     const parseCommentThread = td.replace('../../lib/parse-comment-thread')
     const fetchReplies = td.replace('../../lib/fetch-replies')
     const fetchComments = require('../../lib/fetch-comments')
-
-    td.when(fetchFirstPageToken(videoId)).thenDo(() => {
-      done('fetchFirstPageToken should not be called')
-      return Task.rejected('should not be called')
-    })
 
     td
       .when(fetchCommentPage(videoId, pageToken))
@@ -205,11 +200,11 @@ describe('/lib/fetch-replies', () => {
 
     fetchComments(videoId, pageToken).fork(
       e => {
-        expect(e).to.equal(expectedError)
-        done()
+        done('should not fail' + e)
       },
       res => {
-        done('not expected to succeed ' + res)
+        expect(res).to.deep.equal({ comments })
+        done()
       }
     )
   })
