@@ -42,7 +42,7 @@ const extractToken = $w =>
 const videoHasComments = $w =>
   cheerioFindText($w, '.comment-section-header-renderer')
     .map(t => t.replace(/,/g, ''))
-    .chain(t => regExec(/comments\s*.\s*([\d,]+)/i, t))
+    .chain(t => regExec(/comments?\s*.\s*([\d,]+)/i, t))
     .map(m => m[1])
     .chain(strToInt)
     .map(c => c > 0)
