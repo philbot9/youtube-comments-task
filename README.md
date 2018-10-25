@@ -84,7 +84,7 @@ If you'd rather use **Promises** instead of Tasks, check out [youtube-comment-ap
 
 ## Compatibility
 
-The module is transpiled with **Babel** and is compatible with node.js versions **>= 0.12**.
+The module is transpiled with **Babel** and is compatible with node.js versions **>= 6**.
 
 ## Examples
 
