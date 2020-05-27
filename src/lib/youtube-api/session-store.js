@@ -8,28 +8,47 @@ const { buildVideoPageUrl } = require('./url-builder')
 const request = require('../utils/request')
 const { videoPageError } = require('../error-handler')
 
-const extractToken = (html, regex) =>
-  Either.fromNullable(regex.exec(html))
-    .chain(m => Either.fromNullable(m[1]))
-    .map(token => decodeURIComponent(token))
+const extractSessionToken = html => {
+  const oldMatch = /'XSRF_TOKEN'\s*\n*:\s*\n*"([^"]+)"/i.exec(html)
+  if (oldMatch && oldMatch[1]) {
+    return Either.Right(decodeURIComponent(oldMatch[1]))
+  }
 
-const extractSessionToken = html =>
-  extractToken(html, /'XSRF_TOKEN'\s*\n*:\s*\n*"(.*)"/i).leftMap(_ =>
+  const newMatch = /"XSRF_TOKEN"\s*\n*:\s*\n*"([^"]+)"/i.exec(html)
+  if (newMatch && newMatch[1]) {
+    return Either.Right(newMatch[1])
+  }
+
+  return Either.Left(
     videoPageError({
       component: 'session-store',
       operation: 'extractSessionToken',
       html
     })
   )
+}
 
-const extractCommentsToken = html =>
-  extractToken(html, /'COMMENTS_TOKEN'\s*\n*:\s*\n*"([^"]+)"/i).leftMap(_ =>
+const extractCommentsToken = html => {
+  const oldMatch = /'COMMENTS_TOKEN'\s*\n*:\s*\n*"([^"]+)"/i.exec(html)
+  if (oldMatch && oldMatch[1]) {
+    return Either.Right(decodeURIComponent(oldMatch[1]))
+  }
+
+  const newMatch = /"continuation":"([^"]+)".{0,500}"comment-item-section"/.exec(
+    html
+  )
+  if (newMatch && newMatch[1]) {
+    return Either.Right(newMatch[1])
+  }
+
+  return Either.Left(
     videoPageError({
       component: 'session-store',
       operation: 'extractCommentsToken',
       html
     })
   )
+}
 
 // TODO: make # retries configurable
 const withRetries = delayedRetry(3, n => n * n * 500)

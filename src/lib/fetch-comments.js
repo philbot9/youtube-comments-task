@@ -33,9 +33,12 @@ const fetchCommentReplies = (videoId, comment) =>
     )
 
 const addReplies = (videoId, comment) =>
-  (comment.hasReplies && !comment.replies
-    ? fetchCommentReplies(videoId, comment).fold(() => comment, x => x)
-    : Task.of(comment))
+  comment.hasReplies && !comment.replies
+    ? fetchCommentReplies(videoId, comment).fold(
+        () => comment,
+        x => x
+      )
+    : Task.of(comment)
 
 const fetchComments = (videoId, pageToken) =>
   Either.fromNullable(pageToken)
