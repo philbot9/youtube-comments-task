@@ -1,23 +1,26 @@
 # youtube-comments-task
 
+## Deprecation Notice
+
+This package has been deprecated and no longer works.
+
+## About
+
 Scrape comments, including their replies, from a YouTube video.
-
-[![Build Status](https://travis-ci.org/philbot9/youtube-comments-task.svg?branch=master)](https://travis-ci.org/philbot9/youtube-comments-task)
-
 
 ## Contents
 
-* [Installation](#installation)
-* [Usage](#usage)
-* [Comment Data](#comment-data)
-* [Errors](#errors)
-* [Task](#task)
-* [Compatibility](#compatibility)
-* [Examples](#examples)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Comment Data](#comment-data)
+- [Errors](#errors)
+- [Task](#task)
+- [Compatibility](#compatibility)
+- [Examples](#examples)
 
 ## Installation
 
-``` bash
+```bash
 npm install --save youtube-comments-task
 ```
 
@@ -31,7 +34,7 @@ The function accepts the YouTube `videoId` and an optional `pageToken`, and retu
 
 The result is an object with the following properties.
 
-``` javascript
+```javascript
 {
   comments: [ { comment }, { comment }, ... ],
   nextPageToken: 'nextpagetokenhere'
@@ -88,30 +91,31 @@ The module is transpiled with **Babel** and is compatible with node.js versions 
 
 ## Examples
 
-``` javascript
+```javascript
 const fetchComments = require('youtube-comments-task')
 
-fetchComments('h_tkIpwbsxY')
-  .fork(e => console.error('ERROR', e),
-        p => {
-          console.log('comments', p.comments)
-          console.log('nextPageToken', p.nextPageToken)
-        })
+fetchComments('h_tkIpwbsxY').fork(
+  e => console.error('ERROR', e),
+  p => {
+    console.log('comments', p.comments)
+    console.log('nextPageToken', p.nextPageToken)
+  }
+)
 ```
 
-``` javascript
+```javascript
 const Task = require('data.task')
 const fetchComments = require('youtube-comments-task')
 
 const fetchAllComments = (videoId, pageToken, fetched = []) =>
-  fetchComments(videoId, pageToken)
-    .chain(({ comments, nextPageToken }) =>
-      nextPageToken
-        ? fetchAllComments(videoId, nextPageToken, fetched.concat(comments))
-        : Task.of(fetched.concat(comments)))
+  fetchComments(videoId, pageToken).chain(({ comments, nextPageToken }) =>
+    nextPageToken
+      ? fetchAllComments(videoId, nextPageToken, fetched.concat(comments))
+      : Task.of(fetched.concat(comments))
+  )
 
-fetchAllComments('h_tkIpwbsxY')
-  .fork(e => console.error('ERROR', e),
-        allComments => console.log(allComments))
-
+fetchAllComments('h_tkIpwbsxY').fork(
+  e => console.error('ERROR', e),
+  allComments => console.log(allComments)
+)
 ```
